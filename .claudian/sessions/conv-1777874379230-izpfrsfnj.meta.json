@@ -1,9 +1,24 @@
 {
   "id": "conv-1777874379230-izpfrsfnj",
   "providerId": "claude",
-  "title": "我现在需要你为我整理我的知识库：",
+  "title": "我想在我的日记里写一篇todolist 但我不知道语法是怎样的，我希望可以实现打勾和打叉表示做完和没...",
   "titleGenerationStatus": "failed",
   "createdAt": 1777874379230,
-  "updatedAt": 1777874569618,
-  "sessionId": null
+  "updatedAt": 1777878757642,
+  "lastResponseAt": 1777878595400,
+  "sessionId": "c0f90772-0813-4be8-a841-f2c989d77ff3",
+  "providerState": {
+    "providerSessionId": "c0f90772-0813-4be8-a841-f2c989d77ff3"
+  },
+  "currentNote": "2026-05-04.md",
+  "usage": {
+    "model": "sonnet[1m]",
+    "inputTokens": 109,
+    "cacheCreationInputTokens": 0,
+    "cacheReadInputTokens": 25216,
+    "contextWindow": 1000000,
+    "contextTokens": 25325,
+    "percentage": 3,
+    "contextWindowIsAuthoritative": true
+  }
 }
