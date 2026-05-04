@@ -566,4 +566,3 @@ TickType_t 管时间，BaseType_t 管状态，TaskHandle_t 是任务身份证。
 
 - [[../../🧠MCU底层原理/CPU架构与内存模型]] — 栈空间为什么容易溢出
 - [[FreeRTOS同步与互斥]] — 任务间如何保护共享资源
-- [[../../芯片平台/ESP32/ESP-IDF开发环境与CMake]] — ESP-IDF 中创建任务的完整工程
