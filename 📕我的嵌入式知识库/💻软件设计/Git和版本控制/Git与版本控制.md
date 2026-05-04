@@ -6,9 +6,6 @@ author: RUI
 
 # Git 与版本控制
 
-> 适合对象：刚开始使用 Git/GitHub 进行版本管理的同学。
-> 学习目标：搞懂 HTTPS vs SSH、Git 基本操作流程、GitHub 协作基础。
-
 ## 目录
 
 - [GitHub 登录凭证](Git与版本控制.md#github-登录凭证)
