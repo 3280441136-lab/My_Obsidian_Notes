@@ -7,23 +7,23 @@ author: RUI
 # FreeRTOS 任务与调度
 
 > 适合对象：刚接触 FreeRTOS，需要理解任务创建、延时、句柄、tick、延时函数选择。
-> 前置知识：[[CPU架构与内存模型]] — 先搞懂栈和寄存器。
+> 前置知识：[[../../../CPU架构与内存模型]] — 先搞懂栈和寄存器。
 
 ## 目录
 
-- [任务是什么](#任务是什么)
-- [xTaskCreate 和 xTaskCreatePinnedToCore](#xtaskcreate-和-xtaskcreatepinnedtocore)
-- [任务句柄 TaskHandle_t](#任务句柄-taskhandle_t)
-- [vTaskDelay、pdMS_TO_TICKS、vTaskDelayUntil](#vtaskdelaypdms_to_ticksvtaskdelayuntil)
-- [esp_rom_delay_us 和 vTaskDelay 的区别](#esp_rom_delay_us-和-vtaskdelay-的区别)
-- [为什么任务栈常给 2048 字节](#为什么任务栈常给-2048-字节)
-- [while 外和 while 内的区别](#while-外和-while-内的区别)
-- [删除任务：vTaskDelete 和 cnt 判断](#删除任务vtaskdelete-和-cnt-判断)
-- [FreeRTOS 函数命名规律](#freertos-函数命名规律)
-- [TickType_t、BaseType_t、TaskHandle_t](#ticktype_tbasetype_ttaskhandle_t)
-- [稳妥代码模板](#稳妥代码模板)
-- [小白排错速查表](#小白排错速查表)
-- [记忆口诀](#记忆口诀)
+- [任务是什么](FreeRTOS任务与调度.md#任务是什么)
+- [xTaskCreate 和 xTaskCreatePinnedToCore](FreeRTOS任务与调度.md#xtaskcreate-和-xtaskcreatepinnedtocore)
+- [任务句柄 TaskHandle_t](FreeRTOS任务与调度.md#任务句柄-taskhandle_t)
+- [vTaskDelay、pdMS_TO_TICKS、vTaskDelayUntil](FreeRTOS任务与调度.md#vtaskdelaypdms_to_ticksvtaskdelayuntil)
+- [esp_rom_delay_us 和 vTaskDelay 的区别](FreeRTOS任务与调度.md#esp_rom_delay_us-和-vtaskdelay-的区别)
+- [为什么任务栈常给 2048 字节](FreeRTOS任务与调度.md#为什么任务栈常给-2048-字节)
+- [while 外和 while 内的区别](FreeRTOS任务与调度.md#while-外和-while-内的区别)
+- [删除任务：vTaskDelete 和 cnt 判断](FreeRTOS任务与调度.md#删除任务vtaskdelete-和-cnt-判断)
+- [FreeRTOS 函数命名规律](FreeRTOS任务与调度.md#freertos-函数命名规律)
+- [TickType_t、BaseType_t、TaskHandle_t](FreeRTOS任务与调度.md#ticktype_tbasetype_ttaskhandle_t)
+- [稳妥代码模板](FreeRTOS任务与调度.md#稳妥代码模板)
+- [小白排错速查表](FreeRTOS任务与调度.md#小白排错速查表)
+- [记忆口诀](FreeRTOS任务与调度.md#记忆口诀)
 
 ---
 
@@ -567,6 +567,6 @@ TickType_t 管时间，BaseType_t 管状态，TaskHandle_t 是任务身份证。
 
 ## 相关笔记
 
-- [[CPU架构与内存模型]] — 栈空间为什么容易溢出
+- [[../../../CPU架构与内存模型]] — 栈空间为什么容易溢出
 - [[FreeRTOS同步与互斥]] — 任务间如何保护共享资源
 - [[../../芯片平台/ESP32/ESP-IDF开发环境与CMake]] — ESP-IDF 中创建任务的完整工程
