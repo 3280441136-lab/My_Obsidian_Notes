@@ -216,4 +216,4 @@ STM32 printf 要重定向，ESP-IDF 开箱就能打印。
 
 - [[GPIO驱动配置]] — UART 引脚需要先配置 GPIO 复用
 - [[I2C总线通信]] — 另一种常见的串行通信协议
-- [[实时操作系统/FreeRTOS任务与调度]] — uart_read_bytes 的阻塞机制涉及 FreeRTOS 任务调度
+- [[../实时操作系统/FreeRTOS任务与调度]] — uart_read_bytes 的阻塞机制涉及 FreeRTOS 任务调度

@@ -166,4 +166,4 @@ ESP32：LEDC 专用外设，直接写频率和占空比。
 ## 相关笔记
 
 - [[GPIO驱动配置]] — PWM 输出引脚也是 GPIO，需要先理解 GPIO 配置
-- [[ESP-IDF/ESP-IDF组件管理器]] — LEDC 是 ESP-IDF 的内置组件
+- [[../ESP-IDF/ESP-IDF组件管理器]] — LEDC 是 ESP-IDF 的内置组件

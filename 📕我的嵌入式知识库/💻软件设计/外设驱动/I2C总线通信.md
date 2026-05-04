@@ -196,4 +196,4 @@ I2C 两条线，SCL 时钟 SDA 数据。
 
 - [[GPIO驱动配置]] — I2C 的 SDA/SCL 是开漏 GPIO，需要理解 GPIO 模式和上拉
 - [[UART串口通信]] — 另一种常用串行通信协议，对比理解
-- [[C语言基础/嵌入式句柄与指针]] — bus_handle 和 dev_handle 的本质是结构体指针
+- [[../C语言基础/嵌入式句柄与指针]] — bus_handle 和 dev_handle 的本质是结构体指针
