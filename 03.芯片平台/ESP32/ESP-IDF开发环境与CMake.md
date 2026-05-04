@@ -1,3 +1,9 @@
+﻿---
+version: V1.0
+updated: 2026-05-04
+author: RUI
+---
+
 # ESP-IDF 工程目录与 CMakeLists 入门笔记
 
 > 适合对象：以前主要用 Keil 开发 STC51、STM32、GD32，刚开始接触 ESP-IDF 工程结构的同学。  
@@ -5,7 +11,35 @@
 
 ---
 
-## 0. 先给结论
+## 目录
+
+- [先给结论](#先给结论)
+- [你当前工程目录长什么样](#你当前工程目录长什么样)
+- [和 Keil 工程的对应关系](#和-keil-工程的对应关系)
+- [根目录 CMakeLists.txt](#根目录-cmakeliststxt)
+- [main/CMakeLists.txt](#maincmakeliststxt)
+- [idf_component_register 是什么](#idf_component_register-是什么)
+- [SRCS 是什么](#srcs-是什么)
+- [INCLUDE_DIRS 是什么](#include_dirs-是什么)
+- [为什么 include 了 list.h 还不够](#为什么-include-了-listh-还不够)
+- [.c 和 .h 的分工](#c-和-h-的分工)
+- [main 文件夹是组件](#main-文件夹是组件)
+- [sdkconfig 是什么](#sdkconfig-是什么)
+- [sdkconfig.old 是什么](#sdkconfigold-是什么)
+- [build 文件夹是什么](#build-文件夹是什么)
+- [.vscode 文件夹是什么](#vscode-文件夹是什么)
+- [.clangd 是什么](#clangd-是什么)
+- [.devcontainer 是什么](#devcontainer-是什么)
+- [.gitignore 是什么](#gitignore-是什么)
+- [新增 .c/.h 文件时该怎么做](#新增-ch-文件时该怎么做)
+- [常见错误速查](#常见错误速查)
+- [发给队友时保留哪些](#发给队友时保留哪些)
+- [小白记忆口诀](#小白记忆口诀)
+- [你现在最该掌握的三句话](#你现在最该掌握的三句话)
+
+---
+
+## 先给结论
 
 <span style="color:#d32f2f;"><b>ESP-IDF 里的 CMakeLists.txt，大致相当于 Keil 工程里的“工程文件管理器”。</b></span>
 
@@ -32,7 +66,7 @@ SRCS "list.c"          才是让 list.c 真正参与编译
 
 ---
 
-## 1. 你当前工程目录长什么样
+## 你当前工程目录长什么样
 
 当前工程大致是：
 
@@ -64,7 +98,7 @@ build/             编译产物
 
 ---
 
-## 2. 和 Keil 工程的对应关系
+## 和 Keil 工程的对应关系
 
 | Keil 里的东西 | ESP-IDF 里的东西 | 人话解释 |
 |---|---|---|
@@ -85,7 +119,7 @@ ESP-IDF 是 CMake 文本化工程管理
 
 ---
 
-## 3. 根目录 CMakeLists.txt
+## 根目录 CMakeLists.txt
 
 你当前根目录的 `CMakeLists.txt` 是：
 
@@ -96,7 +130,7 @@ include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 project(helloworld)
 ```
 
-### 3.1 它是干什么的
+### 它是干什么的
 
 这个文件是整个 ESP-IDF 工程的入口。
 
@@ -109,7 +143,7 @@ project(helloworld)
 请使用 ESP-IDF 的构建系统来编译
 ```
 
-### 3.2 每一行解释
+### 每一行解释
 
 ```cmake
 cmake_minimum_required(VERSION 3.16)
@@ -169,7 +203,7 @@ helloworld.map
 
 ---
 
-## 4. main/CMakeLists.txt
+## main/CMakeLists.txt
 
 你当前 `main/CMakeLists.txt` 是：
 
@@ -182,7 +216,7 @@ idf_component_register(SRCS "list.c" "main.c"
 
 ---
 
-## 5. idf_component_register 是什么
+## idf_component_register 是什么
 
 `idf_component_register()` 是 ESP-IDF 提供的 CMake 函数。
 
@@ -205,7 +239,7 @@ main 组件
 
 ---
 
-## 6. SRCS 是什么
+## SRCS 是什么
 
 ```cmake
 SRCS "list.c" "main.c"
@@ -265,7 +299,7 @@ idf_component_register(
 
 ---
 
-## 7. INCLUDE_DIRS 是什么
+## INCLUDE_DIRS 是什么
 
 ```cmake
 INCLUDE_DIRS "."
@@ -311,7 +345,7 @@ idf_component_register(
 
 ---
 
-## 8. 为什么 include 了 list.h 还不够
+## 为什么 include 了 list.h 还不够
 
 这是最关键的点。
 
@@ -370,7 +404,7 @@ CMakeLists.txt：告诉 ESP-IDF 要把 list.c 编译进工程
 
 ---
 
-## 9. .c 和 .h 的分工
+## .c 和 .h 的分工
 
 | 文件 | 作用 | 是否加入 SRCS |
 |---|---|---|
@@ -410,7 +444,7 @@ CMakeLists.txt
 
 ---
 
-## 10. main 文件夹是组件
+## main 文件夹是组件
 
 ESP-IDF 里有“组件 component”的概念。
 
@@ -448,7 +482,7 @@ components/
 
 ---
 
-## 11. sdkconfig 是什么
+## sdkconfig 是什么
 
 `sdkconfig` 是 ESP-IDF 的配置文件。
 
@@ -483,7 +517,7 @@ menuconfig
 
 ---
 
-## 12. sdkconfig.old 是什么
+## sdkconfig.old 是什么
 
 `sdkconfig.old` 是旧配置备份。
 
@@ -503,7 +537,7 @@ sdkconfig.old 可以不发
 
 ---
 
-## 13. build 文件夹是什么
+## build 文件夹是什么
 
 `build/` 是编译产物目录。
 
@@ -561,7 +595,7 @@ fullclean / 彻底清理
 
 ---
 
-## 14. .vscode 文件夹是什么
+## .vscode 文件夹是什么
 
 `.vscode/` 是 VS Code 的项目配置。
 
@@ -597,7 +631,7 @@ ESP-IDF 路径
 
 ---
 
-## 15. .clangd 是什么
+## .clangd 是什么
 
 `.clangd` 是给 clangd 语言服务器用的配置。
 
@@ -620,7 +654,7 @@ ESP-IDF 路径
 
 ---
 
-## 16. .devcontainer 是什么
+## .devcontainer 是什么
 
 `.devcontainer/` 是 VS Code Dev Container / Docker 容器开发环境配置。
 
@@ -638,7 +672,7 @@ ESP-IDF 路径
 
 ---
 
-## 17. .gitignore 是什么
+## .gitignore 是什么
 
 这个文件和版本管理有关。你说 Git/GitHub 先不学，所以这里只给一句定位：
 
@@ -656,7 +690,7 @@ ESP-IDF 路径
 
 ---
 
-## 18. 新增 .c/.h 文件时该怎么做
+## 新增 .c/.h 文件时该怎么做
 
 假设你要新增一个电机模块：
 
@@ -728,9 +762,9 @@ idf_component_register(
 
 ---
 
-## 19. 常见错误速查
+## 常见错误速查
 
-### 19.1 找不到头文件
+### 找不到头文件
 
 报错类似：
 
@@ -748,7 +782,7 @@ INCLUDE_DIRS 是否包含头文件所在目录
 
 ---
 
-### 19.2 undefined reference
+### undefined reference
 
 报错类似：
 
@@ -772,7 +806,7 @@ list.c 是否写进 main/CMakeLists.txt 的 SRCS
 
 ---
 
-### 19.3 修改了 CMakeLists 但没生效
+### 修改了 CMakeLists 但没生效
 
 可以尝试：
 
@@ -793,7 +827,7 @@ list.c 是否写进 main/CMakeLists.txt 的 SRCS
 
 ---
 
-## 20. 发给队友时保留哪些
+## 发给队友时保留哪些
 
 如果暂时不用 Git，只是压缩包发队友，建议保留：
 
@@ -842,7 +876,7 @@ sdkconfig.old
 
 ---
 
-## 21. 小白记忆口诀
+## 小白记忆口诀
 
 ```text
 main/ 放源码。
@@ -857,7 +891,7 @@ build 是编译产物，可以删，不建议发。
 
 ---
 
-## 22. 你现在最该掌握的三句话
+## 你现在最该掌握的三句话
 
 <span style="color:#d32f2f;"><b>第一句：</b></span>
 
@@ -876,4 +910,11 @@ build 是编译产物，可以删，不建议发。
 ```text
 打包工程给队友时，不要带 build，源码和 CMakeLists、sdkconfig 才是关键。
 ```
+
+---
+
+## 相关笔记
+
+- [[02.嵌入式系统/实时操作系统/FreeRTOS任务与调度]]
+- [[01.编程语言与基础/C语言/C语言预处理指令]]
 

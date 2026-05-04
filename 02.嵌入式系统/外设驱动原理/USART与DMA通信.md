@@ -1,8 +1,30 @@
-# 🚀 USART0 DMA发送学习笔记：从“能用”到“看懂每一行”
+﻿---
+version: V1.0
+updated: 2026-05-04
+author: RUI
+---
+
+# 🚀 USART0 DMA发送学习笔记：从”能用”到”看懂每一行”
 
 > 适用对象：GD32 初学者、刚从 51/零散 STM32 标准库过渡过来的同学  
 > 当前工程：`GD32F470 + USART0 + DMA异步发送`  
 > 目标：把 `Usart0.c` 里 DMA 发送相关代码彻底看明白
+
+---
+
+## 目录
+
+- [先记住一句](#先记住一句)
+- [🎯 先抓住这套发送链路到底在干嘛](#-先抓住这套发送链路到底在干嘛)
+- [\`Usart0_DmaTx_Init\`](#usart0_dmatx_init)
+- [\`Usart0_DmaSendBuffer\`](#usart0_dmasendbuffer)
+- [\`DMA1_Channel7_IRQHandler\`](#dma1_channel7_irqhandler)
+- [\`Usart0_Printf\`](#usart0_printf)
+- [🔍 你现在最容易糊涂的两个点](#-你现在最容易糊涂的两个点)
+- [🧠 DMA相关字段速记表](#-dma相关字段速记表)
+- [❌ 这块最常见的坑](#-这块最常见的坑)
+- [✅ 你现在这套写法，核心优点是什么](#-你现在这套写法核心优点是什么)
+- [📌 最后总结原文保留](#-最后总结原文保留)
 
 ---
 
@@ -47,7 +69,7 @@
 
 ---
 
-## 1. `Usart0_DmaTx_Init`
+## `Usart0_DmaTx_Init`
 
 ### 代码块
 
@@ -185,7 +207,7 @@ static void Usart0_DmaTx_Init(void)   // DMA发送初始化函数，只在本文
 
 ---
 
-## 2. `Usart0_DmaSendBuffer`
+## `Usart0_DmaSendBuffer`
 
 ### 代码块
 
@@ -325,7 +347,7 @@ static uint8_t Usart0_DmaSendBuffer(uint8_t *buf, uint16_t len)
 
 ---
 
-## 3. `DMA1_Channel7_IRQHandler`
+## `DMA1_Channel7_IRQHandler`
 
 ### 代码块
 
@@ -403,7 +425,7 @@ void DMA1_Channel7_IRQHandler(void)
 
 ---
 
-## 4. `Usart0_Printf`
+## `Usart0_Printf`
 
 ### 代码块
 
@@ -491,7 +513,7 @@ void Usart0_Printf(const char *fmt, ...)
 
 ## 🔍 你现在最容易糊涂的两个点
 
-### 1. 为什么必须“复制到 `tx_dma_buf`”，不能直接发 `temp_buf`
+### 为什么必须“复制到 `tx_dma_buf`”，不能直接发 `temp_buf`
 
 #### 结论
 
@@ -528,7 +550,7 @@ void Usart0_Printf(const char *fmt, ...)
 
 ---
 
-### 2. 为什么 DMA 发送完成了，还不一定代表 USART 已经“真正发完”
+### 为什么 DMA 发送完成了，还不一定代表 USART 已经“真正发完”
 
 #### 先说结论
 
@@ -767,4 +789,10 @@ USART视角:
 
 1. `为什么必须“复制到 tx_dma_buf”，不能直接发 temp_buf`
 2. `为什么 DMA 发送完成了，还要等 USART 真正发完，某些场景还要补看 TC 标志`
+
+---
+
+## 相关笔记
+
+- [[03.芯片平台/GD32/GD32底层架构与启动流程]]
 

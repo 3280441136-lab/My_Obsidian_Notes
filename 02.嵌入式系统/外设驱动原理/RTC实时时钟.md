@@ -1,3 +1,9 @@
+﻿---
+version: V1.0
+updated: 2026-05-04
+author: RUI
+---
+
 # ⏰ RTC 与 Rtc_app 从驱动到串口交互学习笔记
 
 > 面向当前工程：`C:\Users\32804\Desktop\study_gd32\我的GD32工程\2025_ShengSai`
@@ -8,6 +14,79 @@
 > - `HardWare/Rtc/Rtc.h`
 > - `Function/Rtc_app.c`
 > - `Function/Rtc_app.h`
+
+---
+
+## 目录
+
+- [🎯 先给结论](#-先给结论)
+- [🧭 在你项目中的分层位置](#-在你项目中的分层位置)
+- [🧠 RTC 是什么](#-rtc-是什么)
+- [📌 当前代码总览](#-当前代码总览)
+- [Rtc.h](#rtch)
+- [🔧 Rtc.c 的核心职责](#-rtcc-的核心职责)
+- [结论](#结论)
+- [🧱 Rtc.c 的关键变量和宏](#-rtcc-的关键变量和宏)
+- [RTC_BKP_MARK](#rtc_bkp_mark)
+- [static uint8_t rtc_ready](#static-uint8_t-rtc_ready)
+- [🔄 BCD 到底是什么，为什么 RTC 里总碰到它](#-bcd-到底是什么为什么-rtc-里总碰到它)
+- [结论](#结论-1)
+- [🔍 Rtc_DecToBcd() 和 Rtc_BcdToDec()](#-rtc_dectobcd-和-rtc_bcdtodec)
+- [Rtc_DecToBcd()](#rtc_dectobcd)
+- [Rtc_BcdToDec()](#rtc_bcdtodec)
+- [📅 Rtc_GetWeek() 为什么要自己算星期](#-rtc_getweek-为什么要自己算星期)
+- [🛠️ Rtc_Init() 完整拆解](#️-rtc_init-完整拆解)
+- [Rtc_Init() 逻辑框图](#rtc_init-逻辑框图)
+- [逐行关键解释](#逐行关键解释)
+- [rcu_periph_clock_enable(RCU_PMU)](#rcu_periph_clock_enablercu_pmu)
+- [pmu_backup_write_enable()](#pmu_backup_write_enable)
+- [rtcsrc_flag = GET_BITS(RCU_BDCTL, 8, 9)](#rtcsrc_flag--get_bitsrcu_bdctl-8-9)
+- [首次配置分支](#首次配置分支)
+- [rcu_osci_on(RCU_LXTAL)](#rcu_osci_onrcu_lxtal)
+- [rcu_osci_stab_wait(RCU_LXTAL)](#rcu_osci_stab_waitrcu_lxtal)
+- [rcu_rtc_clock_config(RCU_RTCSRC_LXTAL)](#rcu_rtc_clock_configrcu_rtcsrc_lxtal)
+- [rcu_periph_clock_enable(RCU_RTC)](#rcu_periph_clock_enablercu_rtc)
+- [rtc_register_sync_wait()](#rtc_register_sync_wait)
+- [RTC_BKP0 = RTC_BKP_MARK](#rtc_bkp0--rtc_bkp_mark)
+- [非首次配置分支](#非首次配置分支)
+- [rtc_ready = 1](#rtc_ready--1)
+- [📝 Rtc_SetDatetime() 完整拆解](#-rtc_setdatetime-完整拆解)
+- [Rtc_SetDatetime() 逻辑框图](#rtc_setdatetime-逻辑框图)
+- [关键点解释](#关键点解释)
+- [rtc_time->week = Rtc_GetWeek(...)](#rtc_time-week--rtc_getweek)
+- [rtc_parameter_struct rtc_initpara](#rtc_parameter_struct-rtc_initpara)
+- [年份为什么只写后两位](#年份为什么只写后两位)
+- [factor_asyn = 0x7F 和 factor_syn = 0xFF](#factor_asyn--0x7f-和-factor_syn--0xff)
+- [display_format = RTC_24HOUR](#display_format--rtc_24hour)
+- [📖 Rtc_GetDatetime() 完整拆解](#-rtc_getdatetime-完整拆解)
+- [💬 Rtc_app.c 的职责是什么](#-rtc_appc-的职责是什么)
+- [结论](#结论-2)
+- [🧷 rtc_wait_input 是什么](#-rtc_wait_input-是什么)
+- [🔍 Rtc_App_ParseDatetime() 完整拆解](#-rtc_app_parsedatetime-完整拆解)
+- [Rtc_App_ParseDatetime() 当前校验了哪些内容](#rtc_app_parsedatetime-当前校验了哪些内容)
+- [🧠 闰年和月天数为什么要专门写](#-闰年和月天数为什么要专门写)
+- [🧪 Rtc_App_StartConfig()](#-rtc_app_startconfig)
+- [🧪 Rtc_App_IsWaitInput()](#-rtc_app_iswaitinput)
+- [🧪 Rtc_App_InputDatetime()](#-rtc_app_inputdatetime)
+- [🧪 Rtc_App_PrintNow()](#-rtc_app_printnow)
+- [🖨️ RTC 里这串打印为什么这样写](#️-rtc-里这串打印为什么这样写)
+- [🔢 RTC 模块里要顺带掌握的格式化输出知识](#-rtc-模块里要顺带掌握的格式化输出知识)
+- [⚠️ 当前 RTC / Rtc_app 代码的真实状态总结](#️-当前-rtc--rtc_app-代码的真实状态总结)
+- [已经做得对的地方](#已经做得对的地方)
+- [当前还要注意的点](#当前还要注意的点)
+- [🧱 RTC 整体伪代码总结](#-rtc-整体伪代码总结)
+- [⚠️ 常见坑总结](#️-常见坑总结)
+- [把 Rtc.c 和 Rtc_app.c 的职责混在一起](#把-rtcc-和-rtc_appc-的职责混在一起)
+- [忘了 RTC 硬件喜欢 BCD](#忘了-rtc-硬件喜欢-bcd)
+- [忘了后备域访问权限](#忘了后备域访问权限)
+- [忘了等待 LXTAL 稳定](#忘了等待-lxtal-稳定)
+- [忘了 rtc_register_sync_wait()](#忘了-rtc_register_sync_wait)
+- [只校验字符串格式，不校验日期合法性](#只校验字符串格式不校验日期合法性)
+- [星期编码前后不统一](#星期编码前后不统一)
+- [误以为赛题允许宽松分隔符，你当前代码就已经支持了](#误以为赛题允许宽松分隔符你当前代码就已经支持了)
+- [忘了 rtc_wait_input 只是当前下一帧输入状态](#忘了-rtc_wait_input-只是当前下一帧输入状态)
+- [✅ 这部分你真正要记住的 6 句话](#-这部分你真正要记住的-6-句话)
+- [📍下一步建议](#下一步建议)
 
 ---
 
@@ -168,7 +247,7 @@ Rtc_GetDatetime()
 
 ## 🧱 `Rtc.c` 的关键变量和宏
 
-## 1. `RTC_BKP_MARK`
+## `RTC_BKP_MARK`
 
 ```c
 #define RTC_BKP_MARK    0x5A5AA5A5U
@@ -198,7 +277,7 @@ Rtc_GetDatetime()
 
 ---
 
-## 2. `static uint8_t rtc_ready;`
+## `static uint8_t rtc_ready;`
 
 ### 这是干什么的
 
@@ -406,7 +485,7 @@ rtc_ready = 0
 
 ## 逐行关键解释
 
-## 1. `rcu_periph_clock_enable(RCU_PMU);`
+## `rcu_periph_clock_enable(RCU_PMU);`
 
 ### 这是干什么的
 
@@ -423,7 +502,7 @@ rtc_ready = 0
 
 ---
 
-## 2. `pmu_backup_write_enable();`
+## `pmu_backup_write_enable();`
 
 ### 这是干什么的
 
@@ -443,7 +522,7 @@ rtc_ready = 0
 
 ---
 
-## 3. `rtcsrc_flag = GET_BITS(RCU_BDCTL, 8, 9);`
+## `rtcsrc_flag = GET_BITS(RCU_BDCTL, 8, 9);`
 
 ### 这是干什么的
 
@@ -468,7 +547,7 @@ rtc_ready = 0
 
 ---
 
-## 4. 首次配置分支
+## 首次配置分支
 
 ```c
 if((RTC_BKP0 != RTC_BKP_MARK) || (rtcsrc_flag == 0U))
@@ -493,7 +572,7 @@ if((RTC_BKP0 != RTC_BKP_MARK) || (rtcsrc_flag == 0U))
 
 ---
 
-## 5. `rcu_osci_on(RCU_LXTAL);`
+## `rcu_osci_on(RCU_LXTAL);`
 
 ### 这是干什么的
 
@@ -516,7 +595,7 @@ RTC 需要一个稳定、低功耗、适合长期计时的时钟源。
 
 ---
 
-## 6. `rcu_osci_stab_wait(RCU_LXTAL)`
+## `rcu_osci_stab_wait(RCU_LXTAL)`
 
 ### 这是干什么的
 
@@ -533,7 +612,7 @@ RTC 需要一个稳定、低功耗、适合长期计时的时钟源。
 
 ---
 
-## 7. `rcu_rtc_clock_config(RCU_RTCSRC_LXTAL);`
+## `rcu_rtc_clock_config(RCU_RTCSRC_LXTAL);`
 
 ### 这是干什么的
 
@@ -550,7 +629,7 @@ RTC 需要一个稳定、低功耗、适合长期计时的时钟源。
 
 ---
 
-## 8. `rcu_periph_clock_enable(RCU_RTC);`
+## `rcu_periph_clock_enable(RCU_RTC);`
 
 ### 这是干什么的
 
@@ -563,7 +642,7 @@ RTC 需要一个稳定、低功耗、适合长期计时的时钟源。
 
 ---
 
-## 9. `rtc_register_sync_wait()`
+## `rtc_register_sync_wait()`
 
 ### 这是干什么的
 
@@ -580,7 +659,7 @@ RTC 需要一个稳定、低功耗、适合长期计时的时钟源。
 
 ---
 
-## 10. `RTC_BKP0 = RTC_BKP_MARK;`
+## `RTC_BKP0 = RTC_BKP_MARK;`
 
 ### 这是干什么的
 
@@ -596,7 +675,7 @@ RTC 需要一个稳定、低功耗、适合长期计时的时钟源。
 
 ---
 
-## 11. 非首次配置分支
+## 非首次配置分支
 
 ```c
 else
@@ -628,7 +707,7 @@ else
 
 ---
 
-## 12. `rtc_ready = 1;`
+## `rtc_ready = 1;`
 
 ### 这是干什么的
 
@@ -698,7 +777,7 @@ uint8_t Rtc_SetDatetime(rtc_time_t *rtc_time)
 
 ## 关键点解释
 
-## 1. `rtc_time->week = Rtc_GetWeek(...)`
+## `rtc_time->week = Rtc_GetWeek(...)`
 
 ### 这是干什么的
 
@@ -715,7 +794,7 @@ uint8_t Rtc_SetDatetime(rtc_time_t *rtc_time)
 
 ---
 
-## 2. `rtc_parameter_struct rtc_initpara;`
+## `rtc_parameter_struct rtc_initpara;`
 
 ### 这是干什么的
 
@@ -735,7 +814,7 @@ GD32 RTC 库自己的初始化结构体。
 
 ---
 
-## 3. 年份为什么只写后两位
+## 年份为什么只写后两位
 
 ```c
 rtc_initpara.year = Rtc_DecToBcd((uint8_t)(rtc_time->year % 100));
@@ -768,7 +847,7 @@ rtc_time->year = (uint16_t)(2000 + Rtc_BcdToDec(rtc_initpara.year));
 
 ---
 
-## 4. `factor_asyn = 0x7F` 和 `factor_syn = 0xFF`
+## `factor_asyn = 0x7F` 和 `factor_syn = 0xFF`
 
 ### 这是干什么的
 
@@ -798,7 +877,7 @@ RTC 的异步分频和同步分频参数。
 
 ---
 
-## 5. `display_format = RTC_24HOUR`
+## `display_format = RTC_24HOUR`
 
 ### 这是干什么的
 
@@ -961,19 +1040,19 @@ YYYY-MM-DD HH:MM:SS
 
 ## `Rtc_App_ParseDatetime()` 当前校验了哪些内容
 
-### 1. 空指针检查
+### 空指针检查
 
 ```c
 if((str == NULL) || (rtc_time == NULL))
 ```
 
-### 2. 长度必须是 19
+### 长度必须是 19
 
 ```c
 if(strlen(str) != 19)
 ```
 
-### 3. 固定位置必须是固定分隔符
+### 固定位置必须是固定分隔符
 
 ```c
 str[4]  == '-'
@@ -983,39 +1062,39 @@ str[13] == ':'
 str[16] == ':'
 ```
 
-### 4. 其余位置必须是数字
+### 其余位置必须是数字
 
 靠 `Rtc_App_IsDigit()` 一位一位检查
 
-### 5. 年份范围
+### 年份范围
 
 ```text
 2000 ~ 2099
 ```
 
-### 6. 月份范围
+### 月份范围
 
 ```text
 1 ~ 12
 ```
 
-### 7. 日期范围
+### 日期范围
 
 会结合闰年判断
 
-### 8. 小时范围
+### 小时范围
 
 ```text
 0 ~ 23
 ```
 
-### 9. 分钟范围
+### 分钟范围
 
 ```text
 0 ~ 59
 ```
 
-### 10. 秒范围
+### 秒范围
 
 ```text
 0 ~ 59
@@ -1297,21 +1376,21 @@ Usart0_Printf("%u\r\n", (unsigned int)rtc_time.month);
 
 ## 已经做得对的地方
 
-### 1. 分层方向是对的
+### 分层方向是对的
 
 - `Rtc.c` 管底层
 - `Rtc_app.c` 管交互和解析
 
-### 2. 输入合法性检查比最初版本更完整
+### 输入合法性检查比最初版本更完整
 
 - 年月日时分秒都有范围检查
 - 已经加了闰年和月天数判断
 
-### 3. 后备域标记思路是对的
+### 后备域标记思路是对的
 
 - 避免每次上电都像第一次配置
 
-### 4. 串口状态机思路是对的
+### 串口状态机思路是对的
 
 - `"RTC Config"` -> `"Input Datetime"` -> 下一帧输入时间
 
@@ -1319,7 +1398,7 @@ Usart0_Printf("%u\r\n", (unsigned int)rtc_time.month);
 
 ## 当前还要注意的点
 
-### 1. 目前只支持固定格式
+### 目前只支持固定格式
 
 当前只接受：
 
@@ -1332,12 +1411,12 @@ YYYY-MM-DD HH:MM:SS
 
 <span style="color:red"><strong>对你自己的工程来说已经能用，但对赛题“完全贴题”还不够。</strong></span>
 
-### 2. `Rtc_SetDatetime()` 没有显式检查空指针
+### `Rtc_SetDatetime()` 没有显式检查空指针
 
 当前默认上层传进来的指针有效。  
 虽然你现在调用路径比较干净，但从鲁棒性角度，后面可以补。
 
-### 3. 年份默认锁定在 `2000~2099`
+### 年份默认锁定在 `2000~2099`
 
 这是由：
 
@@ -1431,7 +1510,7 @@ YYYY-MM-DD HH:MM:SS
 
 ## ⚠️ 常见坑总结
 
-## 1. 把 `Rtc.c` 和 `Rtc_app.c` 的职责混在一起
+## 把 `Rtc.c` 和 `Rtc_app.c` 的职责混在一起
 
 错误思路：
 
@@ -1442,38 +1521,38 @@ YYYY-MM-DD HH:MM:SS
 - `Rtc.c` 只管硬件时间读写
 - `Rtc_app.c` 才管字符串解析和提示信息
 
-## 2. 忘了 RTC 硬件喜欢 BCD
+## 忘了 RTC 硬件喜欢 BCD
 
 - 直接拿十进制写进去，会错
 
-## 3. 忘了后备域访问权限
+## 忘了后备域访问权限
 
 - 不能正确配置 RTC 后备域
 
-## 4. 忘了等待 `LXTAL` 稳定
+## 忘了等待 `LXTAL` 稳定
 
 - RTC 时钟源可能不可靠
 
-## 5. 忘了 `rtc_register_sync_wait()`
+## 忘了 `rtc_register_sync_wait()`
 
 - RTC 域和主系统不同步，读写风险变大
 
-## 6. 只校验字符串格式，不校验日期合法性
+## 只校验字符串格式，不校验日期合法性
 
 这样会错放过：
 
 - `2025-02-31`
 - `2025-04-31`
 
-## 7. 星期编码前后不统一
+## 星期编码前后不统一
 
 - 算法输出和工程内部定义要统一
 
-## 8. 误以为赛题允许宽松分隔符，你当前代码就已经支持了
+## 误以为赛题允许宽松分隔符，你当前代码就已经支持了
 
 <span style="color:red"><strong>注意：当前代码并没有支持宽松分隔符，它只支持固定格式。</strong></span>
 
-## 9. 忘了 `rtc_wait_input` 只是“当前下一帧输入状态”
+## 忘了 `rtc_wait_input` 只是“当前下一帧输入状态”
 
 - 这不是一个长期模式
 - 处理一帧之后就应该退出等待状态
@@ -1506,5 +1585,11 @@ OLED 显示层接 RTC + Sample
 TF / Flash / 日志再逐步挂进来
 ```
 
-<span style="color:blue"><strong>也就是说，RTC 现在不需要重写，后面主要是继续扩展它的“被使用场景”。</strong></span>
+<span style=”color:blue”><strong>也就是说，RTC 现在不需要重写，后面主要是继续扩展它的”被使用场景”。</strong></span>
+
+---
+
+## 相关笔记
+
+- [[03.芯片平台/GD32/GD32底层架构与启动流程]]
 

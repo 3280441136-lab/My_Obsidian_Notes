@@ -1,8 +1,65 @@
+﻿---
+version: V1.0
+updated: 2026-05-04
+author: RUI
+---
+
 # 🚀 GD32 ADC 从 0 到 1 学习拆解笔记
 
 > 面向当前工程：`C:\Users\32804\Desktop\study_gd32\我的GD32工程\2025_ShengSai`
 >
 > 对应目标：先把 **ADC 驱动层** 学明白，再平稳接入后续 `Sample.c`
+
+---
+
+## 目录
+
+- [🎯 先给结论](#-先给结论)
+- [🧭 这部分在你项目中的位置](#-这部分在你项目中的位置)
+- [🧠 ADC 到底是什么](#-adc-到底是什么)
+- [📌 关键概念一次讲清](#-关键概念一次讲清)
+- [分频是什么，为什么这里用 /8](#分频是什么为什么这里用-8)
+- [右对齐是什么，为什么用右对齐](#右对齐是什么为什么用右对齐)
+- [规则组是什么](#规则组是什么)
+- [采样时间是什么](#采样时间是什么)
+- [精度、量程、分辨率分别是什么](#精度量程分辨率分别是什么)
+- [🏗️ Adc_Init() 的完整逻辑框图](#️-adc_init-的完整逻辑框图)
+- [🧩 推荐的 Adc.h](#-推荐的-adch)
+- [🧩 推荐的 Adc.c](#-推荐的-adcc)
+- [🔍 Adc_Init() 每一行 GD 库函数到底干了什么](#-adc_init-每一行-gd-库函数到底干了什么)
+- [rcu_periph_clock_enable(RCU_GPIOC)](#rcu_periph_clock_enablercu_gpioc)
+- [gpio_mode_set](#gpio_mode_setadc_port-gpio_mode_analog-gpio_pupd_none-adc_pin)
+- [rcu_periph_clock_enable(RCU_ADC0)](#rcu_periph_clock_enablercu_adc0)
+- [adc_clock_config](#adc_clock_configadc_adcck_pclk2_div8)
+- [adc_deinit](#adc_deinit)
+- [adc_resolution_config](#adc_resolution_configadc_periph-adc_resolution_12b)
+- [adc_special_function_config](#adc_special_function_configadc_periph-adc_continuous_mode-enable)
+- [adc_data_alignment_config](#adc_data_alignment_configadc_periph-adc_dataalign_right)
+- [adc_channel_length_config](#adc_channel_length_configadc_periph-adc_routine_channel-1)
+- [adc_routine_channel_config](#adc_routine_channel_configadc_periph-0-adc_channel-adc_sampletime_56)
+- [adc_external_trigger_config](#adc_external_trigger_configadc_periph-adc_routine_channel-external_trigger_disable)
+- [adc_enable](#adc_enableadc_periph)
+- [delay_1ms](#delay_1ms1)
+- [adc_calibration_enable](#adc_calibration_enableadc_periph)
+- [adc_software_trigger_enable](#adc_software_trigger_enableadc_periph-adc_routine_channel)
+- [🔢 Adc_GetValue() 和 Adc_GetVoltage() 到底干什么](#-adc_getvalue-和-adc_getvoltage-到底干什么)
+- [Adc_GetValue()](#adc_getvalue)
+- [Adc_GetVoltage()](#adc_getvoltage)
+- [🧪 如何临时验证 ADC 驱动写对了](#-如何临时验证-adc-驱动写对了)
+- [🖨️ 这段串口打印里 %u、%.3f 到底什么意思](#️-这段串口打印里-u3f-到底什么意思)
+- [🪜 ADC 层和 Sample 层以后怎么衔接](#-adc-层和-sample-层以后怎么衔接)
+- [⚠️ 常见坑总结](#️-常见坑总结)
+- [把 ADC分频 和 采样周期 混为一谈](#把-adc分频-和-采样周期-混为一谈)
+- [把 板端电压 和 工程值 混为一谈](#把-板端电压-和-工程值-混为一谈)
+- [直接在 ADC.c 里写 ratio / limit](#直接在-adcc-里写-ratio--limit)
+- [忘记把 PC0 配成模拟输入](#忘记把-pc0-配成模拟输入)
+- [忘记开 GPIOC 或 ADC0 时钟](#忘记开-gpioc-或-adc0-时钟)
+- [忘记首次软件触发](#忘记首次软件触发)
+- [把 4096 当最大值](#把-4096-当最大值)
+- [误以为左对齐和右对齐只是随便选](#误以为左对齐和右对齐只是随便选)
+- [用寄存器宏直接读值，但自己又没吃透](#用寄存器宏直接读值但自己又没吃透)
+- [✅ 本阶段你真正要记住的 5 句话](#-本阶段你真正要记住的-5-句话)
+- [📍下一步建议](#下一步建议)
 
 ---
 
@@ -91,7 +148,7 @@ ADC，全称模数转换器。
 
 ## 📌 关键概念一次讲清
 
-## 1. 分频是什么，为什么这里用 `/8`
+## 分频是什么，为什么这里用 `/8`
 
 ### 结论
 
@@ -122,7 +179,7 @@ ADC，全称模数转换器。
 
 ---
 
-## 2. 右对齐是什么，为什么用右对齐
+## 右对齐是什么，为什么用右对齐
 
 ### 结论
 
@@ -176,7 +233,7 @@ voltage = adc_value * 3.3f / 4095.0f;
 
 ---
 
-## 3. 规则组是什么
+## 规则组是什么
 
 ### 结论
 
@@ -222,7 +279,7 @@ ADC 不是只能采一个东西，它可以排队采多个通道。
 
 ---
 
-## 4. 采样时间是什么
+## 采样时间是什么
 
 ### 结论
 
@@ -250,7 +307,7 @@ ADC 不是只能采一个东西，它可以排队采多个通道。
 
 ---
 
-## 5. 精度、量程、分辨率分别是什么
+## 精度、量程、分辨率分别是什么
 
 ### 分辨率
 
@@ -474,7 +531,7 @@ float Adc_GetVoltage(void)
 
 ## 🔍 `Adc_Init()` 每一行 GD 库函数到底干了什么
 
-## 1. `rcu_periph_clock_enable(RCU_GPIOC);`
+## `rcu_periph_clock_enable(RCU_GPIOC);`
 
 ### 结论
 
@@ -497,7 +554,7 @@ float Adc_GetVoltage(void)
 
 ---
 
-## 2. `gpio_mode_set(ADC_PORT, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, ADC_PIN);`
+## `gpio_mode_set(ADC_PORT, GPIO_MODE_ANALOG, GPIO_PUPD_NONE, ADC_PIN);`
 
 ### 结论
 
@@ -524,7 +581,7 @@ float Adc_GetVoltage(void)
 
 ---
 
-## 3. `rcu_periph_clock_enable(RCU_ADC0);`
+## `rcu_periph_clock_enable(RCU_ADC0);`
 
 ### 结论
 
@@ -540,7 +597,7 @@ float Adc_GetVoltage(void)
 
 ---
 
-## 4. `adc_clock_config(ADC_ADCCK_PCLK2_DIV8);`
+## `adc_clock_config(ADC_ADCCK_PCLK2_DIV8);`
 
 ### 结论
 
@@ -559,7 +616,7 @@ float Adc_GetVoltage(void)
 
 ---
 
-## 5. `adc_deinit();`
+## `adc_deinit();`
 
 ### 结论
 
@@ -575,7 +632,7 @@ float Adc_GetVoltage(void)
 
 ---
 
-## 6. `adc_resolution_config(ADC_PERIPH, ADC_RESOLUTION_12B);`
+## `adc_resolution_config(ADC_PERIPH, ADC_RESOLUTION_12B);`
 
 ### 结论
 
@@ -594,7 +651,7 @@ float Adc_GetVoltage(void)
 
 ---
 
-## 7. `adc_special_function_config(ADC_PERIPH, ADC_CONTINUOUS_MODE, ENABLE);`
+## `adc_special_function_config(ADC_PERIPH, ADC_CONTINUOUS_MODE, ENABLE);`
 
 ### 结论
 
@@ -619,7 +676,7 @@ float Adc_GetVoltage(void)
 
 ---
 
-## 8. `adc_data_alignment_config(ADC_PERIPH, ADC_DATAALIGN_RIGHT);`
+## `adc_data_alignment_config(ADC_PERIPH, ADC_DATAALIGN_RIGHT);`
 
 ### 结论
 
@@ -631,7 +688,7 @@ float Adc_GetVoltage(void)
 
 ---
 
-## 9. `adc_channel_length_config(ADC_PERIPH, ADC_ROUTINE_CHANNEL, 1);`
+## `adc_channel_length_config(ADC_PERIPH, ADC_ROUTINE_CHANNEL, 1);`
 
 ### 结论
 
@@ -647,7 +704,7 @@ float Adc_GetVoltage(void)
 
 ---
 
-## 10. `adc_routine_channel_config(ADC_PERIPH, 0, ADC_CHANNEL, ADC_SAMPLETIME_56);`
+## `adc_routine_channel_config(ADC_PERIPH, 0, ADC_CHANNEL, ADC_SAMPLETIME_56);`
 
 ### 结论
 
@@ -670,7 +727,7 @@ PC0 -> ADC_CHANNEL_10 -> 规则组 rank0
 
 ---
 
-## 11. `adc_external_trigger_config(ADC_PERIPH, ADC_ROUTINE_CHANNEL, EXTERNAL_TRIGGER_DISABLE);`
+## `adc_external_trigger_config(ADC_PERIPH, ADC_ROUTINE_CHANNEL, EXTERNAL_TRIGGER_DISABLE);`
 
 ### 结论
 
@@ -687,7 +744,7 @@ PC0 -> ADC_CHANNEL_10 -> 规则组 rank0
 
 ---
 
-## 12. `adc_enable(ADC_PERIPH);`
+## `adc_enable(ADC_PERIPH);`
 
 ### 结论
 
@@ -700,7 +757,7 @@ PC0 -> ADC_CHANNEL_10 -> 规则组 rank0
 
 ---
 
-## 13. `delay_1ms(1);`
+## `delay_1ms(1);`
 
 ### 结论
 
@@ -713,7 +770,7 @@ PC0 -> ADC_CHANNEL_10 -> 规则组 rank0
 
 ---
 
-## 14. `adc_calibration_enable(ADC_PERIPH);`
+## `adc_calibration_enable(ADC_PERIPH);`
 
 ### 结论
 
@@ -730,7 +787,7 @@ PC0 -> ADC_CHANNEL_10 -> 规则组 rank0
 
 ---
 
-## 15. `adc_software_trigger_enable(ADC_PERIPH, ADC_ROUTINE_CHANNEL);`
+## `adc_software_trigger_enable(ADC_PERIPH, ADC_ROUTINE_CHANNEL);`
 
 ### 结论
 
@@ -942,36 +999,36 @@ void Sample_Main_Task(void)
 
 ## ⚠️ 常见坑总结
 
-## 1. 把 `ADC分频` 和 `采样周期` 混为一谈
+## 把 `ADC分频` 和 `采样周期` 混为一谈
 
 - 分频是 ADC 硬件内部速度
 - 采样周期是业务层多久取一次值
 
-## 2. 把 `板端电压` 和 `工程值` 混为一谈
+## 把 `板端电压` 和 `工程值` 混为一谈
 
 - ADC 只能读板端真实电压
 - 题目里的工程值还要乘 `ratio`
 
-## 3. 直接在 `ADC.c` 里写 `ratio / limit`
+## 直接在 `ADC.c` 里写 `ratio / limit`
 
 <span style="color:red"><strong>这是分层错误。</strong></span>
 
 - ADC 负责读电压
 - Sample 负责业务判断
 
-## 4. 忘记把 `PC0` 配成模拟输入
+## 忘记把 `PC0` 配成模拟输入
 
 - ADC 读值会不稳或不对
 
-## 5. 忘记开 `GPIOC` 或 `ADC0` 时钟
+## 忘记开 `GPIOC` 或 `ADC0` 时钟
 
 - 后面的配置都不会真正工作
 
-## 6. 忘记首次软件触发
+## 忘记首次软件触发
 
 - ADC 初始化完了，但其实没开始转换
 
-## 7. 把 `4096` 当最大值
+## 把 `4096` 当最大值
 
 正确是：
 
@@ -979,11 +1036,11 @@ void Sample_Main_Task(void)
 最大码值 = 4095
 ```
 
-## 8. 误以为左对齐和右对齐只是“随便选”
+## 误以为左对齐和右对齐只是“随便选”
 
 - 当前项目里，右对齐明显更省脑子
 
-## 9. 用寄存器宏直接读值，但自己又没吃透
+## 用寄存器宏直接读值，但自己又没吃透
 
 比如直接写：
 
@@ -1025,5 +1082,11 @@ Sample.c 增加主任务 + LED1副任务 + LED2副任务
 把 Adc_GetVoltage() 接进 Sample_Main_Task()
 ```
 
-<span style="color:blue"><strong>到这里，你的 ADC 才算真正从“会抄例程”变成“会自己接项目”。</strong></span>
+<span style=”color:blue”><strong>到这里，你的 ADC 才算真正从”会抄例程”变成”会自己接项目”。</strong></span>
+
+---
+
+## 相关笔记
+
+- [[03.芯片平台/GD32/GD32底层架构与启动流程]]
 

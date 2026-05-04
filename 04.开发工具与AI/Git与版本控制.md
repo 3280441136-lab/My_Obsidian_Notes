@@ -1,6 +1,28 @@
-# GitHub、SSH 与 Git 命令入门笔记
+---
+version: V1.0
+updated: 2026-05-04
+author: RUI
+---
 
-## 1. GitHub 登录弹窗填什么
+# Git 与版本控制
+
+> 适合对象：刚开始使用 Git/GitHub 进行版本管理的同学。
+> 学习目标：搞懂 HTTPS vs SSH、Git 基本操作流程、GitHub 协作基础。
+
+## 目录
+
+- [GitHub 登录凭证](#github-登录凭证)
+- [HTTPS 和 SSH 的区别](#https-和-ssh-的区别)
+- [SSH Key 配置](#ssh-key-配置)
+- [仓库克隆与远程地址](#仓库克隆与远程地址)
+- [终端环境](#终端环境)
+- [cd 与基本命令](#cd-与基本命令)
+- [Git 常用主线流程](#git-常用主线流程)
+- [最重要的习惯](#最重要的习惯)
+
+---
+
+## GitHub 登录凭证
 
 Obsidian Git 弹出：
 
@@ -25,7 +47,9 @@ GitHub 个人信息里：
 
 用户名填小字那一行，但不要带 `@`。
 
-## 2. HTTPS 和 SSH 的区别
+---
+
+## HTTPS 和 SSH 的区别
 
 HTTPS 和 SSH 都是本地 Git 与 GitHub 云端仓库沟通的方式。
 
@@ -42,7 +66,9 @@ SSH 认 key
 最终权限都认 GitHub 账号
 ```
 
-## 3. SSH Key 是什么
+---
+
+## SSH Key 配置
 
 SSH Key 分两部分：
 
@@ -60,7 +86,7 @@ SSH Key 分两部分：
 把每台电脑的公钥添加到 GitHub
 ```
 
-## 4. 新仓库默认用 SSH
+### 新仓库默认用 SSH
 
 在 GitHub 新建仓库后：
 
@@ -80,7 +106,7 @@ git clone git@github.com:用户名/仓库名.git
 https://github.com/用户名/仓库名.git
 ```
 
-## 5. 已有仓库改成 SSH
+### 已有仓库改成 SSH
 
 查看当前远程地址：
 
@@ -96,7 +122,9 @@ git remote set-url origin git@github.com:用户名/仓库名.git
 
 每个本地仓库都要各自改一次，但只需要改一次。
 
-## 6. 发给队友克隆
+---
+
+## 仓库克隆与远程地址
 
 可以发两种地址：
 
@@ -119,7 +147,9 @@ private 仓库：必须给队友权限
 
 你负责给仓库权限，队友负责配置自己的 SSH key。
 
-## 7. 终端、cmd、PowerShell、Git Bash
+---
+
+## 终端环境
 
 终端是输入命令的窗口。
 
@@ -137,35 +167,22 @@ Git 命令大多在哪个里面都能用。
 git --version
 ```
 
-## 8. cd 是什么
+---
+
+## cd 与基本命令
 
 `cd` 是 `change directory`，意思是切换当前文件夹。
 
 ```bash
-cd 文件夹名
+cd 文件夹名    # 进入某个文件夹
+cd ..         # 回到上一级
+pwd           # 显示当前位置
+ls            # 查看当前文件夹内容
 ```
 
-进入某个文件夹。
+---
 
-```bash
-cd ..
-```
-
-回到上一级。
-
-```bash
-pwd
-```
-
-显示当前位置。
-
-```bash
-ls
-```
-
-查看当前文件夹内容。
-
-## 9. Git 常用主线
+## Git 常用主线流程
 
 日常最常用流程：
 
@@ -203,7 +220,9 @@ git diff
 git log --oneline
 ```
 
-## 10. 最重要的习惯
+---
+
+## 最重要的习惯
 
 每次操作前先看状态：
 
@@ -219,3 +238,10 @@ git status
 哪些文件还没提交
 本地是否领先或落后 GitHub
 ```
+
+---
+
+## 相关笔记
+
+- [[04.开发工具与AI/AI辅助开发]] — AI 工具在开发中的使用
+- [[Home]] — 返回总索引

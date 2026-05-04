@@ -1,11 +1,40 @@
+---
+version: V1.0
+updated: 2026-05-04
+author: RUI
+---
+
 # C 语言链表入门笔记
 
 > 适合对象：会写一点 C 语言，但刚开始接触 <span style="color:#1565c0;"><b>结构体、指针、malloc、链表</b></span> 的同学。  
-> 学习目标：看懂 `list_node`、`list_t`、`list_init()`、`list_push_back()`、`list_pop_back()`，并理解为什么链表在 FreeRTOS 同步互斥里常被拿来当“共享资源”讲。
+> 学习目标：看懂 `list_node`、`list_t`、`list_init()`、`list_push_back()`、`list_pop_back()`，并理解为什么链表在 FreeRTOS 同步互斥里常被拿来当"共享资源"讲。
 
 ---
 
-## 0. 先给结论
+## 目录
+
+- [先给结论](#先给结论)
+- [为什么要学链表](#为什么要学链表)
+- [节点结构体 list_node](#节点结构体-list_node)
+- [为什么结构体里写 struct list_node*](#为什么结构体里写-struct-list_node)
+- [typedef 是什么](#typedef-是什么)
+- [链表管理结构体 list_t](#链表管理结构体-list_t)
+- [空链表是什么状态](#空链表是什么状态)
+- [list_init() 初始化链表](#list_init-初始化链表)
+- [malloc 是什么](#malloc-是什么)
+- [为什么第一个节点这样创建](#为什么第一个节点这样创建)
+- [为什么不能用局部变量当节点](#为什么不能用局部变量当节点)
+- [list_push_back() 尾插](#list_push_back-尾插)
+- [list_pop_back() 尾删](#list_pop_back-尾删)
+- [链表和 FreeRTOS 同步互斥的关系](#链表和-freertos-同步互斥的关系)
+- [互斥锁保护链表](#互斥锁保护链表)
+- [同步信号量通知有数据](#同步信号量通知有数据)
+- [工程上要注意的坑](#工程上要注意的坑)
+- [小白记忆口诀](#小白记忆口诀)
+
+---
+
+## 先给结论
 
 <span style="color:#d32f2f;"><b>链表就是一串靠指针串起来的节点。</b></span>
 
@@ -41,7 +70,7 @@ typedef struct list_node
 
 ---
 
-## 1. 为什么要学链表
+## 为什么要学链表
 
 链表的核心意义：
 
@@ -75,7 +104,7 @@ int arr[10];
 
 ---
 
-## 2. 节点结构体 list_node
+## 节点结构体 list_node
 
 代码：
 
@@ -88,7 +117,7 @@ typedef struct list_node
 } list_node;
 ```
 
-### 2.1 每一行是什么意思
+### 每一行是什么意思
 
 ```c
 int data;
@@ -135,7 +164,7 @@ struct list_node *pre;
 
 ---
 
-## 3. 为什么结构体里写 struct list_node*
+## 为什么结构体里写 struct list_node*
 
 你可能会疑惑：
 
@@ -187,7 +216,7 @@ struct list_node *p;
 
 ---
 
-## 4. typedef 是什么
+## typedef 是什么
 
 `typedef` 的作用是：
 
@@ -213,7 +242,7 @@ list_node *p;
 
 ---
 
-## 5. 链表管理结构体 list_t
+## 链表管理结构体 list_t
 
 截图里的链表管理结构体大概是：
 
@@ -226,7 +255,7 @@ typedef struct
 } list_t;
 ```
 
-它不是节点，而是“链表总管”。
+它不是节点，而是"链表总管"。
 
 | 成员 | 作用 |
 |---|---|
@@ -265,7 +294,7 @@ list_t
 
 ---
 
-## 6. 空链表是什么状态
+## 空链表是什么状态
 
 空链表应该是：
 
@@ -294,7 +323,7 @@ list_t
 
 ---
 
-## 7. list_init() 初始化链表
+## list_init() 初始化链表
 
 代码：
 
@@ -305,7 +334,7 @@ void list_init(list_t *t)
 }
 ```
 
-### 7.1 这是干什么的
+### 这是干什么的
 
 人话：
 
@@ -321,7 +350,7 @@ t->tail = NULL;
 t->num = 0;
 ```
 
-### 7.2 参数 list_t *t 是什么
+### 参数 list_t *t 是什么
 
 ```c
 list_t *t
@@ -339,7 +368,7 @@ t 是一个指针，指向一个 list_t 链表管理结构体
 因为函数要修改外面的链表本体，而不是修改一个临时副本
 ```
 
-### 7.3 -> 是什么
+### -> 是什么
 
 如果 `t` 是结构体指针：
 
@@ -361,7 +390,7 @@ t->head
 
 ---
 
-## 8. malloc 是什么
+## malloc 是什么
 
 代码：
 
@@ -369,7 +398,7 @@ t->head
 t->head = (list_node *)malloc(sizeof(list_node));
 ```
 
-### 8.1 malloc 的作用
+### malloc 的作用
 
 `malloc` 是 C 标准库函数，全称可以理解为：
 
@@ -404,7 +433,7 @@ size：要申请多少字节
 
 ---
 
-### 8.2 sizeof(list_node) 是什么
+### sizeof(list_node) 是什么
 
 ```c
 sizeof(list_node)
@@ -436,7 +465,7 @@ int：4 字节
 
 ---
 
-### 8.3 为什么要强转成 list_node*
+### 为什么要强转成 list_node*
 
 ```c
 (list_node *)malloc(sizeof(list_node))
@@ -470,7 +499,7 @@ list_node *
 
 ---
 
-## 9. 为什么第一个节点这样创建
+## 为什么第一个节点这样创建
 
 代码：
 
@@ -540,7 +569,7 @@ list_t
 
 ---
 
-## 10. 为什么不能用局部变量当节点
+## 为什么不能用局部变量当节点
 
 错误写法：
 
@@ -577,7 +606,7 @@ list_node *node = malloc(sizeof(list_node));
 
 ---
 
-## 11. list_push_back() 尾插
+## list_push_back() 尾插
 
 完整逻辑：
 
@@ -595,7 +624,7 @@ void list_push_back(list_t *t, int data)
 }
 ```
 
-### 11.1 空链表插入
+### 空链表插入
 
 插入前：
 
@@ -613,7 +642,7 @@ head/tail
   [data]
 ```
 
-### 11.2 非空链表插入
+### 非空链表插入
 
 原来：
 
@@ -661,7 +690,7 @@ t->num++;
 
 ---
 
-## 12. list_pop_back() 尾删
+## list_pop_back() 尾删
 
 当前 `list.c` 中的实现逻辑：
 
@@ -690,7 +719,7 @@ void list_pop_back(list_t *t)
 }
 ```
 
-### 12.1 空链表
+### 空链表
 
 ```c
 if (t->tail == NULL)
@@ -705,7 +734,7 @@ if (t->tail == NULL)
 链表是空的，没东西可删，直接返回
 ```
 
-### 12.2 保存旧尾节点
+### 保存旧尾节点
 
 ```c
 list_node *node_old_tail = t->tail;
@@ -718,7 +747,7 @@ list_node *node_old_tail = t->tail;
 旧 tail 还需要 free 掉
 ```
 
-### 12.3 tail 往前移动
+### tail 往前移动
 
 ```c
 t->tail = t->tail->pre;
@@ -740,7 +769,7 @@ t->tail = t->tail->pre;
         tail    old_tail
 ```
 
-### 12.4 断开新 tail 的 next
+### 断开新 tail 的 next
 
 ```c
 if (t->tail)
@@ -757,7 +786,7 @@ if (t->tail)
         tail
 ```
 
-### 12.5 如果删的是最后一个节点
+### 如果删的是最后一个节点
 
 如果原来只有一个节点：
 
@@ -793,7 +822,7 @@ tail = NULL
 num = 0
 ```
 
-### 12.6 free 是什么
+### free 是什么
 
 ```c
 free(node_old_tail);
@@ -820,7 +849,7 @@ free：还内存
 
 ---
 
-## 13. 链表和 FreeRTOS 同步互斥的关系
+## 链表和 FreeRTOS 同步互斥的关系
 
 老师讲同步互斥前写链表，是为了构造一个：
 
@@ -857,7 +886,7 @@ free 节点
 
 ---
 
-## 14. 互斥锁保护链表
+## 互斥锁保护链表
 
 伪代码：
 
@@ -889,7 +918,7 @@ xSemaphoreGive(list_mutex);
 
 ---
 
-## 15. 同步信号量通知有数据
+## 同步信号量通知有数据
 
 生产者：
 
@@ -930,7 +959,7 @@ list_pop_back(&list);
 
 ---
 
-## 16. 工程上要注意的坑
+## 工程上要注意的坑
 
 | 坑 | 后果 | 建议 |
 |---|---|---|
@@ -956,7 +985,7 @@ node->pre = NULL;
 
 ---
 
-## 17. 小白记忆口诀
+## 小白记忆口诀
 
 ```text
 结构体定义节点长什么样。
@@ -968,3 +997,8 @@ malloc 借内存，free 还内存。
 有数据才让消费者取，这叫同步。
 ```
 
+---
+
+## 相关笔记
+
+- [[02.嵌入式系统/实时操作系统/FreeRTOS同步与互斥]]
