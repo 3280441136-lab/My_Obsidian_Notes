@@ -1,9 +1,24 @@
 {
   "id": "conv-1777907702972-o2x9ur56x",
   "providerId": "claude",
-  "title": "有了新的未整理的笔记，涵盖了STM32和ESPIDF的GPIO,串口，IIC等等的软件配置和硬件原理...",
-  "titleGenerationStatus": "pending",
+  "title": "将AI对话里的内容整理进我的知识库，原则参考README",
+  "titleGenerationStatus": "failed",
   "createdAt": 1777907702972,
-  "updatedAt": 1777907702999,
-  "sessionId": null
+  "updatedAt": 1777908663825,
+  "lastResponseAt": 1777908062250,
+  "sessionId": "0eb3f07f-d56e-4734-92dc-1d7dd3267742",
+  "providerState": {
+    "providerSessionId": "0eb3f07f-d56e-4734-92dc-1d7dd3267742"
+  },
+  "currentNote": "📕我的嵌入式知识库/💻软件设计/ESP-IDF/ESP-IDF组件管理器.md",
+  "usage": {
+    "model": "sonnet[1m]",
+    "inputTokens": 437,
+    "cacheCreationInputTokens": 0,
+    "cacheReadInputTokens": 33536,
+    "contextWindow": 1000000,
+    "contextTokens": 33973,
+    "percentage": 3,
+    "contextWindowIsAuthoritative": true
+  }
 }
