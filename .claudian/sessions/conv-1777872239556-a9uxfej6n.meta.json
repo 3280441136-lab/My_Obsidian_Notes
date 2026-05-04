@@ -2,10 +2,22 @@
   "id": "conv-1777872239556-a9uxfej6n",
   "providerId": "claude",
   "title": "你好",
-  "titleGenerationStatus": "pending",
+  "titleGenerationStatus": "failed",
   "createdAt": 1777872239590,
-  "updatedAt": 1777872822450,
-  "lastResponseAt": 1777872437536,
-  "sessionId": null,
-  "currentNote": "2026-05-04.md"
+  "updatedAt": 1777873014833,
+  "lastResponseAt": 1777872849095,
+  "sessionId": "f85760d8-55c0-4fe6-acef-ad81aeab6bdf",
+  "providerState": {
+    "providerSessionId": "f85760d8-55c0-4fe6-acef-ad81aeab6bdf"
+  },
+  "usage": {
+    "model": "sonnet",
+    "inputTokens": 81,
+    "cacheCreationInputTokens": 0,
+    "cacheReadInputTokens": 24960,
+    "contextWindow": 1000000,
+    "contextTokens": 25041,
+    "percentage": 3,
+    "contextWindowIsAuthoritative": true
+  }
 }
