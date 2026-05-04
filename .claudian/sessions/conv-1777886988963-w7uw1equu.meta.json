@@ -4,20 +4,20 @@
   "title": "我正在创建我的知识库，我已经建立起大概的框架。",
   "titleGenerationStatus": "failed",
   "createdAt": 1777886988963,
-  "updatedAt": 1777887973770,
-  "lastResponseAt": 1777887973770,
+  "updatedAt": 1777888433723,
+  "lastResponseAt": 1777888433723,
   "sessionId": "8ea5edda-2f54-4d5f-bffc-c50ffe926bab",
   "providerState": {
     "providerSessionId": "8ea5edda-2f54-4d5f-bffc-c50ffe926bab"
   },
   "usage": {
     "model": "sonnet[1m]",
-    "inputTokens": 54,
+    "inputTokens": 937,
     "cacheCreationInputTokens": 0,
-    "cacheReadInputTokens": 83456,
+    "cacheReadInputTokens": 97664,
     "contextWindow": 1000000,
-    "contextTokens": 83510,
-    "percentage": 8,
+    "contextTokens": 98601,
+    "percentage": 10,
     "contextWindowIsAuthoritative": true
   }
 }
