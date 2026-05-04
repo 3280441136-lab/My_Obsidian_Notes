@@ -2,23 +2,23 @@
   "id": "conv-1777873268935-wtud0544u",
   "providerId": "claude",
   "title": "帮我写一篇今天的工作报告，你自行发挥",
-  "titleGenerationStatus": "pending",
+  "titleGenerationStatus": "failed",
   "createdAt": 1777873268936,
-  "updatedAt": 1777873375068,
-  "lastResponseAt": 1777873375068,
+  "updatedAt": 1777873563861,
+  "lastResponseAt": 1777873563861,
   "sessionId": "75efde4c-511a-413d-b8df-bdd12d8fa7d7",
   "providerState": {
     "providerSessionId": "75efde4c-511a-413d-b8df-bdd12d8fa7d7"
   },
   "currentNote": "2026-05-04.md",
   "usage": {
-    "model": "sonnet",
-    "inputTokens": 37,
+    "model": "opus",
+    "inputTokens": 1453,
     "cacheCreationInputTokens": 0,
-    "cacheReadInputTokens": 35328,
+    "cacheReadInputTokens": 45568,
     "contextWindow": 1000000,
-    "contextTokens": 35365,
-    "percentage": 4,
+    "contextTokens": 47021,
+    "percentage": 5,
     "contextWindowIsAuthoritative": true
   }
 }

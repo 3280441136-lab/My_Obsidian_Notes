@@ -46,7 +46,9 @@
       "reasoningSummary": "detailed",
       "environmentVariables": "",
       "environmentHash": "",
-      "installationMethodsByHost": {},
+      "installationMethodsByHost": {
+        "Rui-Workstation": "native-windows"
+      },
       "wslDistroOverridesByHost": {}
     },
     "opencode": {
