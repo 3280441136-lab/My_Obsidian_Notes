@@ -1,7 +1,7 @@
 {
   "userName": "",
   "permissionMode": "yolo",
-  "model": "sonnet",
+  "model": "sonnet[1m]",
   "thinkingBudget": "low",
   "effortLevel": "high",
   "serviceTier": "default",
@@ -30,10 +30,10 @@
       "loadUserSettings": true,
       "enableChrome": false,
       "enableBangBash": false,
-      "enableOpus1M": false,
-      "enableSonnet1M": false,
+      "enableOpus1M": true,
+      "enableSonnet1M": true,
       "customModels": "",
-      "lastModel": "sonnet",
+      "lastModel": "sonnet[1m]",
       "environmentVariables": "",
       "environmentHash": ""
     },
@@ -65,7 +65,7 @@
   },
   "settingsProvider": "claude",
   "savedProviderModel": {
-    "claude": "sonnet"
+    "claude": "sonnet[1m]"
   },
   "savedProviderEffort": {
     "claude": "high"

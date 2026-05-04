@@ -4,21 +4,20 @@
   "title": "帮我写一篇今天的工作报告，你自行发挥",
   "titleGenerationStatus": "failed",
   "createdAt": 1777873268936,
-  "updatedAt": 1777873563861,
+  "updatedAt": 1777873716610,
   "lastResponseAt": 1777873563861,
   "sessionId": "75efde4c-511a-413d-b8df-bdd12d8fa7d7",
   "providerState": {
     "providerSessionId": "75efde4c-511a-413d-b8df-bdd12d8fa7d7"
   },
-  "currentNote": "2026-05-04.md",
   "usage": {
-    "model": "opus",
+    "model": "sonnet[1m]",
     "inputTokens": 1453,
     "cacheCreationInputTokens": 0,
     "cacheReadInputTokens": 45568,
     "contextWindow": 1000000,
     "contextTokens": 47021,
     "percentage": 5,
-    "contextWindowIsAuthoritative": true
+    "contextWindowIsAuthoritative": false
   }
 }
