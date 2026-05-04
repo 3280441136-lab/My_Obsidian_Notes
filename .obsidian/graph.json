@@ -8,14 +8,14 @@
   "collapse-color-groups": false,
   "colorGroups": [
     {
-      "query": "tag:软件  ",
+      "query": "tag:#软件  ",
       "color": {
         "a": 1,
         "rgb": 4357119
       }
     },
     {
-      "query": "tag:硬件",
+      "query": "tag:#硬件 ",
       "color": {
         "a": 1,
         "rgb": 15753312
@@ -29,16 +29,16 @@
       }
     }
   ],
-  "collapse-display": true,
+  "collapse-display": false,
   "showArrow": false,
   "textFadeMultiplier": 0,
-  "nodeSizeMultiplier": 1,
-  "lineSizeMultiplier": 1.00512449441538,
-  "collapse-forces": false,
+  "nodeSizeMultiplier": 1.58696426583547,
+  "lineSizeMultiplier": 1.47041448662288,
+  "collapse-forces": true,
   "centerStrength": 0.518713248970312,
   "repelStrength": 10,
   "linkStrength": 1,
   "linkDistance": 250,
   "scale": 1.8531659365444888,
-  "close": false
+  "close": true
 }
