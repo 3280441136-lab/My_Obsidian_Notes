@@ -4,8 +4,8 @@
   "title": "将AI对话里的内容整理进我的知识库，原则参考README",
   "titleGenerationStatus": "failed",
   "createdAt": 1777907702972,
-  "updatedAt": 1777909003454,
-  "lastResponseAt": 1777909003454,
+  "updatedAt": 1777909202214,
+  "lastResponseAt": 1777909202214,
   "sessionId": "0eb3f07f-d56e-4734-92dc-1d7dd3267742",
   "providerState": {
     "providerSessionId": "0eb3f07f-d56e-4734-92dc-1d7dd3267742"
@@ -13,12 +13,12 @@
   "currentNote": "📕我的嵌入式知识库/💻软件设计/ESP-IDF/ESP-IDF组件管理器.md",
   "usage": {
     "model": "sonnet[1m]",
-    "inputTokens": 100,
+    "inputTokens": 118,
     "cacheCreationInputTokens": 0,
-    "cacheReadInputTokens": 59264,
+    "cacheReadInputTokens": 66688,
     "contextWindow": 1000000,
-    "contextTokens": 59364,
-    "percentage": 6,
+    "contextTokens": 66806,
+    "percentage": 7,
     "contextWindowIsAuthoritative": true
   }
 }

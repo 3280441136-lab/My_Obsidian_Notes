@@ -250,9 +250,9 @@ ESP-IDF 的通用模式：
 ## 相关笔记
 
 - [[ESP-IDF分区表与Flash布局]] — 分区表是 ESP-IDF 另一个核心概念
-- [[../../GPIO驱动配置]] — STM32 与 ESP-IDF 的 GPIO 配置对比
-- [[../../PWM与定时器]] — STM32 TIM 与 ESP32 LEDC 的 PWM 方案对比
-- [[../../UART串口通信]] — 串口硬件原理与 ESP-IDF 配置
-- [[../../I2C总线通信]] — I2C 总线通信与 ESP-IDF 新版 API
+- [[../外设驱动/GPIO驱动配置]] — STM32 与 ESP-IDF 的 GPIO 配置对比
+- [[../外设驱动/PWM与定时器]] — STM32 TIM 与 ESP32 LEDC 的 PWM 方案对比
+- [[../外设驱动/UART串口通信]] — 串口硬件原理与 ESP-IDF 配置
+- [[../外设驱动/I2C总线通信]] — I2C 总线通信与 ESP-IDF 新版 API
 - [[../../C语言基础/嵌入式句柄与指针]] — 句柄模式的本质
 - [[../../C语言基础/C语言预处理指令]] — `#include` 和组件头文件引入的关系
