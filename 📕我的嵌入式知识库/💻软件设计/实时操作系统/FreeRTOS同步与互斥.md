@@ -2,6 +2,7 @@
 version: V2.0
 updated: 2026-05-04
 author: RUI
+tags: [软件]
 ---
 
 # FreeRTOS 同步、互斥与任务调度

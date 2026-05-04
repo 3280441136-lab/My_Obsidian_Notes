@@ -2,6 +2,7 @@
 version: V1.0
 updated: 2026-05-04
 author: RUI
+tags: [软件]
 ---
 
 # C 语言预处理指令：`#` 号用法笔记

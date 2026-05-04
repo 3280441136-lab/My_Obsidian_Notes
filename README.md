@@ -18,11 +18,14 @@
 version: V1.0
 updated: YYYY-MM-DD
 author: RUI
+tags: [软件|MCU底层|硬件]
 ---
 ```
 - `version`：笔记版本号
 - `updated`：最后更新日期
 - `author`：固定为 RUI
+- `tags`：知识大类标签，用于图谱颜色分组<br>
+  `软件` = 💻软件设计 / `MCU底层` = 🧠MCU底层原理 / `硬件` = 🔧硬件设计
 
 ### 笔记风格
 - 标题层级不使用数字序号（不用 `1.`、`1.1` 等）

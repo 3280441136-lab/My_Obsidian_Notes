@@ -2,6 +2,7 @@
 version: V1.0
 updated: 2026-05-04
 author: RUI
+tags: [软件]
 ---
 
 # Git 与版本控制
