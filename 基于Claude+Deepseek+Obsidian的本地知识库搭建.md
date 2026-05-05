@@ -259,7 +259,7 @@ git config --global user.email "你的邮箱@example.com"
 
 ### 2.1 注册
 
-1. 打开浏览器，地址栏输入 **https://github.com**，回车
+1. 打开浏览器，地址栏输入**https://github.com
 2. 页面加载后，点击右上角的 **`Sign up`** 按钮
 3. 输入你的**邮箱地址**，点击 `Continue`
 4. 设置一个**密码**（至少 8 位，要包含数字和字母），点击 `Continue`
@@ -293,7 +293,7 @@ https://github.com/你的用户名/my-obsidian-notes.git
 
 ### 3.1 下载 Obsidian
 
-1. 打开浏览器，地址栏输入 **https://obsidian.md**，回车
+1. 打开浏览器，地址栏输入 **https://obsidian.md
 2. 页面中间有一个大大的 `Download` 按钮，点击它
 3. 网站会自动识别你是 Windows，显示 `Download for Windows`，点击下载
 4. 等待下载完成，文件大约 100MB
