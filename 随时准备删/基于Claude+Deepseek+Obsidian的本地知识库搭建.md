@@ -469,9 +469,9 @@ Claude Code 默认只认 Anthropic 的 API，不认 DeepSeek。CCSwitch 是一�
 | **API URL** | `https://api.deepseek.com/v1` | DeepSeek 的接口地址，**注意末尾的 `/v1` 不能漏** |
 | **API Key** | `sk-xxxxxxxxxxxx` | 在第六步保存的那个以 `sk-` 开头的字符串 |
 | **Model** | `deepseek-chat` | 使用的模型名称 |
-![](assets/基于Claude+Deepseek+Obsidian的本地知识库搭建/file-20260505202657723.png)
-![637](assets/基于Claude+Deepseek+Obsidian的本地知识库搭建/file-20260505202823453.png)
-![](assets/基于Claude+Deepseek+Obsidian的本地知识库搭建/file-20260505203010071.png)
+![](assets/基于Claude+Deepseek+Obsidian的本地知识库搭建/file-20260505203433519.png)
+![637](assets/基于Claude+Deepseek+Obsidian的本地知识库搭建/file-20260505203433517.png)
+![](assets/基于Claude+Deepseek+Obsidian的本地知识库搭建/file-20260505203433516.png)
 
 
 
@@ -516,7 +516,7 @@ claude
 
 如果它回答自己是 **DeepSeek** 的某个模型 → **🎉 配置成功了！**
 
-![[他说自己是deepseek.png]]
+![[assets/基于Claude+Deepseek+Obsidian的本地知识库搭建/file-20260505203433520.png]]
 
 > 上图显示的效果是我加了插件后的界面，首次安装没有下方的那些 LOGO，这是正常的。
 
