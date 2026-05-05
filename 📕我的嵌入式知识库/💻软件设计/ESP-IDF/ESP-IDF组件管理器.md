@@ -1,6 +1,6 @@
 ---
-version: V1.1
-updated: 2026-05-04
+version: V1.2
+updated: 2026-05-05
 author: RUI
 tags: [软件]
 ---
@@ -13,6 +13,8 @@ tags: [软件]
 - [工程结构一览](ESP-IDF组件管理器.md#工程结构一览)
 - [组件是什么](ESP-IDF组件管理器.md#组件是什么)
 - [自己写一个组件](ESP-IDF组件管理器.md#自己写一个组件)
+- [CMakeLists 三字段：SRCS / INCLUDE_DIRS / REQUIRES](ESP-IDF组件管理器.md#cmakelists-三字段srcs--include_dirs--requires)
+- [esp_err_t 与返回值检查](ESP-IDF组件管理器.md#esp_err_t-与返回值检查)
 - [组件管理器怎么用](ESP-IDF组件管理器.md#组件管理器怎么用)
 - [三种组件来源对比](ESP-IDF组件管理器.md#三种组件来源对比)
 - [初学者的学习顺序](ESP-IDF组件管理器.md#初学者的学习顺序)
@@ -111,6 +113,170 @@ idf_component_register(
 ```
 
 意思是：这个组件包含 `led_driver.c`，头文件目录是 `include`。
+
+如果这个组件依赖了 GPIO 驱动，要加 `REQUIRES`：
+
+```cmake
+idf_component_register(
+    SRCS "led_driver.c"
+    INCLUDE_DIRS "include"
+    REQUIRES esp_driver_gpio
+)
+```
+
+---
+
+## CMakeLists 三字段：SRCS / INCLUDE_DIRS / REQUIRES
+
+ESP-IDF 中 `main/` 也是组件，`components/xxx/` 也是组件。它们的 `CMakeLists.txt` 都围绕三个字段：
+
+| 字段 | 含义 |
+|---|---|
+| `SRCS` | 本组件要编译哪些 `.c` 文件 |
+| `INCLUDE_DIRS` | 本组件公开哪些头文件目录 |
+| `REQUIRES` | 本组件依赖哪些其他组件 |
+
+### 什么时候改 SRCS
+
+新增 `.c` 文件时，要加到 `SRCS`。
+
+例如新增 `sensor.c` 和 `sensor_filter.c`：
+
+```cmake
+idf_component_register(
+    SRCS "sensor.c" "sensor_filter.c"
+    INCLUDE_DIRS "include"
+)
+```
+
+否则 `.c` 文件不会参与编译。
+
+### 什么时候改 INCLUDE_DIRS
+
+组件有公开头文件目录时，加到 `INCLUDE_DIRS`。
+
+例如 `components/sensor/include/sensor.h`：
+
+```cmake
+INCLUDE_DIRS "include"
+```
+
+这样其他组件才能 `#include "sensor.h"`。
+
+### 什么时候改 REQUIRES
+
+**判断规则：**
+
+```text
+我 include 了谁的 .h？
+这个 .h 属于哪个组件？
+那就 REQUIRES 哪个组件。
+```
+
+常见对应：
+
+| 代码里用了 | 常见依赖 |
+|---|---|
+| `#include "driver/gpio.h"` | `esp_driver_gpio` |
+| `#include "driver/uart.h"` | `esp_driver_uart` |
+| `#include "freertos/queue.h"` | FreeRTOS 基础，通常不需手动加 |
+| `#include "sensor.h"` | `sensor`（自定义组件） |
+
+如果 `main.c` 用了自定义组件 `sensor.h`，那么 `main/CMakeLists.txt` 要写：
+
+```cmake
+idf_component_register(
+    SRCS "main.c"
+    INCLUDE_DIRS "."
+    REQUIRES sensor
+)
+```
+
+否则编译报 `fatal error: sensor.h: No such file or directory`。
+
+### 完整组件模板
+
+```text
+components/sensor/
+├── CMakeLists.txt
+├── include/
+│   └── sensor.h
+└── sensor.c
+```
+
+`components/sensor/CMakeLists.txt`：
+
+```cmake
+idf_component_register(
+    SRCS "sensor.c"
+    INCLUDE_DIRS "include"
+    REQUIRES esp_driver_gpio
+)
+```
+
+`main/CMakeLists.txt`：
+
+```cmake
+idf_component_register(
+    SRCS "main.c"
+    INCLUDE_DIRS "."
+    REQUIRES sensor
+)
+```
+
+### 项目顶层 CMakeLists.txt
+
+项目根目录的 `CMakeLists.txt` 负责声明整个工程，一般不频繁改：
+
+```cmake
+cmake_minimum_required(VERSION 3.22)
+
+include($ENV{IDF_PATH}/tools/cmake/project.cmake)
+project(my_project)
+```
+
+---
+
+## esp_err_t 与返回值检查
+
+ESP-IDF 很多函数返回 `esp_err_t`，这是统一的错误码类型。
+
+常见返回值：
+
+| 返回值 | 含义 |
+|---|---|
+| `ESP_OK` | 成功 |
+| `ESP_ERR_NO_MEM` | 内存不足 |
+| `ESP_ERR_INVALID_ARG` | 参数错误 |
+| `ESP_ERR_INVALID_STATE` | 当前状态不允许（如已经初始化过） |
+
+用法：
+
+```c
+esp_err_t err = gpio_config(&io_conf);
+
+if (err != ESP_OK)
+{
+    return err;
+}
+```
+
+`err` 比 `ret` 更适合新手理解——直接表达"错误码"的语义。
+
+如果初始化必须成功，可以用断言：
+
+```c
+ESP_ERROR_CHECK(driver_init());
+```
+
+等价于：
+
+```c
+esp_err_t err = driver_init();
+if (err != ESP_OK) {
+    打印错误并停止程序;
+}
+```
 
 ---
 
@@ -256,3 +422,5 @@ ESP-IDF 的通用模式：
 - [[../外设驱动/I2C总线通信]] — I2C 总线通信与 ESP-IDF 新版 API
 - [[../C语言基础/嵌入式句柄与指针]] — 句柄模式的本质
 - [[../C语言基础/C语言预处理指令]] — `#include` 和组件头文件引入的关系
+- [[../C语言基础/嵌入式句柄与指针]] — `esp_err_t` 和句柄模式的本质
+- [[../实时操作系统/FreeRTOS同步与互斥]] — ISR → 队列 → 任务的完整事件处理流程
