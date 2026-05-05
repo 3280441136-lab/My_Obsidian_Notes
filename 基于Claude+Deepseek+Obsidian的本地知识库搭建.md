@@ -14,6 +14,6 @@
 2.可以连外网的魔法
 3.一双手
 
-
+去deepseek官网，注册，购买API，目前deepseek有hen'da，持续到先小量购买
 
 下载CCswitch，用于给claudecode配置URL和token，模型映射为deepseekV4pro。
