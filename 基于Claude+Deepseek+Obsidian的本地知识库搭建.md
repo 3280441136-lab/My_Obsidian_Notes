@@ -469,10 +469,10 @@ Claude Code 默认只认 Anthropic 的 API，不认 DeepSeek。CCSwitch 是一�
 | **API URL** | `https://api.deepseek.com/v1` | DeepSeek 的接口地址，**注意末尾的 `/v1` 不能漏** |
 | **API Key** | `sk-xxxxxxxxxxxx` | 在第六步保存的那个以 `sk-` 开头的字符串 |
 | **Model** | `deepseek-chat` | 使用的模型名称 |
-
+![](assets/基于Claude+Deepseek+Obsidian的本地知识库搭建/file-20260505202657723.png)
 3. **设置模型映射**（这一步非常关键！）：
    - Claude Code 内部用的是 Claude 的模型名称，比如 `claude-sonnet-4-20250514`
-   - 但 DeepSeek 不叫这个名字，它叫 `deepseek-chat`
+   - 但 DeepSeek 不叫这个名字，它叫 `deepseek`
    - 所以需要告诉 CCSwitch：「当 Claude Code 说要找 `claude-sonnet-4-20250514` 时，你帮我去找 `deepseek-chat`」
    - 在 CCSwitch 界面找到「模型映射」（Model Mapping）区域
    - 添加一条规则：**源模型** 填 `claude-sonnet-4-20250514`，**目标模型** 填 `deepseek-chat`
