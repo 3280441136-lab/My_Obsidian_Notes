@@ -20,9 +20,14 @@
 - 多文件并行写作用一个消息里的多个 Write/Edit 调用
 - 新建笔记时内容一次性写完，不反复 Edit 同一个文件
 - Edit 的 `old_string` 尽量短且唯一，避免因匹配不唯一重试
+- **同一文件的多处 Edit 合并到一个调用**：改版本号、改目录、改正文尽量一次搞定，不要拆成 3 次 Edit
+- **TodoWrite 只在任务开始和全部完成时用**，中间步骤不更新（每次 TodoWrite 重发整个列表）
 
 ## 禁止事项
 
 - 禁止全局 `Grep output_mode="content"` 不做 `head_limit`
 - 禁止 Read 不加 offset/limit 读长文件
 - 禁止在内容补充后做全库链接验证
+- **禁止同一文件连续多次 Edit**（应合并为一次或最多两次）
+- **禁止用 `Grep content` 去"看看某文件里有没有某内容"**——用 `files_with_matches` 定位文件，再 Read 关键行
+- **禁止 TodoWrite 频繁更新**——开始设一次，结束设一次，中间不碰
