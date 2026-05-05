@@ -34,6 +34,8 @@ obsidian是什么？
 下载obsidian
 
 https://www.bilibili.com/video/BV1fZCyBYEuT/?spm_id_from=333.1391.0.0&vd_source=e72b23bd02efae338ff569492cafce55
+视频里的AI部分是用的Gemini CLI，比较垃圾，也不具有通用性。我们用的claudecode+deepseek可以广泛用于任何领域，包括代码，闲聊，对话，笔记。
+
 obsidian的用法和markdown的简单语法我不教，不影响本次教程。
 如果你需要
 
