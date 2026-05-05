@@ -26,6 +26,51 @@ tags: [软件]
 
 ---
 
+## 从 Keil 裸机到 FreeRTOS
+
+在 Keil 裸机里，常见结构是：
+
+```c
+int main(void)
+{
+    while (1)
+    {
+        // 轮询按键、传感器、串口
+    }
+}
+```
+
+ESP-IDF 使用 FreeRTOS，程序入口变为：
+
+```c
+void app_main(void)
+{
+    // 初始化外设
+    // 创建任务
+}
+```
+
+对比：
+
+| Keil 裸机 | ESP-IDF / FreeRTOS |
+|---|---|
+| `main()` | `app_main()` |
+| 一个大 `while (1)` | 多个 FreeRTOS 任务 |
+| 中断里置标志位 | 中断里发队列/信号量 |
+| 手动管理工程文件 | `CMakeLists.txt` 管理组件和依赖 |
+
+ESP-IDF 常见外设驱动套路：
+
+```text
+初始化外设
+  → 中断捕获事件
+  → ISR 只做最短处理
+  → 队列/信号量通知任务
+  → 任务里做打印、协议解析、状态机等较慢逻辑
+```
+
+---
+
 ## 任务是什么
 
 FreeRTOS 里的任务可以理解成：
