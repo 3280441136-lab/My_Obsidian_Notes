@@ -15,6 +15,5 @@
 3.一双手
 
 
-第一步：xia'za
 
-第二步：下载
+下载CCswitch，用于给claudecode配置URL和token，模型映射为deepseekV4pro。
