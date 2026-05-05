@@ -618,12 +618,12 @@ claude
 
 以后每次要在这个 Vault 里用 AI：
 
-1. **确认 CCSwitch 在后台运行**（任务栏右下角有图标）
-2. 按 `Win + R`，输入 `cmd`，回车打开命令提示符
-3. 切换到你 Vault 的目录：
+1. 按 `Win + R`，输入 `cmd`，回车打开命令提示符
+2. 切换到你 Vault 的目录：
 
 ```cmd
-cd D:\MyObsidianVault
+cd D:\MyObsidianVault 
+(仅仅作为示例,你也可以直接在你Vault的文件夹右键打开cmd,然后输入claude)
 ```
 
 4. 启动 Claude Code：
