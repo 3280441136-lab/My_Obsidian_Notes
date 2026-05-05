@@ -28,3 +28,4 @@ node.js是什么：js和node.js分别是什么，前后端桌面端，同样是�
 下载CCswitch，用于给claudecode配置URL和token，模型映射为deepseekV4pro。
 
 打开claudecode发现可以正常提问和回答了，你问他是什么模型，他说自己是deepseek。
+![](assets/基于Claude+Deepseek+Obsidian的本地知识库搭建/他说自己是deepseek.png)
