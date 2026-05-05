@@ -19,7 +19,8 @@ git是什么：当今计算机科学领域的基本设施，当今程序员的�
 拓展：github：steam的游戏云存档
 
 下载node.js
-node.js
+node.js是什么：js和node.js分别是什么，前后端桌面端，同样是每个程序员必然触及的领域。
+
 
 去deepseek官网，注册，购买API，目前deepseek有很大折扣，token消耗量比较低，持续到5月31号。
 
