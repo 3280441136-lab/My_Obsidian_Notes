@@ -25,9 +25,17 @@ obsidian是什么？
 2.可以连外网的魔法
 3.一双手
 
-教程正式开始：
 
 下载git
+
+注册github账号
+
+
+下载obsidian
+
+https://www.bilibili.com/video/BV1fZCyBYEuT/?spm_id_from=333.1391.0.0&vd_source=e72b23bd02efae338ff569492cafce55
+obsidian的用法和markdown的简单语法我不教，不影响本次教程。
+如果你需要
 
 
 下载node.js
@@ -45,5 +53,3 @@ obsidian是什么？
 ![](assets/基于Claude+Deepseek+Obsidian的本地知识库搭建/他说自己是deepseek.png)
 到这一步，你已经可以正常使用claudecode了。
 
-下载obsidian，
-obsidian的用法和markdown的简单语法我不教
