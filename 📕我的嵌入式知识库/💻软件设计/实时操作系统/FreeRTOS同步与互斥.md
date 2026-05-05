@@ -264,6 +264,99 @@ void task_display(void *param)
 
 ---
 
+## 队列 API 三部曲：Create / SendFromISR / Receive
+
+这是 ESP-IDF 外设驱动中最常见的 ISR + 队列模式。
+
+### 第一步：xQueueCreate 创建队列
+
+```c
+QueueHandle_t event_queue = xQueueCreate(8, sizeof(gpio_num_t));
+
+if (event_queue == NULL)
+{
+    return ESP_ERR_NO_MEM;
+}
+```
+
+参数：
+
+| 参数 | 例子 | 含义 |
+|---|---|---|
+| `uxQueueLength` | `8` | 队列最多保存多少个元素 |
+| `uxItemSize` | `sizeof(gpio_num_t)` | 每个元素占多少字节 |
+
+返回值：非 `NULL` = 成功（返回句柄），`NULL` = 内存不足。
+
+> 队列保存的是"数据副本"，不是保存局部变量地址。
+
+### 第二步：xQueueSendFromISR 中断里发送
+
+在中断函数里发数据到队列：
+
+```c
+gpio_num_t gpio_num = GPIO_NUM_21;
+xQueueSendFromISR(event_queue, &gpio_num, NULL);
+```
+
+参数：
+
+| 参数 | 例子 | 含义 |
+|---|---|---|
+| `xQueue` | `event_queue` | 发到哪个队列 |
+| `pvItemToQueue` | `&gpio_num` | 要发送的数据地址 |
+| `pxHigherPriorityTaskWoken` | `NULL` | 是否唤醒更高优先级任务（进阶） |
+
+返回 `pdTRUE` = 成功，`errQUEUE_FULL` = 队列满。
+
+为什么传 `&gpio_num`：队列函数需要知道"从哪个地址复制数据"，创建时已指定元素大小，会自动复制 `sizeof(gpio_num_t)` 字节。
+
+为什么中断里用 `FromISR` 版本：
+
+```text
+普通任务里用 xQueueSend()
+中断函数里用 xQueueSendFromISR()
+```
+
+中断里不能随便调用普通 FreeRTOS API。
+
+### 第三步：xQueueReceive 任务里接收
+
+```c
+gpio_num_t gpio_num;
+
+if (xQueueReceive(event_queue, &gpio_num, portMAX_DELAY) == pdTRUE)
+{
+    ESP_LOGI(TAG, "GPIO%d triggered", gpio_num);
+}
+```
+
+参数：
+
+| 参数 | 例子 | 含义 |
+|---|---|---|
+| `xQueue` | `event_queue` | 从哪个队列收 |
+| `pvBuffer` | `&gpio_num` | 收到的数据存哪里 |
+| `xTicksToWait` | `portMAX_DELAY` | 最多等多久 |
+
+`portMAX_DELAY` 表示一直等，直到有数据。**等待期间任务睡眠，不空转占 CPU。**
+
+### 完整 ISR → 队列 → 任务流程
+
+```text
+初始化阶段创建队列
+  ↓
+外设中断发生
+  ↓
+ISR 用 xQueueSendFromISR 发事件
+  ↓
+任务用 xQueueReceive 阻塞等待
+  ↓
+任务收到事件并处理（打印日志、业务逻辑）
+```
+
+---
+
 ## 互斥：Mutex 解决的是资源归谁用
 
 ### Mutex 是什么意思

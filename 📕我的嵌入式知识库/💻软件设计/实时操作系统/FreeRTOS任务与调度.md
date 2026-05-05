@@ -1,6 +1,6 @@
 ---
-version: V1.0
-updated: 2026-05-04
+version: V1.1
+updated: 2026-05-05
 author: RUI
 tags: [软件]
 ---
@@ -9,6 +9,7 @@ tags: [软件]
 
 ## 目录
 
+- [从 Keil 裸机到 FreeRTOS](FreeRTOS任务与调度.md#从-keil-裸机到-freertos)
 - [任务是什么](FreeRTOS任务与调度.md#任务是什么)
 - [xTaskCreate 和 xTaskCreatePinnedToCore](FreeRTOS任务与调度.md#xtaskcreate-和-xtaskcreatepinnedtocore)
 - [任务句柄 TaskHandle_t](FreeRTOS任务与调度.md#任务句柄-taskhandle_t)
