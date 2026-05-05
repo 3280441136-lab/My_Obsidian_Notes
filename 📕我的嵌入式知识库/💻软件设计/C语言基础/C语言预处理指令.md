@@ -1,6 +1,6 @@
 ---
-version: V1.0
-updated: 2026-05-04
+version: V1.1
+updated: 2026-05-05
 author: RUI
 tags: [软件]
 ---
@@ -32,6 +32,8 @@ tags: [软件]
 - [常用模板 5：配置检查](C语言预处理指令.md#常用模板-5配置检查)
 - [预处理指令速查表](C语言预处理指令.md#预处理指令速查表)
 - [小白常见坑](C语言预处理指令.md#小白常见坑)
+- [头文件包含的工程原则](C语言预处理指令.md#头文件包含的工程原则)
+- [宏定义放 .h 还是 .c](C语言预处理指令.md#宏定义放-h-还是-c)
 - [记忆口诀](C语言预处理指令.md#记忆口诀)
 - [推荐学习顺序](C语言预处理指令.md#推荐学习顺序)
 
@@ -779,6 +781,92 @@ int a = 1 + 2 * 1 + 2;
 #endif：条件编译收尾。
 #error：配置不对，直接让编译失败。
 #pragma once：简单版头文件保护。
+```
+
+---
+
+## 头文件包含的工程原则
+
+### 谁用到谁包含
+
+不要依赖"别的文件帮我 include 了某个头文件"。
+
+一个 `.c` 或 `.h` 文件里用到了某个类型、宏或函数，就应该自己包含对应头文件。
+
+ESP-IDF 常见对应：
+
+| 用到的内容 | 需要包含 |
+|---|---|
+| `esp_err_t` | `#include "esp_err.h"` |
+| `ESP_LOGI` | `#include "esp_log.h"` |
+| `gpio_config()`、`GPIO_NUM_21` | `#include "driver/gpio.h"` |
+| `xTaskCreate()` | `#include "freertos/task.h"` |
+| `xQueueCreate()` | `#include "freertos/queue.h"` |
+| `intptr_t` | `#include <stdint.h>` |
+| `printf()` | `#include <stdio.h>` |
+
+### ESP-IDF 日志 vs printf
+
+`stdio.h` 主要提供 `printf()`、`scanf()`、`sprintf()`。如果文件里没用到这些，就不需要包含 `<stdio.h>`。
+
+ESP-IDF 日志优先使用：
+
+```c
+ESP_LOGI()
+ESP_LOGE()
+ESP_LOGW()
+```
+
+而不是 `printf()`。
+
+---
+
+## 宏定义放 .h 还是 .c
+
+取决于它是不是"公开接口"。
+
+### 放 .h 的情况
+
+如果外部文件需要知道或可能修改这个宏，放 `.h`：
+
+```c
+// sensor.h
+#define SENSOR_GPIO GPIO_NUM_21
+```
+
+适合放 `.h` 的内容：
+
+```text
+外部要调用的函数声明
+外部要用的类型定义
+外部需要知道的配置宏
+```
+
+### 放 .c 的情况
+
+如果只是驱动内部实现细节，放 `.c`：
+
+```c
+// sensor.c
+#define SENSOR_QUEUE_LENGTH 8
+#define SENSOR_TASK_STACK_SIZE 2048
+#define SENSOR_TASK_PRIORITY 10
+```
+
+适合放 `.c` 的内容：
+
+```text
+内部任务栈大小
+内部队列长度
+内部状态变量
+内部 helper 函数
+```
+
+### 一句话判断
+
+```text
+别人需要 include 后使用它 → 放 .h
+只有本 .c 文件自己用 → 放 .c
 ```
 
 ---
