@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(gh api *)",
+      "PowerShell(gh search repos \"ESP32-P4-WIFI6\" --owner waveshareteam --limit 5 --json name,url,description 2>$null)",
+      "PowerShell(New-Item *)",
+      "PowerShell(Get-ChildItem *)"
+    ]
+  }
+}
