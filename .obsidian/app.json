@@ -2,5 +2,12 @@
   "useMarkdownLinks": true,
   "newLinkFormat": "relative",
   "alwaysUpdateLinks": true,
-  "promptDelete": true
+  "promptDelete": true,
+  "pdfExportSettings": {
+    "includeName": true,
+    "pageSize": "Letter",
+    "landscape": false,
+    "margin": "0",
+    "downscalePercent": 100
+  }
 }
