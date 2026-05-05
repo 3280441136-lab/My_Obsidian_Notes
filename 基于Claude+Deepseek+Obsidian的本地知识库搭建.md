@@ -546,7 +546,8 @@ claude
 ```
 
 ```markdown
-这里是我自己在用的claude.md里的内容,是让AI根据我的需求自定义写的,可以节省token,防止大量fei'huan'chong
+这里是我自己在用的claude.md里的内容,是让AI根据我的需求自定义写的,可以节省token,防止大量非缓冲写入
+
 # Obsidian 知识库操作规范
 
   
