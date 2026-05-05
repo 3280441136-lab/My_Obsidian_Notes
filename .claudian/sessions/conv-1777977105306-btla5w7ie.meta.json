@@ -4,8 +4,8 @@
   "title": "这个claude",
   "titleGenerationStatus": "failed",
   "createdAt": 1777977105307,
-  "updatedAt": 1777977289684,
-  "lastResponseAt": 1777977127370,
+  "updatedAt": 1777981388679,
+  "lastResponseAt": 1777981388679,
   "sessionId": "8f77f64e-3c57-4582-b5f6-49ab729fe61b",
   "providerState": {
     "providerSessionId": "8f77f64e-3c57-4582-b5f6-49ab729fe61b"
@@ -13,12 +13,12 @@
   "currentNote": "CLAUDE.md",
   "usage": {
     "model": "sonnet",
-    "inputTokens": 25583,
+    "inputTokens": 53151,
     "cacheCreationInputTokens": 0,
     "cacheReadInputTokens": 0,
     "contextWindow": 1000000,
-    "contextTokens": 25583,
-    "percentage": 3,
+    "contextTokens": 53151,
+    "percentage": 5,
     "contextWindowIsAuthoritative": true
   }
 }
