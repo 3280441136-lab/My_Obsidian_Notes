@@ -1,6 +1,6 @@
 ---
-version: V1.0
-updated: 2026-05-04
+version: V1.1
+updated: 2026-05-05
 author: RUI
 tags: [软件]
 ---
@@ -16,6 +16,8 @@ tags: [软件]
 - [GPIO 输出速度](GPIO驱动配置.md#gpio-输出速度)
 - [GPIO 复用](GPIO驱动配置.md#gpio-复用)
 - [记忆口诀](GPIO驱动配置.md#记忆口诀)
+- [GPIO 中断与 ISR 回调](GPIO驱动配置.md#gpio-中断与-isr-回调)
+- [ISR 里不要做什么](GPIO驱动配置.md#isr-里不要做什么)
 
 ---
 
@@ -175,11 +177,128 @@ STM32 手动开时钟选端口，ESP-IDF 全局编号一口价。
 
 ---
 
+## GPIO 中断与 ISR 回调
+
+ESP-IDF 的 GPIO 中断通过回调函数注册：
+
+```c
+static void gpio_isr_handler(void *arg)
+{
+    const gpio_num_t gpio_num = *(const gpio_num_t *)arg;
+    // 中断处理
+}
+```
+
+注册中断：
+
+```c
+static const gpio_num_t s_gpio_num = GPIO_NUM_21;
+
+gpio_isr_handler_add(GPIO_NUM_21,
+                     gpio_isr_handler,
+                     (void *)&s_gpio_num);
+```
+
+第三个参数 `(void *)&s_gpio_num` 会在中断触发时传给 `gpio_isr_handler` 的 `arg`。
+
+> 注册时传什么，中断触发时 arg 就是什么。
+
+### 中断回调函数签名
+
+IDF API 规定的回调类型是带 `void *arg` 参数的：
+
+```c
+static void gpio_isr_handler(void *arg);
+```
+
+**不能**写成无参数版本：
+
+```c
+static void gpio_isr_handler(void);  // 错误
+```
+
+### 多个 GPIO 共用一个中断函数
+
+利用 `arg` 参数区分是哪个引脚触发：
+
+```c
+static const gpio_num_t s_btn_1 = GPIO_NUM_21;
+static const gpio_num_t s_btn_2 = GPIO_NUM_22;
+
+gpio_isr_handler_add(GPIO_NUM_21, btn_isr_handler, (void *)&s_btn_1);
+gpio_isr_handler_add(GPIO_NUM_22, btn_isr_handler, (void *)&s_btn_2);
+```
+
+中断里：
+
+```c
+static void btn_isr_handler(void *arg)
+{
+    const gpio_num_t gpio_num = *(const gpio_num_t *)arg;
+    // 根据 gpio_num 区分处理
+}
+```
+
+---
+
+## ISR 里不要做什么
+
+中断函数 ISR 要短、快、可预测。
+
+**不建议在 ISR 里做：**
+
+```text
+打印日志（ESP_LOGI 等）
+延时（vTaskDelay、delay_us）
+复杂计算
+动态申请内存（malloc）
+阻塞等待
+访问耗时外设
+```
+
+**推荐在 ISR 里做：**
+
+```text
+读/清中断标志
+记录很少量数据
+发送队列/信号量通知任务
+```
+
+常见做法——ISR 只发事件，任务做业务：
+
+```c
+static void gpio_isr_handler(void *arg)
+{
+    const gpio_num_t gpio_num = *(const gpio_num_t *)arg;
+    xQueueSendFromISR(event_queue, &gpio_num, NULL);
+}
+```
+
+日志和业务逻辑放任务里处理：
+
+```c
+static void event_task(void *arg)
+{
+    gpio_num_t gpio_num;
+    while (true)
+    {
+        if (xQueueReceive(event_queue, &gpio_num, portMAX_DELAY) == pdTRUE)
+        {
+            ESP_LOGI(TAG, "GPIO%d triggered", gpio_num);
+        }
+    }
+}
+```
+
+---
+
 ## 相关笔记
 
-- [[../../🧠MCU底层原理/CPU架构与内存模型]] — GPIO 配置本质是寄存器操作，先理解寄存器是什么
+- [[../../🧠MCU底层原理/CPU架构与内存模型]] — GPIO 配置本质是寄存器操作
 - [[../ESP-IDF/ESP-IDF组件管理器]] — 把 GPIO 驱动封装成组件的思路
 - [[PWM与定时器]] — PWM 输出依赖 GPIO 引脚配置
 - [[UART串口通信]] — 串口涉及 GPIO 复用为 UART 功能
 - [[I2C总线通信]] — I2C 的 SDA/SCL 本质是开漏输出的 GPIO
-- [[../../🔧硬件设计/常用元件/电阻选型]] — LED 限流电阻计算、上拉下拉电阻选型
+- [[../../🔧硬件设计/电阻选型]] — LED 限流电阻计算、上拉下拉电阻选型
+- [[../实时操作系统/FreeRTOS同步与互斥]] — ISR 中发队列、任务中收队列的完整模式
+- [[../C语言基础/嵌入式句柄与指针]] — ISR 回调中 `void *arg` 的指针转换

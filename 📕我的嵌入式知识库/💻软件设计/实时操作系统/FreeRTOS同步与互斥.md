@@ -1,6 +1,6 @@
 ---
-version: V2.0
-updated: 2026-05-04
+version: V2.1
+updated: 2026-05-05
 author: RUI
 tags: [软件]
 ---
@@ -14,6 +14,7 @@ tags: [软件]
 - [任务状态：FreeRTOS 最底层的理解入口](FreeRTOS同步与互斥.md#任务状态freertos-最底层的理解入口)
 - [vTaskDelay 和 esp_rom_delay_us 的区别](FreeRTOS同步与互斥.md#vtaskdelay-和-esp_rom_delay_us-的区别)
 - [同步：信号量和队列解决的是谁等谁](FreeRTOS同步与互斥.md#同步信号量和队列解决的是谁等谁)
+- [队列 API 三部曲：Create / SendFromISR / Receive](FreeRTOS同步与互斥.md#队列-api-三部曲create--sendfromisr--receive)
 - [互斥：Mutex 解决的是资源归谁用](FreeRTOS同步与互斥.md#互斥mutex-解决的是资源归谁用)
 - [为什么标志位不能当互斥锁](FreeRTOS同步与互斥.md#为什么标志位不能当互斥锁)
 - [优先级翻转和优先级继承](FreeRTOS同步与互斥.md#优先级翻转和优先级继承)
