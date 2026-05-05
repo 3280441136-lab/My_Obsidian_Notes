@@ -33,6 +33,7 @@ obsidian是什么？
 
 下载obsidian
 
+git和github部分看这个视频，如果你正在用git和github就不需要看，因为我真的不想教git和github。
 https://www.bilibili.com/video/BV1fZCyBYEuT/?spm_id_from=333.1391.0.0&vd_source=e72b23bd02efae338ff569492cafce55
 视频里的AI部分是用的Gemini CLI，比较垃圾，也不具有通用性。我们用的claudecode+deepseek可以广泛用于任何领域，包括代码，闲聊，对话，笔记。
 
