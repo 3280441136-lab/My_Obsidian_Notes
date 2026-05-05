@@ -21,10 +21,10 @@ git是什么：当今计算机科学领域的基本设施，当今程序员的�
 下载node.js
 node.js是什么：js和node.js分别是什么，前后端桌面端，同样是每个程序员必然触及的领域。
 
-通过npm指令下载claudecode，再调用claudecode CLI，这时候发现需要账号或者API
+通过npm指令安装claudecode，再调用claudecode CLI，这时候发现需要账号或者API
 
 去deepseek官网，注册，购买API，目前deepseek有很大折扣，token消耗量比较低，持续到5月31号。
 
 下载CCswitch，用于给claudecode配置URL和token，模型映射为deepseekV4pro。
 
-用npm安装claudecode，
+给
