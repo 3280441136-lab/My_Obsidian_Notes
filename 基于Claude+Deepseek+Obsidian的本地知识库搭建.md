@@ -26,19 +26,16 @@ obsidian是什么？
 3.一双手
 
 
-下载git
+下载git：
 
 注册github账号
 
 
-下载obsidian
-
+下载obsidian：
+这个视频值得看，包括obsidian的基本用法和git，github。
 git和github部分看这个视频，如果你正在用git和github就不需要看，因为我真的不想教git和github。
 https://www.bilibili.com/video/BV1fZCyBYEuT/?spm_id_from=333.1391.0.0&vd_source=e72b23bd02efae338ff569492cafce55
 视频里的AI部分是用的Gemini CLI，比较垃圾，也不具有通用性。我们用的claudecode+deepseek可以广泛用于任何领域，包括代码，闲聊，对话，笔记。
-
-obsidian的用法和markdown的简单语法我不教，不影响本次教程。
-如果你需要
 
 
 下载node.js
