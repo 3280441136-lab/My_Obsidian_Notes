@@ -42,7 +42,7 @@ https://www.bilibili.com/video/BV1fZCyBYEuT/?spm_id_from=333.1391.0.0&vd_source=
 下载node.js
 
 
-通过npm指令安装claudecode，再随便建个空文件夹，无论在哪，然后在里面cmd，调用claudecode CLI，这时候发现需要账号或者API，关掉
+通过npm指令安装claudecode，再随便建个空文件夹，无论在哪，然后在里面cmd，调用claudecode CLI，这时候发现需要账号或者API，叉掉cmd窗口，我们不需要在这里登录或者输入API。
 
 
 去deepseek官网，注册，购买API，目前deepseek有很大折扣，token消耗量比较低，持续到5月31号。
