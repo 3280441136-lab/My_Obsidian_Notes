@@ -9,23 +9,38 @@
 优点：从0开始，可以几乎无限扩展，且借助AI整理效率极高，后续也可以借助github将知识库升级到云端；对文字，代码类笔记碾压传统手写和word，ppt等一切形式；形成完整的生态：你与AI对话产生的文本，你在网上获取的文本资料--转为markdown格式存在obsidian的知识库文件夹下--AI整理，补充，规范--又有了新的文本，新的笔记--AI整理，补充，规范，形成闭环。
 缺点：对已有的手写笔记难以支持
 
+你必须至少要有的前置知识：
+markdown是什么？他相比于你经常见到的txt，docx有什么不同？
+我们待会要配置的API和URL是什么，为什么我们可以在claude框架下使用deepseek作为他的大脑？
+git是什么：当今计算机科学领域的基本设施，当今程序员的必备工具，类比于steam的游戏本地存档。如果你是一个程序员，却不知道git是什么，那就像
+拓展：github：steam的游戏云存档
+node.js是什么：js和node.js分别是什么，前后端桌面端，同样是每个程序员必然触及的领域。
+obsidian是什么？
+
 搭建这个知识库，你现在需要什么：
 1.一台Windows11的电脑
 2.可以连外网的魔法
 3.一双手
 
+教程正式开始：
+
 下载git
-git是什么：当今计算机科学领域的基本设施，当今程序员的必备工具，类比于steam的游戏本地存档。如果你是一个程序员，却不知道git是什么，那就像
-拓展：github：steam的游戏云存档
+
 
 下载node.js
-node.js是什么：js和node.js分别是什么，前后端桌面端，同样是每个程序员必然触及的领域。
+
 
 通过npm指令安装claudecode，再调用claudecode CLI，这时候发现需要账号或者API
 
 去deepseek官网，注册，购买API，目前deepseek有很大折扣，token消耗量比较低，持续到5月31号。
 
-下载CCswitch，用于给claudecode配置URL和token，模型映射为deepseekV4pro。
+
+下载CCswitch，用于给claudecode配置deepseek的URL和token，模型映射为deepseekV4pro。
+
 
 打开claudecode发现可以正常提问和回答了，你问他是什么模型，他说自己是deepseek。
 ![](assets/基于Claude+Deepseek+Obsidian的本地知识库搭建/他说自己是deepseek.png)
+
+
+下载obsidian，
+obsidian的用法和markdown的简单语法我不教https://www.bilibili.com/video/BV1fZCyBYEuT/?spm_id_from=333.1391.0.0&vd_source=e72b23bd02efae338ff569492cafce55
