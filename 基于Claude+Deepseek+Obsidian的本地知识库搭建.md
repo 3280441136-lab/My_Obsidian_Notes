@@ -10,6 +10,9 @@
 缺点：对已有的手写笔记难以支持
 
 你必须至少要有的前置知识：
+
+注意：接下来你可能会有疑问，为什么我写个笔记建个知识库要这么多前置知识，太麻烦了，我不做了。但事实是：接下来的前置知识几乎都是一个程序员所必须有的，哪怕你不是程序员，但你学习过一门编程语言，你也一定都听说过，这些知识不是只对这个创建知识库的项目有用，你学了他们，相当于学了编程界的加减乘除。
+
 markdown是什么？他相比于你经常见到的txt，docx有什么不同？
 我们待会要配置的API和URL是什么，为什么我们可以在claude框架下使用deepseek作为他的大脑？
 git是什么：当今计算机科学领域的基本设施，当今程序员的必备工具，类比于steam的游戏本地存档。如果你是一个程序员，却不知道git是什么，那就像
@@ -38,9 +41,9 @@ obsidian是什么？
 下载CCswitch，用于给claudecode配置deepseek的URL和token，模型映射为deepseekV4pro。
 
 
-打开claudecode发现可以正常提问和回答了，你问他是什么模型，他说自己是deepseek。
+打开claudecode发现可以正常提问和回答了，你问他是什么模型，他说自己是deepseek。（下面的部分LOGO是我加的插件，首次下载是没有的）
 ![](assets/基于Claude+Deepseek+Obsidian的本地知识库搭建/他说自己是deepseek.png)
-
+到这一步，你已经可以正常使用claudecode了。
 
 下载obsidian，
-obsidian的用法和markdown的简单语法我不教https://www.bilibili.com/video/BV1fZCyBYEuT/?spm_id_from=333.1391.0.0&vd_source=e72b23bd02efae338ff569492cafce55
+obsidian的用法和markdown的简单语法我不教
