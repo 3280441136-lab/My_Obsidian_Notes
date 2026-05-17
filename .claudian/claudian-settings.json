@@ -19,13 +19,14 @@
     "scrollDownKey": "s",
     "focusInputKey": "i"
   },
+  "requireCommandOrControlEnterToSend": false,
   "locale": "zh-CN",
   "providerConfigs": {
     "claude": {
       "safeMode": "acceptEdits",
       "cliPath": "",
       "cliPathsByHost": {
-        "Rui-Workstation": "C:\\Users\\DongXinRui\\AppData\\Roaming\\npm\\node_modules\\@anthropic-ai\\claude-code\\bin\\claude.exe"
+        "device:ff8b3812-9bda-44c3-9a4b-f742bb021307": "C:\\Users\\DongXinRui\\AppData\\Roaming\\npm\\node_modules\\@anthropic-ai\\claude-code\\bin\\claude.exe"
       },
       "loadUserSettings": true,
       "enableChrome": false,
@@ -47,7 +48,7 @@
       "environmentVariables": "",
       "environmentHash": "",
       "installationMethodsByHost": {
-        "Rui-Workstation": "native-windows"
+        "device:ff8b3812-9bda-44c3-9a4b-f742bb021307": "native-windows"
       },
       "wslDistroOverridesByHost": {}
     },
@@ -81,6 +82,7 @@
   "maxTabs": 3,
   "tabBarPosition": "input",
   "enableAutoScroll": true,
-  "openInMainTab": false,
+  "deferMathRenderingDuringStreaming": true,
+  "chatViewPlacement": "right-sidebar",
   "hiddenProviderCommands": {}
 }
