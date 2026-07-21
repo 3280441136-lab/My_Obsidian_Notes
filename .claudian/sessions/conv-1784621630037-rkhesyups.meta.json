@@ -4,7 +4,7 @@
   "title": "这是我的计划，很多地方我说的模棱两可，你帮我补充完全和美化我的计划书，如果有疑问就先询问我，不要猜我...",
   "titleGenerationStatus": "failed",
   "createdAt": 1784621630038,
-  "updatedAt": 1784623846587,
+  "updatedAt": 1784624126508,
   "lastResponseAt": 1784623846587,
   "sessionId": "019f83bd-05d7-79b0-9d67-73e102993a49",
   "selectedModel": "gpt-5.5",
@@ -14,7 +14,7 @@
     "transcriptRootPath": "C:\\Users\\DongXinRui\\.codex\\sessions",
     "workspaceDependencyToolVersion": 1
   },
-  "currentNote": "本次暑假计划：.md",
+  "currentNote": "暑假计划/本次暑假计划：.md",
   "usage": {
     "inputTokens": 37258,
     "cacheCreationInputTokens": 0,
