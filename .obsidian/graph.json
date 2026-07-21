@@ -3,42 +3,20 @@
   "search": "",
   "showTags": false,
   "showAttachments": false,
-  "hideUnresolved": false,
-  "showOrphans": false,
+  "hideUnresolved": true,
+  "showOrphans": true,
   "collapse-color-groups": false,
-  "colorGroups": [
-    {
-      "query": "tag:#软件  ",
-      "color": {
-        "a": 1,
-        "rgb": 4357119
-      }
-    },
-    {
-      "query": "tag:#硬件 ",
-      "color": {
-        "a": 1,
-        "rgb": 15753312
-      }
-    },
-    {
-      "query": "tag:#MCU底层  ",
-      "color": {
-        "a": 1,
-        "rgb": 11729188
-      }
-    }
-  ],
+  "colorGroups": [],
   "collapse-display": false,
-  "showArrow": false,
+  "showArrow": true,
   "textFadeMultiplier": 0,
-  "nodeSizeMultiplier": 1.58696426583547,
-  "lineSizeMultiplier": 1.47041448662288,
+  "nodeSizeMultiplier": 2.09843778989944,
+  "lineSizeMultiplier": 5,
   "collapse-forces": true,
   "centerStrength": 0.518713248970312,
   "repelStrength": 10,
   "linkStrength": 1,
   "linkDistance": 250,
-  "scale": 1,
-  "close": true
+  "scale": 1.8531659365444888,
+  "close": false
 }
