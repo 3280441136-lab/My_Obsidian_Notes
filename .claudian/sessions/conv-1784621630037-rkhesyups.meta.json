@@ -1,0 +1,28 @@
+{
+  "id": "conv-1784621630037-rkhesyups",
+  "providerId": "codex",
+  "title": "这是我的计划，很多地方我说的模棱两可，你帮我补充完全和美化我的计划书，如果有疑问就先询问我，不要猜我...",
+  "titleGenerationStatus": "failed",
+  "createdAt": 1784621630038,
+  "updatedAt": 1784623055126,
+  "lastResponseAt": 1784621789103,
+  "sessionId": "019f83bd-05d7-79b0-9d67-73e102993a49",
+  "selectedModel": "gpt-5.5",
+  "providerState": {
+    "threadId": "019f83bd-05d7-79b0-9d67-73e102993a49",
+    "sessionFilePath": "C:\\Users\\DongXinRui\\.codex\\sessions\\2026\\07\\21\\rollout-2026-07-21T16-13-50-019f83bd-05d7-79b0-9d67-73e102993a49.jsonl",
+    "transcriptRootPath": "C:\\Users\\DongXinRui\\.codex\\sessions",
+    "workspaceDependencyToolVersion": 1
+  },
+  "currentNote": "本次暑假计划：.md",
+  "usage": {
+    "inputTokens": 18662,
+    "cacheCreationInputTokens": 0,
+    "cacheReadInputTokens": 16768,
+    "contextWindow": 258400,
+    "contextWindowIsAuthoritative": true,
+    "contextTokens": 18662,
+    "percentage": 7,
+    "model": "gpt-5.5"
+  }
+}
