@@ -4,8 +4,8 @@
   "title": "我这里有我的暑假计划，安路FPGA学习脑图xmind，学习方法论收集，请你根据上述内容写出obisi...",
   "titleGenerationStatus": "failed",
   "createdAt": 1784682997548,
-  "updatedAt": 1784684863795,
-  "lastResponseAt": 1784684863795,
+  "updatedAt": 1784685680119,
+  "lastResponseAt": 1784685680119,
   "sessionId": "019f8765-6afe-7410-b6eb-c77afadc5227",
   "selectedModel": "gpt-5.5",
   "providerState": {
@@ -19,13 +19,13 @@
     "C:\\Users\\DongXinRui\\Downloads\\新建文件夹"
   ],
   "usage": {
-    "inputTokens": 85268,
+    "inputTokens": 104185,
     "cacheCreationInputTokens": 0,
     "cacheReadInputTokens": 84352,
     "contextWindow": 258400,
     "contextWindowIsAuthoritative": true,
-    "contextTokens": 85268,
-    "percentage": 33,
+    "contextTokens": 104185,
+    "percentage": 40,
     "model": "gpt-5.5"
   }
 }
