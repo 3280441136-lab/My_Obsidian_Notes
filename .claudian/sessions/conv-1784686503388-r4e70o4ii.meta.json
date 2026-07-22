@@ -4,7 +4,25 @@
   "title": "帮我润色",
   "titleGenerationStatus": "pending",
   "createdAt": 1784686503388,
-  "updatedAt": 1784686503395,
-  "sessionId": null,
-  "selectedModel": "gpt-5.5"
+  "updatedAt": 1784686585143,
+  "lastResponseAt": 1784686585143,
+  "sessionId": "019f879a-ea3b-7ed3-bb50-83774263232c",
+  "selectedModel": "gpt-5.5",
+  "providerState": {
+    "threadId": "019f879a-ea3b-7ed3-bb50-83774263232c",
+    "sessionFilePath": "C:\\Users\\DongXinRui\\.codex\\sessions\\2026\\07\\22\\rollout-2026-07-22T10-15-04-019f879a-ea3b-7ed3-bb50-83774263232c.jsonl",
+    "transcriptRootPath": "C:\\Users\\DongXinRui\\.codex\\sessions",
+    "workspaceDependencyToolVersion": 1
+  },
+  "currentNote": "很有意义的人生思考/你首先是一个成年人，才是一个大学生.md",
+  "usage": {
+    "inputTokens": 15705,
+    "cacheCreationInputTokens": 0,
+    "cacheReadInputTokens": 13696,
+    "contextWindow": 258400,
+    "contextWindowIsAuthoritative": true,
+    "contextTokens": 15705,
+    "percentage": 6,
+    "model": "gpt-5.5"
+  }
 }
