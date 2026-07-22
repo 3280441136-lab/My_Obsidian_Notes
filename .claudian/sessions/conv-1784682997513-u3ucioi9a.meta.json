@@ -2,9 +2,30 @@
   "id": "conv-1784682997513-u3ucioi9a",
   "providerId": "codex",
   "title": "我这里有我的暑假计划，安路FPGA学习脑图xmind，学习方法论收集，请你根据上述内容写出obisi...",
-  "titleGenerationStatus": "pending",
+  "titleGenerationStatus": "failed",
   "createdAt": 1784682997548,
-  "updatedAt": 1784682997583,
-  "sessionId": null,
-  "selectedModel": "gpt-5.5"
+  "updatedAt": 1784684561702,
+  "lastResponseAt": 1784684561702,
+  "sessionId": "019f8765-6afe-7410-b6eb-c77afadc5227",
+  "selectedModel": "gpt-5.5",
+  "providerState": {
+    "threadId": "019f8765-6afe-7410-b6eb-c77afadc5227",
+    "sessionFilePath": "C:\\Users\\DongXinRui\\.codex\\sessions\\2026\\07\\22\\rollout-2026-07-22T09-16-38-019f8765-6afe-7410-b6eb-c77afadc5227.jsonl",
+    "transcriptRootPath": "C:\\Users\\DongXinRui\\.codex\\sessions",
+    "workspaceDependencyToolVersion": 1
+  },
+  "currentNote": "学习方法论收集（待总结和筛选）.md",
+  "externalContextPaths": [
+    "C:\\Users\\DongXinRui\\Downloads\\新建文件夹"
+  ],
+  "usage": {
+    "inputTokens": 93086,
+    "cacheCreationInputTokens": 0,
+    "cacheReadInputTokens": 92544,
+    "contextWindow": 258400,
+    "contextWindowIsAuthoritative": true,
+    "contextTokens": 93086,
+    "percentage": 36,
+    "model": "gpt-5.5"
+  }
 }
