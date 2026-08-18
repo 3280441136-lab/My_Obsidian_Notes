@@ -302,17 +302,19 @@
   "settingsProvider": "claude",
   "lastSelectedChatModel": {
     "providerId": "codex",
-    "model": "gpt-5.5"
+    "model": "gpt-5.6-terra"
   },
   "savedProviderModel": {
     "claude": "sonnet",
-    "codex": "gpt-5.5"
+    "codex": "gpt-5.6-terra"
   },
   "savedProviderEffort": {
     "claude": "high",
-    "codex": "xhigh"
+    "codex": "high"
   },
-  "savedProviderServiceTier": {},
+  "savedProviderServiceTier": {
+    "codex": "default"
+  },
   "savedProviderThinkingBudget": {},
   "savedProviderPermissionMode": {
     "claude": "yolo",
