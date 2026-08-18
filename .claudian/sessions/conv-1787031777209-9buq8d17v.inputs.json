@@ -31,7 +31,8 @@
       "canonicalText": "原来的图片删除，提取其中内容，继续。",
       "images": [],
       "contentDigest": "65cd9838239685d8f6e0162468f340129d9da5da5ac9b56750baa1abc06fdced",
-      "providerUserMessageId": "01a01369-a2b8-72e0-a108-c3563c402c7f"
+      "providerUserMessageId": "01a01364-f63a-7d80-bf74-d98d7b9d6a05",
+      "providerAssistantMessageId": "01a01364-f63a-7d80-bf74-d98d7b9d6a05"
     },
     {
       "schemaVersion": 1,
@@ -61,7 +62,7 @@
         }
       ],
       "contentDigest": "1ac83175879e122ff1847986dfe3d234a4a28bb04e10ad22628ac5f12457516a",
-      "providerUserMessageId": "01a0136f-860e-73f2-b407-c6dffa474dcd",
+      "providerUserMessageId": "01a0136f-850d-7072-9dbe-f3fd05f761cd",
       "providerAssistantMessageId": "msg_0f16c3f986bb1dc1016a83f41453ac819886aaee78296d1aa9"
     }
   ]
