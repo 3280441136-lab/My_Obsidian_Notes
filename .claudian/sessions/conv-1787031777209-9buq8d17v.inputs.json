@@ -61,7 +61,8 @@
         }
       ],
       "contentDigest": "1ac83175879e122ff1847986dfe3d234a4a28bb04e10ad22628ac5f12457516a",
-      "providerUserMessageId": "01a0136f-860e-73f2-b407-c6dffa474dcd"
+      "providerUserMessageId": "01a0136f-860e-73f2-b407-c6dffa474dcd",
+      "providerAssistantMessageId": "msg_0f16c3f986bb1dc1016a83f41453ac819886aaee78296d1aa9"
     }
   ]
 }
