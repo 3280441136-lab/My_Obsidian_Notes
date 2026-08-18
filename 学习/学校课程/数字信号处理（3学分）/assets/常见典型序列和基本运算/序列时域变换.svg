@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="430" viewBox="0 0 1200 430" role="img" aria-labelledby="title desc">
+  <title id="title">离散序列的时域变换</title>
+  <desc id="desc">以一个不对称序列为例，展示原序列、延迟两点和关于原点翻转后的样点位置</desc>
+  <style>
+    .bg{fill:#f5f8fa}.panel{fill:#fff;stroke:#a8b3bd;stroke-width:2}.axis{stroke:#4b5965;stroke-width:2}.stem{stroke:#187c70;stroke-width:5;stroke-linecap:round}.dot{fill:#187c70}.head{font:700 25px Arial,sans-serif;fill:#17324d}.label{font:18px Arial,sans-serif;fill:#263746}.small{font:15px Arial,sans-serif;fill:#526372}.arrow{fill:none;stroke:#c84c36;stroke-width:3;marker-end:url(#arrowhead)}
+  </style>
+  <defs><marker id="arrowhead" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 Z" fill="#c84c36"/></marker></defs>
+  <rect class="bg" width="1200" height="430"/>
+  <text x="55" y="46" class="head">移位与翻转：先跟踪样点位置，再画出样值</text>
+  <g transform="translate(45 85)">
+    <rect class="panel" width="330" height="290" rx="8"/><text x="20" y="34" class="head" style="font-size:22px">原序列 x[n]</text>
+    <line class="axis" x1="35" y1="205" x2="300" y2="205"/><line class="axis" x1="165" y1="60" x2="165" y2="238"/>
+    <g class="stem"><line x1="85" y1="205" x2="85" y2="170"/><line x1="125" y1="205" x2="125" y2="105"/><line x1="165" y1="205" x2="165" y2="138"/><line x1="205" y1="205" x2="205" y2="72"/><line x1="245" y1="205" x2="245" y2="170"/></g>
+    <g class="dot"><circle cx="85" cy="170" r="6"/><circle cx="125" cy="105" r="6"/><circle cx="165" cy="138" r="6"/><circle cx="205" cy="72" r="6"/><circle cx="245" cy="170" r="6"/></g>
+    <text x="78" y="235" class="small">−2</text><text x="118" y="235" class="small">−1</text><text x="161" y="235" class="small">0</text><text x="201" y="235" class="small">1</text><text x="241" y="235" class="small">2</text><text x="303" y="209" class="label">n</text>
+  </g>
+  <path class="arrow" d="M390 210 C425 210,435 210,465 210"/><text x="394" y="190" class="label">延迟 2 点</text>
+  <g transform="translate(435 85)">
+    <rect class="panel" width="330" height="290" rx="8"/><text x="20" y="34" class="head" style="font-size:22px">y[n]=x[n−2]</text>
+    <line class="axis" x1="35" y1="205" x2="300" y2="205"/><line class="axis" x1="85" y1="60" x2="85" y2="238"/>
+    <g class="stem"><line x1="85" y1="205" x2="85" y2="170"/><line x1="125" y1="205" x2="125" y2="105"/><line x1="165" y1="205" x2="165" y2="138"/><line x1="205" y1="205" x2="205" y2="72"/><line x1="245" y1="205" x2="245" y2="170"/></g>
+    <g class="dot"><circle cx="85" cy="170" r="6"/><circle cx="125" cy="105" r="6"/><circle cx="165" cy="138" r="6"/><circle cx="205" cy="72" r="6"/><circle cx="245" cy="170" r="6"/></g>
+    <text x="81" y="235" class="small">0</text><text x="121" y="235" class="small">1</text><text x="161" y="235" class="small">2</text><text x="201" y="235" class="small">3</text><text x="241" y="235" class="small">4</text><text x="303" y="209" class="label">n</text>
+  </g>
+  <path class="arrow" d="M780 210 C815 210,825 210,855 210"/><text x="788" y="190" class="label">关于原点翻转</text>
+  <g transform="translate(825 85)">
+    <rect class="panel" width="330" height="290" rx="8"/><text x="20" y="34" class="head" style="font-size:22px">z[n]=x[−n]</text>
+    <line class="axis" x1="35" y1="205" x2="300" y2="205"/><line class="axis" x1="165" y1="60" x2="165" y2="238"/>
+    <g class="stem"><line x1="85" y1="205" x2="85" y2="170"/><line x1="125" y1="205" x2="125" y2="72"/><line x1="165" y1="205" x2="165" y2="138"/><line x1="205" y1="205" x2="205" y2="105"/><line x1="245" y1="205" x2="245" y2="170"/></g>
+    <g class="dot"><circle cx="85" cy="170" r="6"/><circle cx="125" cy="72" r="6"/><circle cx="165" cy="138" r="6"/><circle cx="205" cy="105" r="6"/><circle cx="245" cy="170" r="6"/></g>
+    <text x="78" y="235" class="small">−2</text><text x="118" y="235" class="small">−1</text><text x="161" y="235" class="small">0</text><text x="201" y="235" class="small">1</text><text x="241" y="235" class="small">2</text><text x="303" y="209" class="label">n</text>
+  </g>
+</svg>

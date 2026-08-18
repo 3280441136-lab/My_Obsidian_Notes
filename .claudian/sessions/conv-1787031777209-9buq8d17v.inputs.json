@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "conversationId": "conv-1787031777209-9buq8d17v",
+  "records": [
+    {
+      "schemaVersion": 1,
+      "id": "msg-1787031777789-gdhtog3",
+      "userTurnOrdinal": 1,
+      "state": "accepted",
+      "localMessageId": "msg-1787031777194-c88qmge",
+      "timestamp": 1787031777194,
+      "rawDisplayText": "这是我学习这一章节的笔记，你要重组，润色，细化，纠正，添加（非ASCII绘出）图像和公式。",
+      "canonicalText": "这是我学习这一章节的笔记，你要重组，润色，细化，纠正，添加（非ASCII绘出）图像和公式。",
+      "context": {
+        "currentNote": {
+          "path": "学习/学校课程/数字信号处理（3学分）/常见典型序列和基本运算.md"
+        }
+      },
+      "images": [],
+      "contentDigest": "e75367a0859821d2b08ffa8f03c6c6c442c2f4dc92dd0caceff5a56de7884525",
+      "providerUserMessageId": "01a01369-a2b8-72e0-a108-c3563c402c7f"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "msg-1787032028869-arjh4xy",
+      "userTurnOrdinal": 2,
+      "state": "accepted",
+      "timestamp": 1787032028869,
+      "rawDisplayText": "原来的图片删除，提取其中内容，继续。",
+      "canonicalText": "原来的图片删除，提取其中内容，继续。",
+      "images": [],
+      "contentDigest": "65cd9838239685d8f6e0162468f340129d9da5da5ac9b56750baa1abc06fdced",
+      "providerUserMessageId": "01a01369-a2b8-72e0-a108-c3563c402c7f"
+    }
+  ]
+}
