@@ -4,7 +4,7 @@
   "title": "这是我学习的一个章节内容，全文是我自己的理解和对课程的粗略总结，不一定正确，你要做的是遵循我原文意志...",
   "titleGenerationStatus": "pending",
   "createdAt": 1787395193517,
-  "lastActivityAt": 1787395193517,
+  "lastActivityAt": 1787395784996,
   "sessionId": "01a0290e-3cb6-75b1-9f42-8fb81968b685",
   "selectedModel": "gpt-5.6-terra",
   "providerState": {
@@ -14,5 +14,15 @@
     "transcriptRootPath": "C:\\Users\\DongXinRui\\.codex\\sessions",
     "workspaceDependencyToolVersion": 1
   },
-  "linkedContentPath": "学习/学校课程/数字信号处理（3学分）/序列的卷积和和卷积运算.md"
+  "linkedContentPath": "学习/学校课程/数字信号处理（3学分）/序列的卷积和和卷积运算.md",
+  "usage": {
+    "inputTokens": 48626,
+    "cacheCreationInputTokens": 0,
+    "cacheReadInputTokens": 47232,
+    "contextWindow": 258400,
+    "contextWindowIsAuthoritative": true,
+    "contextTokens": 48626,
+    "percentage": 19,
+    "model": "gpt-5.6-terra"
+  }
 }
