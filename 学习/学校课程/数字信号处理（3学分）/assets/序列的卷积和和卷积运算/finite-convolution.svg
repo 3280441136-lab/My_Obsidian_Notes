@@ -1,11 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1040" height="650" viewBox="0 0 1040 650" role="img" aria-labelledby="title desc">
-  <title id="title">School-style column calculation for finite convolution</title>
-  <desc id="desc">The four partial products are shifted one place at a time and added by columns to obtain 1, 2, 3, 4, 3, 2, 1.</desc>
+  <title id="title">&#x6709;&#x9650;&#x957f;&#x5e8f;&#x5217;&#x5377;&#x79ef;&#xff1a;&#x50cf;&#x5c0f;&#x5b66;&#x4e58;&#x6cd5;&#x4e00;&#x6837;&#x8ba1;&#x7b97;</title>
+  <desc id="desc">&#x6bcf;&#x4e00;&#x884c;&#x90fd;&#x662f;&#x53f3;&#x79fb;&#x540e;&#x7684;&#x90e8;&#x5206;&#x79ef;&#xff0c;&#x6700;&#x540e;&#x6309;&#x5217;&#x76f8;&#x52a0;&#x5f97;&#x5230; 1, 2, 3, 4, 3, 2, 1.</desc>
   <style>
-    .title { fill: #17324d; font: 700 28px Arial, sans-serif; }
-    .section { fill: #315a7d; font: 700 20px Arial, sans-serif; }
-    .label { fill: #243746; font: 18px Arial, sans-serif; }
-    .small { fill: #526575; font: 16px Arial, sans-serif; }
+    .title { fill: #17324d; font: 700 28px "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; }
+    .section { fill: #315a7d; font: 700 20px "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; }
+    .label { fill: #243746; font: 18px "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; }
+    .small { fill: #526575; font: 16px "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; }
     .value { fill: #172b3a; font: 700 22px Arial, sans-serif; text-anchor: middle; dominant-baseline: middle; }
     .sum { fill: #172b3a; font: 700 23px Arial, sans-serif; text-anchor: middle; dominant-baseline: middle; }
     .input { fill: #e6f0ff; stroke: #3776bd; stroke-width: 2; }
