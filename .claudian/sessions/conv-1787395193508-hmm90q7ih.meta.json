@@ -4,7 +4,7 @@
   "title": "这是我学习的一个章节内容，全文是我自己的理解和对课程的粗略总结，不一定正确，你要做的是遵循我原文意志...",
   "titleGenerationStatus": "failed",
   "createdAt": 1787395193517,
-  "lastActivityAt": 1787397073953,
+  "lastActivityAt": 1787397702227,
   "sessionId": "01a0290e-3cb6-75b1-9f42-8fb81968b685",
   "selectedModel": "gpt-5.6-terra",
   "providerState": {
@@ -16,13 +16,13 @@
   },
   "linkedContentPath": "学习/学校课程/数字信号处理（3学分）/序列的卷积和和卷积运算.md",
   "usage": {
-    "inputTokens": 59316,
+    "inputTokens": 80588,
     "cacheCreationInputTokens": 0,
-    "cacheReadInputTokens": 57984,
+    "cacheReadInputTokens": 77952,
     "contextWindow": 258400,
     "contextWindowIsAuthoritative": true,
-    "contextTokens": 59316,
-    "percentage": 23,
+    "contextTokens": 80588,
+    "percentage": 31,
     "model": "gpt-5.6-terra"
   }
 }
