@@ -41,7 +41,8 @@
         }
       ],
       "contentDigest": "bf0d4c99d2c72e77dccea3ae70cc40d49d9f93c1cd667d45beba2bf9dce04215",
-      "providerUserMessageId": "01a02921-4528-7513-9e59-64ad7fdae576"
+      "providerUserMessageId": "01a02921-4528-7513-9e59-64ad7fdae576",
+      "providerAssistantMessageId": "msg_0c7b3e4d17207b5e016a89825992b087d09fafd8896321dc49"
     }
   ]
 }
