@@ -90,6 +90,19 @@
       "contentDigest": "be8254fdf06f8d66c62c65c4b4ae2ae9abb1b727befa983184f17393806077c1",
       "providerUserMessageId": "01a0292a-ec64-7ed2-abfc-18b2113b341f",
       "providerAssistantMessageId": "msg_0c7b3e4d17207b5e016a8986408e2087d0b6eaafc44492e5e0"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "msg-1787398200382-fdkmuq6",
+      "userTurnOrdinal": 4,
+      "state": "accepted",
+      "localMessageId": "msg-1787398200378-qdolidf",
+      "timestamp": 1787398200378,
+      "rawDisplayText": "图解用中文啊，改进去啊",
+      "canonicalText": "图解用中文啊，改进去啊",
+      "images": [],
+      "contentDigest": "7e515a9bf322de920a20d60fa67efcc30ac3312b323386a8b2eb535f68df66a8",
+      "providerUserMessageId": "01a0293c-1cb8-72b0-a750-05dfee81e79a"
     }
   ]
 }
