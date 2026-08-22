@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 270" role="img" aria-label="Impulse identity and shift properties">
+  <style>
+    .axis { stroke: #263238; stroke-width: 2; }
+    .stem { stroke: #1565c0; stroke-width: 3; }
+    .stem2 { stroke: #ef6c00; stroke-width: 3; }
+    .dot { fill: #1565c0; }
+    .dot2 { fill: #ef6c00; }
+    .label { fill: #263238; font: 16px sans-serif; }
+    .math { fill: #102a43; font: italic 20px Georgia, serif; }
+    .title { fill: #102a43; font: 20px sans-serif; font-weight: 700; }
+  </style>
+  <text class="title" x="20" y="28">Unit impulse: identity and shift</text>
+  <text class="math" x="25" y="72">delta[n]</text>
+  <line class="axis" x1="145" y1="78" x2="700" y2="78"/>
+  <line class="stem2" x1="300" y1="78" x2="300" y2="35"/><circle class="dot2" cx="300" cy="35" r="6"/>
+  <text class="label" x="294" y="101">0</text>
+  <text class="math" x="25" y="137">x[n] * delta[n]</text>
+  <text class="math" x="350" y="137">= x[n]</text>
+  <text class="label" x="25" y="163">The only nonzero term is at m = 0.</text>
+  <line class="axis" x1="145" y1="205" x2="700" y2="205"/>
+  <line class="stem" x1="430" y1="205" x2="430" y2="160"/><circle class="dot" cx="430" cy="160" r="6"/>
+  <text class="label" x="418" y="228">n0</text>
+  <text class="math" x="25" y="253">x[n] * delta[n-n0] = x[n-n0]</text>
+</svg>

@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
-  "conversationId": "conv-1787394997483-ewzdygadk",
+  "conversationId": "conv-1787395193508-hmm90q7ih",
   "records": [
     {
       "schemaVersion": 1,
-      "id": "msg-1787395000225-5t9akxe",
+      "id": "msg-1787395193584-nlez099",
       "userTurnOrdinal": 1,
       "state": "accepted",
-      "localMessageId": "msg-1787394997471-4s9v2l2",
-      "timestamp": 1787394997471,
+      "localMessageId": "msg-1787395193504-n1113da",
+      "timestamp": 1787395193504,
       "rawDisplayText": "这是我学习的一个章节内容，全文是我自己的理解和对课程的粗略总结，不一定正确，你要做的是遵循我原文意志的前提下，对我的笔记进行合理润色，排版，书写公式和解释，对我缺少的内容进行补充，对我的错误的地方做修改，关于我有助于记忆的有趣理解要做保留和延申，笔记不要晦涩难懂，不用ASCII画图，而是用SVG绘图帮助理解，我的原图片不做保留，而是提取其中内容作为你的素材。",
       "canonicalText": "这是我学习的一个章节内容，全文是我自己的理解和对课程的粗略总结，不一定正确，你要做的是遵循我原文意志的前提下，对我的笔记进行合理润色，排版，书写公式和解释，对我缺少的内容进行补充，对我的错误的地方做修改，关于我有助于记忆的有趣理解要做保留和延申，笔记不要晦涩难懂，不用ASCII画图，而是用SVG绘图帮助理解，我的原图片不做保留，而是提取其中内容作为你的素材。",
       "context": {
@@ -18,7 +18,7 @@
       },
       "images": [],
       "contentDigest": "04df7a950799404688fdd6c26a2d05aa82928e4c06c4d6bfec9c700899fbe164",
-      "providerUserMessageId": "01a0290b-506e-78e0-bdf2-96d4aaa97dbf"
+      "providerUserMessageId": "01a0290e-448b-7df2-aa55-0b402328e878"
     }
   ]
 }

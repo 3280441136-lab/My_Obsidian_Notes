@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" role="img" aria-label="Discrete convolution flip shift overlap sum">
+  <style>
+    .axis { stroke: #263238; stroke-width: 2; }
+    .stem { stroke: #1565c0; stroke-width: 3; }
+    .stem2 { stroke: #ef6c00; stroke-width: 3; }
+    .dot { fill: #1565c0; }
+    .dot2 { fill: #ef6c00; }
+    .guide { stroke: #90a4ae; stroke-width: 1.5; stroke-dasharray: 5 5; }
+    .label { fill: #263238; font: 16px sans-serif; }
+    .math { fill: #102a43; font: italic 19px Georgia, serif; }
+    .title { fill: #102a43; font: 20px sans-serif; font-weight: 700; }
+  </style>
+  <text class="title" x="20" y="28">Flip, shift, overlap, and sum</text>
+  <text class="math" x="26" y="72">x[m]</text>
+  <line class="axis" x1="115" y1="78" x2="700" y2="78"/>
+  <line class="stem" x1="190" y1="78" x2="190" y2="38"/><circle class="dot" cx="190" cy="38" r="5"/>
+  <line class="stem" x1="270" y1="78" x2="270" y2="52"/><circle class="dot" cx="270" cy="52" r="5"/>
+  <line class="stem" x1="350" y1="78" x2="350" y2="28"/><circle class="dot" cx="350" cy="28" r="5"/>
+  <line class="stem" x1="430" y1="78" x2="430" y2="60"/><circle class="dot" cx="430" cy="60" r="5"/>
+  <text class="label" x="184" y="101">0</text><text class="label" x="264" y="101">1</text><text class="label" x="344" y="101">2</text><text class="label" x="424" y="101">3</text>
+  <text class="math" x="26" y="143">h[n-m]</text>
+  <line class="axis" x1="115" y1="150" x2="700" y2="150"/>
+  <line class="stem2" x1="270" y1="150" x2="270" y2="108"/><circle class="dot2" cx="270" cy="108" r="5"/>
+  <line class="stem2" x1="350" y1="150" x2="350" y2="122"/><circle class="dot2" cx="350" cy="122" r="5"/>
+  <line class="stem2" x1="430" y1="150" x2="430" y2="98"/><circle class="dot2" cx="430" cy="98" r="5"/>
+  <line class="stem2" x1="510" y1="150" x2="510" y2="132"/><circle class="dot2" cx="510" cy="132" r="5"/>
+  <text class="label" x="264" y="173">0</text><text class="label" x="344" y="173">1</text><text class="label" x="424" y="173">2</text><text class="label" x="504" y="173">3</text>
+  <line class="guide" x1="270" y1="108" x2="270" y2="78"/><line class="guide" x1="350" y1="122" x2="350" y2="78"/><line class="guide" x1="430" y1="98" x2="430" y2="78"/>
+  <text class="label" x="575" y="130">at a fixed n</text>
+  <text class="math" x="26" y="214">y[n] = sum of products</text>
+  <line class="axis" x1="115" y1="232" x2="700" y2="232"/>
+  <line class="stem2" x1="270" y1="232" x2="270" y2="198"/><circle class="dot2" cx="270" cy="198" r="4"/>
+  <line class="stem2" x1="350" y1="232" x2="350" y2="188"/><circle class="dot2" cx="350" cy="188" r="4"/>
+  <line class="stem2" x1="430" y1="232" x2="430" y2="205"/><circle class="dot2" cx="430" cy="205" r="4"/>
+  <text class="label" x="150" y="270">Each overlap contributes x[m] h[n-m]; add all contributions.</text>
+</svg>
