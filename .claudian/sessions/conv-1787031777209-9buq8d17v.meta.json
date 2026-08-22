@@ -15,6 +15,8 @@
     "workspaceDependencyToolVersion": 1
   },
   "linkedContentPath": "学习/学校课程/数字信号处理（3学分）/常见典型序列和基本运算.md",
+  "isPinned": false,
+  "isArchived": true,
   "usage": {
     "inputTokens": 58576,
     "cacheCreationInputTokens": 0,
