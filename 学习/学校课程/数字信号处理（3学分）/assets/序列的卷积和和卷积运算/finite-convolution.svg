@@ -23,9 +23,9 @@
   </defs>
 
   <rect x="0" y="0" width="1040" height="650" fill="#fbfcfe"/>
-  <text class="title" x="34" y="42">Finite convolution: school-style column calculation</text>
+  <text class="title" x="34" y="42">&#x6709;&#x9650;&#x957f;&#x5e8f;&#x5217;&#x5377;&#x79ef;&#xff1a;&#x50cf;&#x5c0f;&#x5b66;&#x4e58;&#x6cd5;&#x4e00;&#x6837;&#x8ba1;&#x7b97;</text>
 
-  <text class="section" x="34" y="86">1. Write the two sequences</text>
+  <text class="section" x="34" y="86">1. &#x5199;&#x51fa;&#x4e24;&#x4e2a;&#x8f93;&#x5165;&#x5e8f;&#x5217;</text>
   <text class="label" x="75" y="128">x[n]</text>
   <g transform="translate(180,101)">
     <rect class="input" x="0" y="0" width="75" height="48"/><rect class="input" x="75" y="0" width="75" height="48"/><rect class="input" x="150" y="0" width="75" height="48"/><rect class="input" x="225" y="0" width="75" height="48"/>
@@ -39,12 +39,12 @@
     <text class="small" x="32" y="70">0</text><text class="small" x="107" y="70">1</text><text class="small" x="182" y="70">2</text><text class="small" x="257" y="70">3</text>
   </g>
   <path class="arrow" d="M 540 175 L 725 175"/>
-  <text class="small" x="545" y="150">Each next row shifts right</text>
-  <text class="small" x="545" y="205">Then add by columns</text>
+  <text class="small" x="545" y="150">&#x6bcf;&#x4e00;&#x884c;&#x5411;&#x53f3;&#x79fb;&#x4e00;&#x4f4d;</text>
+  <text class="small" x="545" y="205">&#x7136;&#x540e;&#x6309;&#x5217;&#x76f8;&#x52a0;</text>
 
   <line class="line" x1="45" y1="286" x2="995" y2="286"/>
-  <text class="section" x="34" y="325">2. Write the shifted partial products</text>
-  <text class="small" x="760" y="325">All products are 1 * 1 = 1</text>
+  <text class="section" x="34" y="325">2. &#x5199;&#x51fa;&#x53f3;&#x79fb;&#x540e;&#x7684;&#x90e8;&#x5206;&#x79ef;</text>
+  <text class="small" x="760" y="325">&#x6240;&#x6709;&#x4e58;&#x79ef;&#x5747;&#x4e3a; 1 * 1 = 1</text>
 
   <g>
     <line class="guide" x1="180" y1="340" x2="180" y2="590"/><line class="guide" x1="255" y1="340" x2="255" y2="590"/><line class="guide" x1="330" y1="340" x2="330" y2="590"/><line class="guide" x1="405" y1="340" x2="405" y2="590"/><line class="guide" x1="480" y1="340" x2="480" y2="590"/><line class="guide" x1="555" y1="340" x2="555" y2="590"/><line class="guide" x1="630" y1="340" x2="630" y2="590"/><line class="guide" x1="705" y1="340" x2="705" y2="590"/>
@@ -67,11 +67,11 @@
   </g>
 
   <line class="line" x1="180" y1="550" x2="705" y2="550"/>
-  <text class="section" x="34" y="590">3. Add each column</text>
+  <text class="section" x="34" y="590">3. &#x6309;&#x5217;&#x76f8;&#x52a0;</text>
   <g transform="translate(180,565)">
     <rect class="result" x="0" y="0" width="75" height="48"/><rect class="result" x="75" y="0" width="75" height="48"/><rect class="result" x="150" y="0" width="75" height="48"/><rect class="result" x="225" y="0" width="75" height="48"/><rect class="result" x="300" y="0" width="75" height="48"/><rect class="result" x="375" y="0" width="75" height="48"/><rect class="result" x="450" y="0" width="75" height="48"/>
     <text class="sum" x="37.5" y="24">1</text><text class="sum" x="112.5" y="24">2</text><text class="sum" x="187.5" y="24">3</text><text class="sum" x="262.5" y="24">4</text><text class="sum" x="337.5" y="24">3</text><text class="sum" x="412.5" y="24">2</text><text class="sum" x="487.5" y="24">1</text>
   </g>
-  <text class="small" x="760" y="590">y[n] = {1, 2, 3, 4, 3, 2, 1}</text>
-  <text class="small" x="760" y="615">length = 4 + 4 - 1 = 7</text>
+  <text class="small" x="760" y="590">&#x8f93;&#x51fa;&#xff1a; y[n] = {1, 2, 3, 4, 3, 2, 1}</text>
+  <text class="small" x="760" y="615">&#x957f;&#x5ea6; = 4 + 4 - 1 = 7</text>
 </svg>

@@ -6,12 +6,12 @@
     .dot { fill: #2f80d0; }
     .dot2 { fill: #e8892f; }
     .guide { stroke: #9aabb8; stroke-width: 1.5; stroke-dasharray: 5 5; }
-    .label { fill: #263b50; font: 16px sans-serif; }
+    .label { fill: #263b50; font: 16px "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; }
     .math { fill: #1d4770; font: italic 19px Georgia, serif; }
-    .title { fill: #1d4770; font: 20px sans-serif; font-weight: 700; }
+    .title { fill: #1d4770; font: 20px "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; font-weight: 700; }
   </style>
   <rect x="0" y="0" width="760" height="300" fill="#fbfcfe"/>
-  <text class="title" x="20" y="28">Flip, shift, overlap, and sum</text>
+  <text class="title" x="20" y="28">&#x79bb;&#x6563;&#x5377;&#x79ef;&#xff1a;&#x7ffb;&#x8f6c;&#x3001;&#x5e73;&#x79fb;&#x3001;&#x91cd;&#x53e0;&#x3001;&#x6c42;&#x548c;</text>
   <text class="math" x="26" y="72">x[m]</text>
   <line class="axis" x1="115" y1="78" x2="700" y2="78"/>
   <line class="stem" x1="190" y1="78" x2="190" y2="38"/><circle class="dot" cx="190" cy="38" r="5"/>
@@ -27,11 +27,11 @@
   <line class="stem2" x1="510" y1="150" x2="510" y2="132"/><circle class="dot2" cx="510" cy="132" r="5"/>
   <text class="label" x="264" y="173">0</text><text class="label" x="344" y="173">1</text><text class="label" x="424" y="173">2</text><text class="label" x="504" y="173">3</text>
   <line class="guide" x1="270" y1="108" x2="270" y2="78"/><line class="guide" x1="350" y1="122" x2="350" y2="78"/><line class="guide" x1="430" y1="98" x2="430" y2="78"/>
-  <text class="label" x="575" y="130">at a fixed n</text>
-  <text class="math" x="26" y="214">y[n] = sum of products</text>
+  <text class="label" x="575" y="130">&#x56fa;&#x5b9a; n &#x65f6;</text>
+  <text class="math" x="26" y="214">y[n] = &#x4ea7;&#x751f;&#x7684;&#x5404;&#x9879;&#x4e58;&#x79ef;&#x4e4b;&#x548c;</text>
   <line class="axis" x1="115" y1="232" x2="700" y2="232"/>
   <line class="stem2" x1="270" y1="232" x2="270" y2="198"/><circle class="dot2" cx="270" cy="198" r="4"/>
   <line class="stem2" x1="350" y1="232" x2="350" y2="188"/><circle class="dot2" cx="350" cy="188" r="4"/>
   <line class="stem2" x1="430" y1="232" x2="430" y2="205"/><circle class="dot2" cx="430" cy="205" r="4"/>
-  <text class="label" x="150" y="270">Each overlap contributes x[m] h[n-m]; add all contributions.</text>
+  <text class="label" x="150" y="270">&#x91cd;&#x53e0;&#x90e8;&#x5206;&#x4ea7;&#x751f; x[m] h[n-m]&#xff0c;&#x518d;&#x628a;&#x6240;&#x6709;&#x9879;&#x76f8;&#x52a0;</text>
 </svg>
