@@ -1,15 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" role="img" aria-label="Discrete convolution flip shift overlap sum">
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="300" viewBox="0 0 760 300" role="img" aria-label="Discrete convolution flip shift overlap sum">
   <style>
-    .axis { stroke: #263238; stroke-width: 2; }
-    .stem { stroke: #1565c0; stroke-width: 3; }
-    .stem2 { stroke: #ef6c00; stroke-width: 3; }
-    .dot { fill: #1565c0; }
-    .dot2 { fill: #ef6c00; }
-    .guide { stroke: #90a4ae; stroke-width: 1.5; stroke-dasharray: 5 5; }
-    .label { fill: #263238; font: 16px sans-serif; }
-    .math { fill: #102a43; font: italic 19px Georgia, serif; }
-    .title { fill: #102a43; font: 20px sans-serif; font-weight: 700; }
+    .axis { stroke: #718096; stroke-width: 2; }
+    .stem { stroke: #2f80d0; stroke-width: 3; }
+    .stem2 { stroke: #e8892f; stroke-width: 3; }
+    .dot { fill: #2f80d0; }
+    .dot2 { fill: #e8892f; }
+    .guide { stroke: #9aabb8; stroke-width: 1.5; stroke-dasharray: 5 5; }
+    .label { fill: #263b50; font: 16px sans-serif; }
+    .math { fill: #1d4770; font: italic 19px Georgia, serif; }
+    .title { fill: #1d4770; font: 20px sans-serif; font-weight: 700; }
   </style>
+  <rect x="0" y="0" width="760" height="300" fill="#fbfcfe"/>
   <text class="title" x="20" y="28">Flip, shift, overlap, and sum</text>
   <text class="math" x="26" y="72">x[m]</text>
   <line class="axis" x1="115" y1="78" x2="700" y2="78"/>
