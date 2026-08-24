@@ -88,7 +88,7 @@
         }
       ],
       "contentDigest": "be8254fdf06f8d66c62c65c4b4ae2ae9abb1b727befa983184f17393806077c1",
-      "providerUserMessageId": "01a0292a-ec64-7ed2-abfc-18b2113b341f",
+      "providerUserMessageId": "01a0292a-ec39-73c1-86ee-e4ff180d9d4a",
       "providerAssistantMessageId": "msg_0c7b3e4d17207b5e016a8986408e2087d0b6eaafc44492e5e0"
     },
     {
@@ -102,7 +102,7 @@
       "canonicalText": "图解用中文啊，改进去啊",
       "images": [],
       "contentDigest": "7e515a9bf322de920a20d60fa67efcc30ac3312b323386a8b2eb535f68df66a8",
-      "providerUserMessageId": "01a0293c-1cb8-72b0-a750-05dfee81e79a",
+      "providerUserMessageId": "01a0293c-1c4b-7b01-8f07-5654b8a46243",
       "providerAssistantMessageId": "msg_0c7b3e4d17207b5e016a8989ae85ac87d0ac73a99ac67d3005"
     },
     {
@@ -116,7 +116,7 @@
       "canonicalText": "仓库agent.md里面有什么",
       "images": [],
       "contentDigest": "1c835b2859ab5ddc6002d85190464f92cd25adbcab6cda27af86620dd439f6aa",
-      "providerUserMessageId": "01a02942-4209-7dc3-bf2e-df6ee0d1ab2e",
+      "providerUserMessageId": "01a02942-41ed-7490-a21f-2dc01b147c82",
       "providerAssistantMessageId": "msg_0c7b3e4d17207b5e016a8989e6577487d0834ee92dc48d67e4"
     }
   ]
