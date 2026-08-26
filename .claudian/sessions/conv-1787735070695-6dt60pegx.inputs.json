@@ -32,6 +32,20 @@
       "contentDigest": "6773d8bb2cd8bd08c8a6bacf243e3652c2d92f25dd7c59601e1f2de2d4c11455",
       "providerUserMessageId": "01a03d50-6c1f-7912-b200-d3c280985ff6",
       "providerAssistantMessageId": "msg_021dfc8de7b5aa78016a8eac33fc4c87d099d6982f2a0be8b8"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "msg-1787735116112-1bjv20i",
+      "userTurnOrdinal": 2,
+      "state": "accepted",
+      "localMessageId": "msg-1787735116106-hmf2nn8",
+      "timestamp": 1787735116106,
+      "rawDisplayText": "帮我改",
+      "canonicalText": "帮我改",
+      "images": [],
+      "contentDigest": "ebec10001a0eb0981f7291f5be9168b71d9ac3547318c6e151e18d173690df1b",
+      "providerUserMessageId": "01a03d51-09bb-7dc3-aaa2-5669b404b987",
+      "providerAssistantMessageId": "msg_021dfc8de7b5aa78016a8eaccdc29887d0ae1b978487f7b058"
     }
   ]
 }
