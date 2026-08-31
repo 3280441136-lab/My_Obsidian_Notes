@@ -3,5 +3,6 @@
   "obsidian-custom-attachment-location",
   "obsidian-enhancing-export",
   "obsidian-git",
-  "obsidian-markmind"
+  "obsidian-markmind",
+  "convert-katex-to-mathjax"
 ]
