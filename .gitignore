@@ -1,2 +1,5 @@
 .obsidian/workspace.json
 .obsidian/workspace-mobile.json
+
+# Keep large reference files local to this vault.
+*.pdf

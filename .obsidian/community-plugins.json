@@ -4,5 +4,7 @@
   "obsidian-enhancing-export",
   "obsidian-git",
   "obsidian-markmind",
-  "convert-katex-to-mathjax"
+  "convert-katex-to-mathjax",
+  "advanced-rename-and-delete-handler",
+  "freedraw-pdf"
 ]
