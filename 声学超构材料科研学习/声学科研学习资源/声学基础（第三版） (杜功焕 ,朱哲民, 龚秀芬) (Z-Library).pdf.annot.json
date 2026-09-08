@@ -9,7 +9,7 @@
     "ctime": 1788592296563,
     "mtime": 1788537872876
   },
-  "updatedAt": "2026-09-08T03:57:53.103Z",
+  "updatedAt": "2026-09-08T03:58:44.891Z",
   "strokes": [
     {
       "id": "stroke-1788710720503-cm7xgxzo",
@@ -93729,13 +93729,13 @@
     {
       "id": "text-1788839865553-zp7kcgtx",
       "page": 31,
-      "text": "重要结论Qm与",
-      "x": 0.452323717948718,
-      "y": 0.5217065614842905,
+      "text": "重要结论：Qm与位移，速度，加速度共振特性的关系",
+      "x": 0.4427083333333335,
+      "y": 0.5222482732936079,
       "color": "#55b4ff",
-      "fontSize": 40,
+      "fontSize": 30,
       "fontFamily": "Segoe UI",
-      "fontScale": 0.026246719160104987,
+      "fontScale": 0.01968503937007874,
       "fontWeight": "normal",
       "fontStyle": "normal",
       "textAlign": "left",
@@ -93744,7 +93744,7 @@
       "wordWrap": true,
       "autoFit": false,
       "manualBoxSize": true,
-      "boxWidthScale": 0.4551282051282051,
+      "boxWidthScale": 0.4827724358974359,
       "boxHeightScale": 0.047907638136511374,
       "zIndex": 257,
       "createdAt": "2026-09-08T03:57:45.553Z"
