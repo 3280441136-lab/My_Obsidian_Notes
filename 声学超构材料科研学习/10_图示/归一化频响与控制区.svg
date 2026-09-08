@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">归一化频响和质量、弹性、力阻控制区</title>
+  <desc id="desc">上方展示不同品质因数下的共振曲线，下方展示低频弹性控制、中频力阻控制和高频质量控制的近似关系。</desc>
+  <rect width="1200" height="680" fill="#ffffff"/>
+  <style>
+    .title { font: 700 27px 'Microsoft YaHei', sans-serif; fill: #172033; }
+    .label { font: 500 20px 'Microsoft YaHei', sans-serif; fill: #243047; }
+    .small { font: 500 16px 'Microsoft YaHei', sans-serif; fill: #41526b; }
+    .axis { stroke: #5e6b7e; stroke-width: 2; fill: none; }
+    .guide { stroke: #8da0b7; stroke-width: 2; stroke-dasharray: 8 7; fill: none; }
+  </style>
+  <text x="60" y="55" class="title">归一化频响：品质因数决定峰的高度和宽度</text>
+  <line x1="60" y1="75" x2="1140" y2="75" stroke="#cbd5e1" stroke-width="2"/>
+
+  <g transform="translate(95 105)">
+    <text x="0" y="20" class="label">速度归一化振幅 B</text>
+    <line x1="40" y1="260" x2="940" y2="260" class="axis"/>
+    <line x1="40" y1="45" x2="40" y2="260" class="axis"/>
+    <line x1="470" y1="45" x2="470" y2="260" class="guide"/>
+    <text x="453" y="288" class="small">z=1</text>
+    <text x="885" y="288" class="small">z=f/f₀</text>
+    <path d="M40 258 C155 256 300 249 390 210 C440 187 455 145 470 117 C486 145 505 187 550 210 C650 249 790 256 920 258" stroke="#176f9f" stroke-width="5" fill="none"/>
+    <path d="M40 258 C170 254 330 240 420 151 C447 119 459 71 470 57 C482 71 495 119 520 151 C610 240 770 254 920 258" stroke="#d64a3b" stroke-width="5" fill="none"/>
+    <path d="M40 258 C230 256 380 240 446 96 C459 62 465 25 470 15 C476 25 482 62 494 96 C560 240 710 256 920 258" stroke="#5b3f9b" stroke-width="5" fill="none"/>
+    <text x="585" y="116" class="small" fill="#5b3f9b">较大 Q：更高、更尖</text>
+    <text x="585" y="145" class="small" fill="#d64a3b">中等 Q</text>
+    <text x="585" y="174" class="small" fill="#176f9f">较小 Q：更低、更宽</text>
+  </g>
+
+  <g transform="translate(70 440)">
+    <rect x="0" y="0" width="345" height="180" rx="6" fill="#e8f3ee" stroke="#6f9f84" stroke-width="2"/>
+    <text x="20" y="38" class="label">低频：弹性控制</text>
+    <text x="20" y="72" class="small">K/ω 占主导</text>
+    <text x="20" y="104" class="small">ξₐ≈Fₐ/K</text>
+    <text x="20" y="132" class="small">vₐ∝ω，aₐ∝ω²</text>
+    <text x="20" y="160" class="small">像“很硬的弹簧”限制位移</text>
+  </g>
+  <g transform="translate(428 440)">
+    <rect x="0" y="0" width="345" height="180" rx="6" fill="#fff0df" stroke="#c68a45" stroke-width="2"/>
+    <text x="20" y="38" class="label">中频：力阻控制</text>
+    <text x="20" y="72" class="small">R 占主导</text>
+    <text x="20" y="104" class="small">vₐ≈Fₐ/R</text>
+    <text x="20" y="132" class="small">ξₐ∝1/ω，aₐ∝ω</text>
+    <text x="20" y="160" class="small">外力先决定速度大小</text>
+  </g>
+  <g transform="translate(786 440)">
+    <rect x="0" y="0" width="345" height="180" rx="6" fill="#eaf0fa" stroke="#6688b8" stroke-width="2"/>
+    <text x="20" y="38" class="label">高频：质量控制</text>
+    <text x="20" y="72" class="small">ωM 占主导</text>
+    <text x="20" y="104" class="small">aₐ≈Fₐ/M</text>
+    <text x="20" y="132" class="small">ξₐ∝1/ω²，vₐ∝1/ω</text>
+    <text x="20" y="160" class="small">像“很重的质量”抗拒加速</text>
+  </g>
+</svg>

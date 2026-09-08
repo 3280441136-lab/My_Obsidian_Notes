@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 1200 620" role="img" aria-labelledby="title desc">
+  <title id="title">衰减振动和强迫振动中的瞬态与稳态</title>
+  <desc id="desc">左侧展示衰减振动的指数包络，右侧展示强迫振动由瞬态响应叠加到稳态响应。</desc>
+  <rect width="1200" height="620" fill="#ffffff"/>
+  <style>
+    .title { font: 700 27px 'Microsoft YaHei', sans-serif; fill: #172033; }
+    .label { font: 500 20px 'Microsoft YaHei', sans-serif; fill: #243047; }
+    .small { font: 500 17px 'Microsoft YaHei', sans-serif; fill: #41526b; }
+    .axis { stroke: #5e6b7e; stroke-width: 2; fill: none; }
+    .guide { stroke: #9eafc2; stroke-width: 2; stroke-dasharray: 8 7; fill: none; }
+  </style>
+  <text x="60" y="55" class="title">从自由衰减到强迫稳态：总响应由两部分组成</text>
+  <line x1="60" y1="75" x2="1140" y2="75" stroke="#cbd5e1" stroke-width="2"/>
+
+  <g transform="translate(65 110)">
+    <text x="0" y="25" class="label">自由衰减振动</text>
+    <text x="0" y="54" class="small">振幅包络为 ξ₀e^(−δt)</text>
+    <line x1="30" y1="230" x2="485" y2="230" class="axis"/>
+    <line x1="30" y1="80" x2="30" y2="380" class="axis"/>
+    <path d="M30 103 C130 125 255 174 465 215" stroke="#5b3f9b" stroke-width="3" fill="none" stroke-dasharray="9 7"/>
+    <path d="M30 357 C130 335 255 286 465 245" stroke="#5b3f9b" stroke-width="3" fill="none" stroke-dasharray="9 7"/>
+    <path d="M30 230 C48 98 66 97 84 229 S120 336 138 230 S174 149 192 230 S228 294 246 230 S282 180 300 230 S336 270 354 230 S390 197 408 230 S444 258 462 230" stroke="#176f9f" stroke-width="5" fill="none"/>
+    <text x="310" y="138" class="small" fill="#5b3f9b">指数包络</text>
+    <text x="352" y="410" class="small">时间 t</text>
+  </g>
+
+  <g transform="translate(620 110)">
+    <text x="0" y="25" class="label">有阻尼的强迫振动</text>
+    <text x="0" y="54" class="small">瞬态解逐渐消失，最后只留下与外力同频的稳态解。</text>
+    <line x1="30" y1="230" x2="500" y2="230" class="axis"/>
+    <line x1="30" y1="80" x2="30" y2="380" class="axis"/>
+    <path d="M30 230 C54 108 78 122 102 246 S150 336 174 198 S222 140 246 247 S294 280 318 211 S366 189 390 243 S438 258 462 220 S480 214 494 230" stroke="#d64a3b" stroke-width="5" fill="none"/>
+    <path d="M30 230 C58 264 86 278 114 230 S170 182 198 230 S254 278 282 230 S338 182 366 230 S422 278 450 230 S478 182 494 210" stroke="#b9c5d5" stroke-width="3" fill="none" stroke-dasharray="8 7"/>
+    <path d="M320 230 C344 182 368 182 392 230 S440 278 464 230 S488 190 500 212" stroke="#176f9f" stroke-width="5" fill="none"/>
+    <text x="48" y="108" class="small" fill="#d64a3b">总响应</text>
+    <text x="70" y="348" class="small">瞬态贡献</text>
+    <text x="350" y="165" class="small" fill="#176f9f">稳态响应</text>
+    <text x="350" y="410" class="small">时间 t</text>
+    <text x="0" y="475" class="label">ξ(t)=ξₜ(t)+ξₛ(t)</text>
+    <text x="0" y="510" class="small">初始条件决定 ξₜ；外力频率、阻尼、质量和刚度决定 ξₛ。</text>
+  </g>
+</svg>

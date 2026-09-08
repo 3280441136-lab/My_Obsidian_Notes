@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 1200 620" role="img" aria-labelledby="title desc">
+  <title id="title">质量、弹簧、阻尼器模型及简谐振动的相位关系</title>
+  <desc id="desc">左侧是质量弹簧阻尼器模型，右侧是位移、速度、加速度之间的相位关系。</desc>
+  <rect width="1200" height="620" fill="#ffffff"/>
+  <style>
+    .title { font: 700 28px 'Microsoft YaHei', sans-serif; fill: #172033; }
+    .label { font: 500 21px 'Microsoft YaHei', sans-serif; fill: #243047; }
+    .small { font: 500 18px 'Microsoft YaHei', sans-serif; fill: #41526b; }
+    .axis { stroke: #5e6b7e; stroke-width: 2; fill: none; }
+    .ink { stroke: #172033; stroke-width: 4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .guide { stroke: #a9b6c8; stroke-width: 1.5; stroke-dasharray: 7 7; fill: none; }
+  </style>
+  <text x="60" y="55" class="title">单自由度质量-弹簧-阻尼器：三个物理角色</text>
+  <line x1="60" y1="75" x2="1140" y2="75" stroke="#cbd5e1" stroke-width="2"/>
+
+  <g transform="translate(85 120)">
+    <line x1="15" y1="18" x2="355" y2="18" stroke="#172033" stroke-width="10"/>
+    <path d="M185 20 L185 54 L165 72 L205 90 L165 108 L205 126 L165 144 L205 162 L185 180" class="ink"/>
+    <line x1="185" y1="180" x2="185" y2="198" class="ink"/>
+    <rect x="135" y="198" width="100" height="80" rx="3" fill="#b8d9ee" stroke="#172033" stroke-width="4"/>
+    <text x="167" y="245" class="label">M</text>
+    <line x1="110" y1="165" x2="110" y2="225" class="ink"/>
+    <line x1="95" y1="165" x2="125" y2="165" class="ink"/>
+    <rect x="98" y="225" width="24" height="31" fill="#f3b76a" stroke="#172033" stroke-width="3"/>
+    <line x1="110" y1="256" x2="110" y2="315" class="ink"/>
+    <line x1="82" y1="315" x2="138" y2="315" class="ink"/>
+    <text x="222" y="122" class="label">K：回复作用</text>
+    <text x="25" y="360" class="label">R：耗散作用</text>
+    <text x="270" y="245" class="label">F(t)：外部驱动</text>
+    <path d="M290 260 L250 260" stroke="#d64a3b" stroke-width="5" fill="none" marker-end="url(#arrow)"/>
+    <text x="138" y="405" class="small">系统状态：位移 ξ，速度 v，
+      加速度 a</text>
+  </g>
+
+  <g transform="translate(520 105)">
+    <text x="0" y="25" class="title" font-size="24">同一简谐运动的三个量</text>
+    <text x="0" y="58" class="small">对 ξ(t)=ξₐcos(ωt−θ)，微分一次得到速度，二次得到加速度。</text>
+    <line x1="0" y1="145" x2="600" y2="145" class="axis"/>
+    <line x1="0" y1="260" x2="600" y2="260" class="axis"/>
+    <line x1="0" y1="375" x2="600" y2="375" class="axis"/>
+    <line x1="118" y1="92" x2="118" y2="420" class="guide"/>
+    <line x1="275" y1="92" x2="275" y2="420" class="guide"/>
+    <line x1="432" y1="92" x2="432" y2="420" class="guide"/>
+    <path d="M0 145 C39 72 79 72 118 145 S197 218 236 145 S315 72 354 145 S433 218 472 145 S551 72 590 145" stroke="#176f9f" stroke-width="5" fill="none"/>
+    <path d="M0 260 C39 260 79 187 118 187 S197 260 236 260 S315 333 354 333 S433 260 472 260 S551 187 590 187" stroke="#d64a3b" stroke-width="5" fill="none"/>
+    <path d="M0 375 C39 448 79 448 118 375 S197 302 236 375 S315 448 354 375 S433 302 472 375 S551 448 590 375" stroke="#5b3f9b" stroke-width="5" fill="none"/>
+    <text x="8" y="113" class="label" fill="#176f9f">位移 ξ</text>
+    <text x="8" y="228" class="label" fill="#d64a3b">速度 v</text>
+    <text x="8" y="343" class="label" fill="#5b3f9b">加速度 a</text>
+    <text x="85" y="463" class="small">速度比位移超前 π/2</text>
+    <text x="354" y="463" class="small">加速度与位移反相</text>
+    <text x="515" y="408" class="small">时间 t</text>
+  </g>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0 0 L10 5 L0 10 Z" fill="#d64a3b"/>
+    </marker>
+  </defs>
+</svg>
