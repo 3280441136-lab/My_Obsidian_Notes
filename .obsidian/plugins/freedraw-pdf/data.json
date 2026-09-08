@@ -1,19 +1,19 @@
 {
   "pressureCaptureVersion": 1,
   "toolDefaults": {
-    "activeTool": "pen",
-    "activeColor": "#ff6b57",
+    "activeTool": "select",
+    "activeColor": "#55b4ff",
     "activeOpacity": 0.96,
     "eraserMode": "segment",
     "selectionMode": "single",
-    "selectedPresetId": "pen-slot-1",
+    "selectedPresetId": "pen-slot-2",
     "selectedPresetIds": {
-      "pen": "pen-slot-1",
+      "pen": "pen-slot-2",
       "highlighter": "highlight-slot-1",
       "eraser": "eraser-slot-3"
     },
     "widths": {
-      "pen": 6,
+      "pen": 5,
       "highlighter": 12,
       "eraser": 30
     }
@@ -92,7 +92,7 @@
       "opacity": 1
     }
   ],
-  "textColor": "#ff6b57",
+  "textColor": "#55b4ff",
   "preferInlineToolbar": true,
   "showRegionToolbarButton": false,
   "showCopyEmbedToolbarButton": false,

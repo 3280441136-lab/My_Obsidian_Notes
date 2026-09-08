@@ -9,7 +9,7 @@
     "ctime": 1788592296563,
     "mtime": 1788537872876
   },
-  "updatedAt": "2026-09-08T03:55:46.015Z",
+  "updatedAt": "2026-09-08T03:57:53.103Z",
   "strokes": [
     {
       "id": "stroke-1788710720503-cm7xgxzo",
@@ -93725,7 +93725,31 @@
     }
   ],
   "eraserPaths": [],
-  "textItems": [],
+  "textItems": [
+    {
+      "id": "text-1788839865553-zp7kcgtx",
+      "page": 31,
+      "text": "重要结论Qm与",
+      "x": 0.452323717948718,
+      "y": 0.5217065614842905,
+      "color": "#55b4ff",
+      "fontSize": 40,
+      "fontFamily": "Segoe UI",
+      "fontScale": 0.026246719160104987,
+      "fontWeight": "normal",
+      "fontStyle": "normal",
+      "textAlign": "left",
+      "verticalAlign": "middle",
+      "lineSpacing": 1.35,
+      "wordWrap": true,
+      "autoFit": false,
+      "manualBoxSize": true,
+      "boxWidthScale": 0.4551282051282051,
+      "boxHeightScale": 0.047907638136511374,
+      "zIndex": 257,
+      "createdAt": "2026-09-08T03:57:45.553Z"
+    }
+  ],
   "shapes": [
     {
       "id": "shape-1788839695841-4jdlsfxe",
@@ -93770,6 +93794,28 @@
       },
       "zIndex": 23,
       "createdAt": "2026-09-08T03:55:15.318Z"
+    },
+    {
+      "id": "shape-1788839814559-40gehabi",
+      "page": 31,
+      "tool": "rectangle",
+      "color": "#55b4ff",
+      "width": 5,
+      "widthScale": 0.0032808398950131233,
+      "start": {
+        "x": 0.04046474358974359,
+        "y": 0.3824866264897075,
+        "pressure": 0.5,
+        "t": 2906333.199999988
+      },
+      "end": {
+        "x": 0.921875,
+        "y": 0.5623349471830986,
+        "pressure": 0.9965323550787706,
+        "t": 2908842.199999988
+      },
+      "zIndex": 9,
+      "createdAt": "2026-09-08T03:56:54.559Z"
     }
   ],
   "imageItems": [],
