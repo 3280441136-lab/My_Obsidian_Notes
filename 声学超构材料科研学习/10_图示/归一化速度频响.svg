@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="620" viewBox="0 0 1100 620" role="img" aria-labelledby="title desc">
+  <title id="title">不同品质因数下的归一化速度频率响应</title>
+  <desc id="desc">横轴为频率比 z，纵轴为归一化速度振幅 B。所有有限品质因数曲线都在 z 等于一处达到峰值，峰值等于 Q。</desc>
+  <rect width="1100" height="620" fill="#ffffff"/>
+  <style>
+    .title{font:700 27px 'Microsoft YaHei',sans-serif;fill:#162033}.sub{font:500 16px 'Microsoft YaHei',sans-serif;fill:#526174}
+    .axis{stroke:#263449;stroke-width:2.4;fill:none}.grid{stroke:#d9e0e8;stroke-width:1}.guide{stroke:#66758a;stroke-width:1.8;stroke-dasharray:8 7}
+    .tick{font:500 15px 'Microsoft YaHei',sans-serif;fill:#425168}.label{font:600 19px 'Microsoft YaHei',sans-serif;fill:#243047}
+    .note{font:500 17px 'Microsoft YaHei',sans-serif;fill:#33445d}.curve{fill:none;stroke-width:3.5;stroke-linejoin:round;stroke-linecap:round}
+  </style>
+  <text x="55" y="42" class="title">归一化速度频响 B(z, Q)</text>
+  <text x="55" y="68" class="sub">速度峰始终落在 z=1；Q 只改变峰高和带宽，不移动速度共振频率</text>
+  <defs><clipPath id="plot"><rect x="90" y="80" width="650" height="450"/></clipPath></defs>
+  <g>
+    <line x1="90" y1="530" x2="740" y2="530" class="axis"/><line x1="90" y1="530" x2="90" y2="80" class="axis"/>
+    <line x1="90" y1="448.2" x2="740" y2="448.2" class="grid"/><line x1="90" y1="366.4" x2="740" y2="366.4" class="grid"/><line x1="90" y1="284.5" x2="740" y2="284.5" class="grid"/><line x1="90" y1="202.7" x2="740" y2="202.7" class="grid"/><line x1="90" y1="120.9" x2="740" y2="120.9" class="grid"/>
+    <line x1="306.7" y1="80" x2="306.7" y2="530" class="guide"/>
+    <text x="78" y="536" class="tick" text-anchor="end">0</text><text x="78" y="454" class="tick" text-anchor="end">1</text><text x="78" y="372" class="tick" text-anchor="end">2</text><text x="78" y="291" class="tick" text-anchor="end">3</text><text x="78" y="209" class="tick" text-anchor="end">4</text><text x="78" y="127" class="tick" text-anchor="end">5</text>
+    <text x="90" y="554" class="tick" text-anchor="middle">0</text><text x="306.7" y="554" class="tick" text-anchor="middle">1</text><text x="523.3" y="554" class="tick" text-anchor="middle">2</text><text x="740" y="554" class="tick" text-anchor="middle">3</text>
+    <text x="59" y="92" class="label">B</text><text x="667" y="581" class="label">z = f / f₀</text>
+  </g>
+  <g clip-path="url(#plot)">
+    <polyline class="curve" stroke="#2a9d8f" points="90.0,530.0 100.8,525.9 111.7,521.8 122.5,517.6 133.3,513.3 144.2,508.9 155.0,504.4 165.8,499.7 176.7,494.8 187.5,489.8 198.3,484.6 209.2,479.3 220.0,474.0 230.8,468.8 241.7,463.9 252.5,459.3 263.3,455.4 274.2,452.2 285.0,449.9 295.8,448.6 306.7,448.2 317.5,448.6 328.3,449.6 339.2,451.2 350.0,453.2 360.8,455.4 371.7,457.7 382.5,460.1 393.3,462.5 404.2,464.9 415.0,467.1 425.8,469.3 436.7,471.4 447.5,473.4 458.3,475.3 469.2,477.1 480.0,478.7 490.8,480.3 501.7,481.8 512.5,483.3 523.3,484.6 534.2,485.9 545.0,487.1 555.8,488.2 566.7,489.3 577.5,490.4 588.3,491.3 599.2,492.3 610.0,493.2 620.8,494.0 631.7,494.8 642.5,495.6 653.3,496.3 664.2,497.0 675.0,497.7 685.8,498.4 696.7,499.0 707.5,499.6 718.3,500.2 729.2,500.7 740.0,501.3"/>
+    <polyline class="curve" stroke="#d1495b" points="90.0,530.0 100.8,525.9 111.7,521.7 122.5,517.5 133.3,513.0 144.2,508.2 155.0,503.1 165.8,497.5 176.7,491.2 187.5,484.1 198.3,475.9 209.2,466.3 220.0,454.6 230.8,440.2 241.7,421.7 252.5,397.3 263.3,363.9 274.2,316.3 285.0,248.6 295.8,166.0 306.7,120.9 317.5,162.4 328.3,234.1 339.2,292.5 350.0,334.1 360.8,363.9 371.7,385.8 382.5,402.4 393.3,415.5 404.2,425.9 415.0,434.5 425.8,441.7 436.7,447.8 447.5,453.0 458.3,457.6 469.2,461.6 480.0,465.1 490.8,468.2 501.7,471.1 512.5,473.6 523.3,475.9 534.2,478.1 545.0,480.0 555.8,481.8 566.7,483.4 577.5,485.0 588.3,486.4 599.2,487.7 610.0,489.0 620.8,490.1 631.7,491.2 642.5,492.2 653.3,493.2 664.2,494.1 675.0,495.0 685.8,495.8 696.7,496.6 707.5,497.4 718.3,498.1 729.2,498.8 740.0,499.4"/>
+    <polyline class="curve" stroke="#7a5195" stroke-dasharray="7 5" points="90.0,530.0 100.8,525.9 111.7,521.7 122.5,517.4 133.3,513.0 144.2,508.2 155.0,503.0 165.8,497.4 176.7,491.0 187.5,483.8 198.3,475.5 209.2,465.5 220.0,453.3 230.8,437.9 241.7,417.7 252.5,389.7 263.3,348.2 274.2,279.4 285.0,142.4 295.8,-267.2"/>
+    <polyline class="curve" stroke="#7a5195" stroke-dasharray="7 5" points="317.5,-308.1 328.3,101.4 339.2,238.2 350.0,306.9 360.8,348.2 371.7,375.8 382.5,395.7 393.3,410.7 404.2,422.4 415.0,431.8 425.8,439.6 436.7,446.1 447.5,451.6 458.3,456.4 469.2,460.6 480.0,464.3 490.8,467.5 501.7,470.4 512.5,473.1 523.3,475.5 534.2,477.6 545.0,479.6 555.8,481.4 566.7,483.1 577.5,484.7 588.3,486.1 599.2,487.5 610.0,488.7 620.8,489.9 631.7,491.0 642.5,492.1 653.3,493.1 664.2,494.0 675.0,494.9 685.8,495.7 696.7,496.5 707.5,497.3 718.3,498.0 729.2,498.7 740.0,499.3"/>
+  </g>
+  <g transform="translate(780 105)">
+    <text x="0" y="0" class="label">曲线参数</text>
+    <line x1="0" y1="31" x2="38" y2="31" stroke="#7a5195" stroke-width="4" stroke-dasharray="7 5"/><text x="50" y="37" class="note">Q → ∞</text>
+    <line x1="0" y1="67" x2="38" y2="67" stroke="#d1495b" stroke-width="4"/><text x="50" y="73" class="note">Q = 5</text>
+    <line x1="0" y1="103" x2="38" y2="103" stroke="#2a9d8f" stroke-width="4"/><text x="50" y="109" class="note">Q = 1</text>
+    <rect x="0" y="148" width="270" height="245" rx="6" fill="#f4f7fa" stroke="#c8d2df"/>
+    <text x="16" y="179" class="label">读图要点</text>
+    <text x="16" y="213" class="note">z → 0：B → 0</text>
+    <text x="16" y="246" class="note">z = 1：B 达峰且 B = Q</text>
+    <text x="16" y="279" class="note">z → ∞：B ∼ 1/z</text>
+    <text x="16" y="312" class="note">速度峰位置与 Q 无关</text>
+    <text x="16" y="345" class="note">相对半功率带宽 = 1/Q</text>
+    <text x="16" y="378" class="note">Q = 1：峰高与归一值同为 1</text>
+  </g>
+</svg>
