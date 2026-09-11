@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650" role="img" aria-labelledby="title desc">
+  <title id="title">电声器件与控制区</title>
+  <desc id="desc">比较压强式电容传声器、压强式动圈传声器和动圈扬声器对应的位移、速度、加速度控制区。</desc>
+  <rect width="1200" height="650" fill="#ffffff"/>
+
+  <style>
+    .title{font:700 28px 'Microsoft YaHei',sans-serif;fill:#172033}
+    .h{font:700 21px 'Microsoft YaHei',sans-serif;fill:#1e293b}
+    .t{font:500 18px 'Microsoft YaHei',sans-serif;fill:#334155}
+    .s{font:500 15px 'Microsoft YaHei',sans-serif;fill:#526174}
+    .axis{stroke:#263449;stroke-width:2.2;fill:none}
+    .grid{stroke:#d9e0e8;stroke-width:1;fill:none}
+    .guide{stroke:#7c8da4;stroke-width:1.6;stroke-dasharray:7 6;fill:none}
+    .ink{stroke:#172033;stroke-width:3.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+    .arrow{stroke:#d1495b;stroke-width:3.2;fill:none;marker-end:url(#arrow)}
+  </style>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#d1495b"/></marker>
+  </defs>
+
+
+  <text x="55" y="48" class="title">同一个振子，三种器件选择三种“平坦输出”</text>
+  <text x="55" y="76" class="s">关键不是笼统追求平坦，而是先确定输出量：位移、速度还是加速度</text>
+  <line x1="55" y1="92" x2="1145" y2="92" stroke="#cbd5e1" stroke-width="2"/>
+
+  <g transform="translate(55 120)">
+    <rect x="0" y="0" width="340" height="490" rx="6" fill="#f5f9fc" stroke="#b8c8d8"/>
+    <text x="22" y="38" class="h">压强式电容传声器</text>
+    <text x="22" y="70" class="s">声压 → 振膜位移 → 电容变化 → 电压</text>
+    <path d="M45 175 C72 142 72 208 99 175" class="arrow"/>
+    <line x1="125" y1="116" x2="125" y2="236" class="ink"/>
+    <line x1="205" y1="116" x2="205" y2="236" class="ink"/>
+    <text x="145" y="164" class="t">间距 D</text>
+    <text x="34" y="254" class="s">振膜</text><text x="190" y="254" class="s">背板</text>
+    <rect x="22" y="288" width="296" height="92" rx="5" fill="#e7f3ee" stroke="#83b8a4"/>
+    <text x="42" y="321" class="h">低频弹性控制</text>
+    <text x="42" y="352" class="t">ξₐ ≈ Fₐ / Kₘ</text>
+    <text x="42" y="408" class="t">Qₘ ≈ 1：低频平台平顺延伸到 f₀ 附近</text>
+    <text x="42" y="444" class="s">Q 太大：共振峰高；Q 太小：过渡区提前下坠</text>
+  </g>
+
+  <g transform="translate(430 120)">
+    <rect x="0" y="0" width="340" height="490" rx="6" fill="#fff8ee" stroke="#d9b780"/>
+    <text x="22" y="38" class="h">压强式动圈传声器</text>
+    <text x="22" y="70" class="s">声压 → 音膜/线圈速度 → 感应电压</text>
+    <path d="M70 130 L70 230 M270 130 L270 230" class="ink"/>
+    <rect x="137" y="154" width="66" height="52" fill="#f6c36d" stroke="#172033" stroke-width="3"/>
+    <path d="M120 146 Q170 115 220 146 M120 214 Q170 245 220 214" class="ink"/>
+    <path d="M238 180 L286 180" class="arrow"/>
+    <text x="217" y="244" class="s">线圈切割磁力线</text>
+    <rect x="22" y="288" width="296" height="92" rx="5" fill="#fdf0dc" stroke="#d9a654"/>
+    <text x="42" y="321" class="h">中间力阻控制</text>
+    <text x="42" y="352" class="t">vₐ ≈ Fₐ / Rₘ，E = Blv</text>
+    <text x="42" y="408" class="t">Qₘ 越低：速度平台越宽</text>
+    <text x="42" y="444" class="s">代价：Rₘ 增大，速度与灵敏度一同下降</text>
+  </g>
+
+  <g transform="translate(805 120)">
+    <rect x="0" y="0" width="340" height="490" rx="6" fill="#f8f4fb" stroke="#bca6ce"/>
+    <text x="22" y="38" class="h">动圈扬声器</text>
+    <text x="22" y="70" class="s">电压 → 电流 → 电动力 → 纸盆加速度</text>
+    <rect x="35" y="135" width="72" height="82" fill="#c8d7e8" stroke="#172033" stroke-width="3"/>
+    <path d="M107 176 L155 176 L236 118 M155 176 L236 234" class="ink"/>
+    <line x1="236" y1="112" x2="266" y2="102" class="ink"/><line x1="236" y1="240" x2="266" y2="250" class="ink"/>
+    <path d="M274 132 Q309 176 274 220" class="arrow"/>
+    <text x="228" y="273" class="s">纸盆推动空气</text>
+    <rect x="22" y="288" width="296" height="92" rx="5" fill="#eee7f4" stroke="#a78bbb"/>
+    <text x="42" y="321" class="h">高频质量控制</text>
+    <text x="42" y="352" class="t">aₐ ≈ Fₐ / Mₘ</text>
+    <text x="42" y="408" class="t">Qₘ ≈ 1：高频平台向下延伸到 f₀ 附近</text>
+    <text x="42" y="444" class="s">声功率近似与加速度振幅平方成正比</text>
+  </g>
+
+</svg>

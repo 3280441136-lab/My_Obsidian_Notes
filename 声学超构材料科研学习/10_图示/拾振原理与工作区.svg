@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="660" viewBox="0 0 1200 660" role="img" aria-labelledby="title desc">
+  <title id="title">拾振原理与工作区</title>
+  <desc id="desc">说明拾振器的外壳位移、内部质量块位移和相对位移，并比较低频测加速度、高频测位移以及共振区失真。</desc>
+  <rect width="1200" height="660" fill="#ffffff"/>
+
+  <style>
+    .title{font:700 28px 'Microsoft YaHei',sans-serif;fill:#172033}
+    .h{font:700 21px 'Microsoft YaHei',sans-serif;fill:#1e293b}
+    .t{font:500 18px 'Microsoft YaHei',sans-serif;fill:#334155}
+    .s{font:500 15px 'Microsoft YaHei',sans-serif;fill:#526174}
+    .axis{stroke:#263449;stroke-width:2.2;fill:none}
+    .grid{stroke:#d9e0e8;stroke-width:1;fill:none}
+    .guide{stroke:#7c8da4;stroke-width:1.6;stroke-dasharray:7 6;fill:none}
+    .ink{stroke:#172033;stroke-width:3.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+    .arrow{stroke:#d1495b;stroke-width:3.2;fill:none;marker-end:url(#arrow)}
+  </style>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#d1495b"/></marker>
+  </defs>
+
+
+  <text x="55" y="48" class="title">拾振器：用内部质量块相对外壳的运动测量振动</text>
+  <text x="55" y="76" class="s">外壳贴着被测物体；真正送给换能元件的是相对位移 ξ = ξ₂ − ξ₁</text>
+  <line x1="55" y1="92" x2="1145" y2="92" stroke="#cbd5e1" stroke-width="2"/>
+  <g transform="translate(55 125)">
+    <rect x="0" y="0" width="300" height="420" rx="6" fill="#f5f9fc" stroke="#b8c8d8" stroke-width="2"/>
+    <text x="20" y="36" class="h">内部结构</text>
+    <rect x="64" y="65" width="172" height="268" fill="#ffffff" stroke="#172033" stroke-width="5"/>
+    <rect x="106" y="102" width="88" height="68" fill="#b8d9ee" stroke="#172033" stroke-width="3"/>
+    <text x="128" y="143" class="h">Mₘ</text>
+    <path d="M150 171 L150 189 L131 204 L169 221 L131 238 L169 255 L150 272" class="ink"/>
+    <line x1="150" y1="272" x2="150" y2="331" class="ink"/>
+    <text x="196" y="224" class="t">Kₘ, Rₘ</text>
+    <path d="M48 365 L103 365" class="arrow"/><text x="112" y="372" class="t">外壳 ξ₁</text>
+    <text x="20" y="402" class="s">质量块绝对位移 ξ₂；输出观察 ξ₂ − ξ₁</text>
+  </g>
+  <g transform="translate(390 125)">
+    <rect x="0" y="0" width="755" height="148" rx="6" fill="#eaf4fb" stroke="#9bc2dc"/>
+    <text x="22" y="35" class="h">低频：f ≪ f₀，质量块基本跟随外壳</text>
+    <text x="22" y="70" class="t">为了让质量块产生加速度，弹簧必须提供惯性力：Kₘξ ≈ −Mₘa₁</text>
+    <text x="22" y="106" class="t">因此 ξ ≈ −a₁ / ω₀²，测相对位移即可反推外壳加速度</text>
+    <text x="556" y="136" class="h" fill="#176f9f">低频区：测加速度</text>
+  </g>
+  <g transform="translate(390 294)">
+    <rect x="0" y="0" width="755" height="116" rx="6" fill="#fff4e6" stroke="#e4b36b"/>
+    <text x="22" y="36" class="h">固有频率附近：拾振器自己的共振混入测量</text>
+    <text x="22" y="72" class="t">相对运动被额外放大，既不再简单代表加速度，也不再简单代表位移</text>
+    <text x="582" y="101" class="h" fill="#c56c18">测量时避开</text>
+  </g>
+  <g transform="translate(390 431)">
+    <rect x="0" y="0" width="755" height="148" rx="6" fill="#eee9f6" stroke="#b6a1cb"/>
+    <text x="22" y="35" class="h">高频：f ≫ f₀，内部质量块因惯性近似不动</text>
+    <text x="22" y="70" class="t">ξ₂ ≈ 0，而外壳仍移动：ξ = ξ₂ − ξ₁ ≈ −ξ₁</text>
+    <text x="22" y="106" class="t">质量块成为近似静止的惯性参考点，相对位移大小近似等于外壳位移</text>
+    <text x="585" y="136" class="h" fill="#725091">高频区：测位移</text>
+  </g>
+  <text x="55" y="626" class="t">同一结构的逻辑：隔振关心质量块绝对运动要小；拾振关心相对运动要能准确代表被测量。</text>
+
+</svg>
