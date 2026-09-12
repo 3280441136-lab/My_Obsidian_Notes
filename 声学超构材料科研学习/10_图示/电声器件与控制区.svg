@@ -35,8 +35,9 @@
     <rect x="22" y="288" width="296" height="92" rx="5" fill="#e7f3ee" stroke="#83b8a4"/>
     <text x="42" y="321" class="h">低频弹性控制</text>
     <text x="42" y="352" class="t">ξₐ ≈ Fₐ / Kₘ</text>
-    <text x="42" y="408" class="t">Qₘ ≈ 1：低频平台平顺延伸到 f₀ 附近</text>
-    <text x="42" y="444" class="s">Q 太大：共振峰高；Q 太小：过渡区提前下坠</text>
+    <text x="42" y="408" class="t">Qₘ ≈ 1：低频平台平顺延伸</text>
+    <text x="42" y="436" class="t">到 f₀ 附近</text>
+    <text x="42" y="468" class="s">Q 太大则峰高；Q 太小则过早下坠</text>
   </g>
 
   <g transform="translate(430 120)">
@@ -52,7 +53,7 @@
     <text x="42" y="321" class="h">中间力阻控制</text>
     <text x="42" y="352" class="t">vₐ ≈ Fₐ / Rₘ，E = Blv</text>
     <text x="42" y="408" class="t">Qₘ 越低：速度平台越宽</text>
-    <text x="42" y="444" class="s">代价：Rₘ 增大，速度与灵敏度一同下降</text>
+    <text x="42" y="444" class="s">代价：Rₘ 增大，速度与灵敏度下降</text>
   </g>
 
   <g transform="translate(805 120)">
@@ -67,8 +68,9 @@
     <rect x="22" y="288" width="296" height="92" rx="5" fill="#eee7f4" stroke="#a78bbb"/>
     <text x="42" y="321" class="h">高频质量控制</text>
     <text x="42" y="352" class="t">aₐ ≈ Fₐ / Mₘ</text>
-    <text x="42" y="408" class="t">Qₘ ≈ 1：高频平台向下延伸到 f₀ 附近</text>
-    <text x="42" y="444" class="s">声功率近似与加速度振幅平方成正比</text>
+    <text x="42" y="408" class="t">Qₘ ≈ 1：高频平台向下延伸</text>
+    <text x="42" y="436" class="t">到 f₀ 附近</text>
+    <text x="42" y="468" class="s">声功率近似正比于加速度振幅平方</text>
   </g>
 
 </svg>

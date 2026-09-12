@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
   <title id="title">隔振传递比与Q</title>
   <desc id="desc">左侧为基础激励隔振模型，右侧为不同机械品质因数下的位移传递比双对数曲线，并标明根号二分界。</desc>
   <rect width="1200" height="680" fill="#ffffff"/>
