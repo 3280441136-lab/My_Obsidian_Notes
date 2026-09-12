@@ -33,6 +33,24 @@ __export(main_exports, {
   default: () => PDFAnnotatorPlugin
 });
 module.exports = __toCommonJS(main_exports);
+
+// src/interaction/toolShortcuts.ts
+var TOOL_KEYS = {
+  "1": "pen",
+  "2": "highlighter",
+  "3": "eraser",
+  "4": "select",
+  "5": "text"
+};
+function resolveToolShortcut(event) {
+  var _a2;
+  if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey || event.repeat || event.isComposing) {
+    return null;
+  }
+  return (_a2 = TOOL_KEYS[event.key]) != null ? _a2 : null;
+}
+
+// main.ts
 var import_obsidian6 = require("obsidian");
 
 // node_modules/perfect-freehand/dist/esm/index.mjs
@@ -216,7 +234,7 @@ function R(e2, t2 = {}) {
 }
 
 // src/ink/inkEngine.ts
-var INK_SMOOTHING_WINDOW_MS = 40;
+var INK_MAX_SMOOTHING_WINDOW_MS = 100;
 var INK_OUTPUT_RATE_HZ = 180;
 var INK_OUTPUT_INTERVAL_MS = 1e3 / INK_OUTPUT_RATE_HZ;
 var INK_END_OF_STROKE_MAX_ITERATIONS = 20;
@@ -234,7 +252,7 @@ var INK_PRESSURE_SLEW_PER_WIDTH = 0.3;
 var INK_PRESSURE_SMOOTHING_ALPHA = 0.4;
 var DEFAULT_INK_RENDER_SETTINGS = {
   thinning: 0.5,
-  streamline: 0.5,
+  streamline: 0.12,
   smoothing: 0.5,
   easing: "linear",
   taperStart: 0,
@@ -415,8 +433,9 @@ function getInflectionPreservation(previous, point, next) {
   const cosine = (incomingX * outgoingX + incomingY * outgoingY) / (incomingLength * outgoingLength);
   return cosine < 0.72 ? 0.35 : 1;
 }
-function getTimedWindowAverage(points, index) {
+function getTimedWindowAverage(points, index, stabilization) {
   const point = points[index];
+  const windowMs = INK_MAX_SMOOTHING_WINDOW_MS * stabilization;
   if (typeof point.t !== "number") {
     return point;
   }
@@ -426,7 +445,7 @@ function getTimedWindowAverage(points, index) {
   let count = 0;
   for (let scan = index; scan >= 0; scan -= 1) {
     const candidate = points[scan];
-    if (typeof candidate.t !== "number" || point.t - candidate.t > INK_SMOOTHING_WINDOW_MS) {
+    if (typeof candidate.t !== "number" || point.t - candidate.t > windowMs) {
       break;
     }
     x2 += candidate.x;
@@ -436,7 +455,7 @@ function getTimedWindowAverage(points, index) {
   }
   for (let scan = index + 1; scan < points.length; scan += 1) {
     const candidate = points[scan];
-    if (typeof candidate.t !== "number" || candidate.t - point.t > INK_SMOOTHING_WINDOW_MS) {
+    if (typeof candidate.t !== "number" || candidate.t - point.t > windowMs) {
       break;
     }
     x2 += candidate.x;
@@ -477,7 +496,7 @@ function getVisualPressureMultiplier(pressure, usePressure) {
   }
   return clamp(1 + (clamp(pressure, 0.06, 1) - 0.5) * INK_PRESSURE_WIDTH_VARIATION, 0.9, 1.09);
 }
-function getSmoothedStrokePoints(points) {
+function getSmoothedStrokePoints(points, stabilization) {
   if (points.length < 3) {
     return points;
   }
@@ -487,7 +506,7 @@ function getSmoothedStrokePoints(points) {
     }
     const previous = points[index - 1];
     const next = points[index + 1];
-    const windowAverage = getTimedWindowAverage(points, index);
+    const windowAverage = getTimedWindowAverage(points, index, stabilization);
     if (windowAverage !== point) {
       const speed = getPointSpeed(previous, next);
       const speedBlend = clamp((speed - INK_SPEED_FLOOR) / Math.max(1e-3, INK_SPEED_CEILING - INK_SPEED_FLOOR), 0, 1);
@@ -508,25 +527,27 @@ function getSmoothedStrokePoints(points) {
     };
   });
 }
-function smoothStrokeCenterline(points, passes = INK_CENTERLINE_SMOOTHING_PASSES) {
+function smoothStrokeCenterline(points, passes = INK_CENTERLINE_SMOOTHING_PASSES, strength = 1) {
   if (points.length < 4 || passes <= 0) {
     return points;
   }
   let result = points;
+  const inset = 0.25 * strength;
+  const retained = 1 - inset;
   for (let pass = 0; pass < passes; pass += 1) {
     const next = [result[0]];
     for (let index = 0; index < result.length - 1; index += 1) {
       const current = result[index];
       const following = result[index + 1];
       next.push({
-        x: current.x * 0.75 + following.x * 0.25,
-        y: current.y * 0.75 + following.y * 0.25,
+        x: current.x * retained + following.x * inset,
+        y: current.y * retained + following.y * inset,
         pressure: clamp(current.pressure * 0.75 + following.pressure * 0.25, 0.06, 1),
         t: typeof current.t === "number" && typeof following.t === "number" ? current.t + (following.t - current.t) * 0.25 : current.t
       });
       next.push({
-        x: current.x * 0.25 + following.x * 0.75,
-        y: current.y * 0.25 + following.y * 0.75,
+        x: current.x * inset + following.x * retained,
+        y: current.y * inset + following.y * retained,
         pressure: clamp(current.pressure * 0.25 + following.pressure * 0.75, 0.06, 1),
         t: typeof current.t === "number" && typeof following.t === "number" ? current.t + (following.t - current.t) * 0.75 : following.t
       });
@@ -539,10 +560,14 @@ function smoothStrokeCenterline(points, passes = INK_CENTERLINE_SMOOTHING_PASSES
 function average(first, second) {
   return (first + second) / 2;
 }
-function getRenderStrokePoints(points, predictTail, predictionStrength = 1) {
+function getRenderStrokePoints(points, predictTail, predictionStrength = 1, settings = activeInkRenderSettings) {
   const inputPoints = predictTail ? getPredictedStrokePoints(points, predictionStrength) : points;
-  const preparedPoints = getSmoothedStrokePoints(resampleStrokePoints(inputPoints));
-  return smoothStrokeCenterline(preparedPoints, 1);
+  const stabilization = settings.streamline;
+  if (stabilization === 0) {
+    return inputPoints;
+  }
+  const preparedPoints = getSmoothedStrokePoints(resampleStrokePoints(inputPoints), stabilization);
+  return smoothStrokeCenterline(preparedPoints, 1, stabilization);
 }
 function getSvgPathFromStroke(outline, closed = true) {
   const length = outline.length;
@@ -564,24 +589,25 @@ function getSvgPathFromStroke(outline, closed = true) {
   return result;
 }
 function getSmoothInkStrokeOutline(points, width, height, baseWidth, usePressure, predictTail, options = {}) {
-  var _a2, _b, _c;
+  var _a2, _b, _c, _d;
   try {
     const renderMode = (_a2 = options.renderMode) != null ? _a2 : predictTail ? "live" : "committed";
     void renderMode;
-    const renderPoints = getRenderStrokePoints(points, predictTail, options.predictionStrength);
+    const settings = (_b = options.inkSettings) != null ? _b : activeInkRenderSettings;
+    const renderPoints = getRenderStrokePoints(points, predictTail, options.predictionStrength, settings);
     if (renderPoints.length < 2) {
       return null;
     }
     if (renderPoints.length < 4 && distanceBetween(renderPoints[0], renderPoints[renderPoints.length - 1]) < INK_MIN_DOT_DISTANCE) {
       return null;
     }
-    const settings = activeInkRenderSettings;
     const effectiveUsePressure = usePressure;
     const easing = getEasingFunction(settings.easing);
+    const geometryScale = 1524 / Math.max(1, width);
     const outline = R(
-      renderPoints.map((point) => [point.x * width, point.y * height, effectiveUsePressure ? clamp(point.pressure, 0.12, 1) : 0.5]),
+      renderPoints.map((point) => [point.x * width * geometryScale, point.y * height * geometryScale, effectiveUsePressure ? clamp(point.pressure, 0.12, 1) : 0.5]),
       {
-        size: Math.max(1, baseWidth),
+        size: Math.max(1, baseWidth * geometryScale),
         thinning: settings.thinning,
         smoothing: settings.smoothing,
         streamline: settings.streamline,
@@ -589,21 +615,21 @@ function getSmoothInkStrokeOutline(points, width, height, baseWidth, usePressure
         simulatePressure: false,
         last: true,
         start: {
-          taper: (_b = options.startTaper) != null ? _b : settings.taperStart,
+          taper: options.startTaper === void 0 ? settings.taperStart : options.startTaper * geometryScale,
           easing,
-          cap: true
+          cap: (_c = options.startCap) != null ? _c : true
         },
         end: {
-          taper: (_c = options.endTaper) != null ? _c : settings.taperEnd,
+          taper: options.endTaper === void 0 ? settings.taperEnd : options.endTaper * geometryScale,
           easing,
-          cap: true
+          cap: (_d = options.endCap) != null ? _d : true
         }
       }
     );
     if (outline.length < 3) {
       return null;
     }
-    return outline;
+    return outline.map((point) => [point[0] / geometryScale, point[1] / geometryScale]);
   } catch (error) {
     console.warn("freedraw-pdf: perfect-freehand outline failed, falling back to canvas stroke", error);
     return null;
@@ -645,9 +671,9 @@ function drawFreehandOutlineStroke(context, points, width, height, baseWidth, us
   }
   return getSvgPathFromStroke(outline) || null;
 }
-function drawUniformSmoothStroke(context, points, width, height, baseWidth, usePressure, predictTail, renderMode, predictionStrength = 1) {
+function drawUniformSmoothStroke(context, points, width, height, baseWidth, usePressure, predictTail, renderMode, predictionStrength = 1, settings = activeInkRenderSettings) {
   void renderMode;
-  const renderPoints = getRenderStrokePoints(points, predictTail, predictionStrength);
+  const renderPoints = getRenderStrokePoints(points, predictTail, predictionStrength, settings);
   if (renderPoints.length < 3) {
     return false;
   }
@@ -680,10 +706,10 @@ function drawSmoothInkStroke(context, points, width, height, baseWidth, usePress
   if (pathData) {
     return pathData;
   }
-  if ((renderMode === "live" || predictTail || !usePressure) && drawUniformSmoothStroke(context, points, width, height, baseWidth, usePressure, predictTail, renderMode, options.predictionStrength)) {
+  if ((renderMode === "live" || predictTail || !usePressure) && drawUniformSmoothStroke(context, points, width, height, baseWidth, usePressure, predictTail, renderMode, options.predictionStrength, options.inkSettings)) {
     return null;
   }
-  const renderPoints = getRenderStrokePoints(points, predictTail, options.predictionStrength);
+  const renderPoints = getRenderStrokePoints(points, predictTail, options.predictionStrength, options.inkSettings);
   const cumulativeDistances = getCumulativeStrokeDistances(renderPoints);
   const first = renderPoints[0];
   if (renderPoints.length === 1) {
@@ -1191,7 +1217,7 @@ function getCutContextPoint(outside, inside, segments, threshold) {
       low = middle;
     }
   }
-  return interpolatePoint(outside, inside, Math.min(1, high + 0.08));
+  return interpolatePoint(outside, inside, low);
 }
 function splitStrokeByEraserPath(stroke, eraserPoints, radiusScale, createId) {
   var _a2;
@@ -1244,10 +1270,10 @@ function splitStrokeByEraserPath(stroke, eraserPoints, radiusScale, createId) {
     }))
   };
 }
-function eraseStrokeSegmentsAlongPath(document2, pageNumber, eraserPoints, radiusScale, createId) {
+function eraseStrokeSegmentsAlongPath(document, pageNumber, eraserPoints, radiusScale, createId) {
   let changed = false;
   const strokes = [];
-  for (const stroke of document2.strokes) {
+  for (const stroke of document.strokes) {
     if (stroke.page !== pageNumber) {
       strokes.push(stroke);
       continue;
@@ -1257,7 +1283,7 @@ function eraseStrokeSegmentsAlongPath(document2, pageNumber, eraserPoints, radiu
     strokes.push(...result.strokes);
   }
   if (changed) {
-    document2.strokes = strokes;
+    document.strokes = strokes;
   }
   return changed;
 }
@@ -1314,9 +1340,9 @@ function pathTouchesShape(shape, segments, threshold) {
 function getOrder(zIndex, fallback) {
   return zIndex != null ? zIndex : fallback;
 }
-function migrateLegacyEraserPaths(document2) {
+function migrateLegacyEraserPaths(document) {
   var _a2, _b;
-  const eraserPaths = [...(_a2 = document2.eraserPaths) != null ? _a2 : []].map((annotation, index) => ({ annotation, fallbackOrder: 3e5 + index })).sort((left, right) => getOrder(left.annotation.zIndex, left.fallbackOrder) - getOrder(right.annotation.zIndex, right.fallbackOrder));
+  const eraserPaths = [...(_a2 = document.eraserPaths) != null ? _a2 : []].map((annotation, index) => ({ annotation, fallbackOrder: 3e5 + index })).sort((left, right) => getOrder(left.annotation.zIndex, left.fallbackOrder) - getOrder(right.annotation.zIndex, right.fallbackOrder));
   if (eraserPaths.length === 0) {
     return false;
   }
@@ -1326,7 +1352,7 @@ function migrateLegacyEraserPaths(document2) {
       continue;
     }
     const eraseOrder = getOrder(eraserPath.zIndex, fallbackOrder);
-    document2.strokes = document2.strokes.filter(
+    document.strokes = document.strokes.filter(
       (stroke, index) => {
         var _a3;
         return stroke.page !== eraserPath.page || getOrder(stroke.zIndex, index) >= eraseOrder || !pathTouchesStroke(
@@ -1336,17 +1362,17 @@ function migrateLegacyEraserPaths(document2) {
         );
       }
     );
-    document2.textItems = document2.textItems.filter(
+    document.textItems = document.textItems.filter(
       (item, index) => item.page !== eraserPath.page || getOrder(item.zIndex, 1e5 + index) >= eraseOrder || !pathTouchesText(item, segments, eraserPath.radiusScale)
     );
-    document2.shapes = document2.shapes.filter(
+    document.shapes = document.shapes.filter(
       (shape, index) => shape.page !== eraserPath.page || getOrder(shape.zIndex, 2e5 + index) >= eraseOrder || !pathTouchesShape(shape, segments, eraserPath.radiusScale)
     );
-    document2.imageItems = ((_b = document2.imageItems) != null ? _b : []).filter(
+    document.imageItems = ((_b = document.imageItems) != null ? _b : []).filter(
       (image, index) => image.page !== eraserPath.page || getOrder(image.zIndex, index) >= eraseOrder || !pathTouchesImage(image, segments, eraserPath.radiusScale)
     );
   }
-  document2.eraserPaths = [];
+  document.eraserPaths = [];
   return true;
 }
 
@@ -1404,15 +1430,15 @@ function clampToolWidth(kind, width) {
   return Math.max(range.min, Math.min(range.max, finiteWidth));
 }
 var DEFAULT_TOOL_PRESETS = [
-  { id: "pen-slot-1", label: "画笔 1", kind: "pen", color: "#ff6b57", width: 3, opacity: 0.96 },
-  { id: "pen-slot-2", label: "画笔 2", kind: "pen", color: "#55b4ff", width: 5, opacity: 0.96 },
-  { id: "pen-slot-3", label: "画笔 3", kind: "pen", color: "#a855f7", width: 8, opacity: 0.96 },
-  { id: "highlight-slot-1", label: "荧光笔 1", kind: "highlighter", color: "#ffcb47", width: 12, opacity: 0.24 },
-  { id: "highlight-slot-2", label: "荧光笔 2", kind: "highlighter", color: "#6bcf8a", width: 16, opacity: 0.22 },
-  { id: "highlight-slot-3", label: "荧光笔 3", kind: "highlighter", color: "#8fdff0", width: 20, opacity: 0.22 },
-  { id: "eraser-slot-1", label: "橡皮擦 1", kind: "eraser", color: "#ffffff", width: 10, opacity: 1 },
-  { id: "eraser-slot-2", label: "橡皮擦 2", kind: "eraser", color: "#ffffff", width: 18, opacity: 1 },
-  { id: "eraser-slot-3", label: "橡皮擦 3", kind: "eraser", color: "#ffffff", width: 30, opacity: 1 }
+  { id: "pen-slot-1", label: "Pen 1", kind: "pen", color: "#ff6b57", width: 3, opacity: 0.96 },
+  { id: "pen-slot-2", label: "Pen 2", kind: "pen", color: "#55b4ff", width: 5, opacity: 0.96 },
+  { id: "pen-slot-3", label: "Pen 3", kind: "pen", color: "#a855f7", width: 8, opacity: 0.96 },
+  { id: "highlight-slot-1", label: "Highlighter 1", kind: "highlighter", color: "#ffcb47", width: 12, opacity: 0.24 },
+  { id: "highlight-slot-2", label: "Highlighter 2", kind: "highlighter", color: "#6bcf8a", width: 16, opacity: 0.22 },
+  { id: "highlight-slot-3", label: "Highlighter 3", kind: "highlighter", color: "#8fdff0", width: 20, opacity: 0.22 },
+  { id: "eraser-slot-1", label: "Eraser 1", kind: "eraser", color: "#ffffff", width: 10, opacity: 1 },
+  { id: "eraser-slot-2", label: "Eraser 2", kind: "eraser", color: "#ffffff", width: 18, opacity: 1 },
+  { id: "eraser-slot-3", label: "Eraser 3", kind: "eraser", color: "#ffffff", width: 30, opacity: 1 }
 ];
 var TEXT_FONT_FAMILIES = [
   "Segoe UI",
@@ -1422,20 +1448,20 @@ var TEXT_FONT_FAMILIES = [
   "Courier New"
 ];
 var TEXT_COLOR_PRESETS = [
-  { color: "#202124", label: "黑色" },
-  { color: "#ff6b57", label: "珊瑚红" },
-  { color: "#ffcb47", label: "黄色" },
-  { color: "#55b4ff", label: "蓝色" },
-  { color: "#6bcf8a", label: "绿色" },
-  { color: "#a855f7", label: "紫色" }
+  { color: "#202124", label: "Black" },
+  { color: "#ff6b57", label: "Coral" },
+  { color: "#ffcb47", label: "Yellow" },
+  { color: "#55b4ff", label: "Blue" },
+  { color: "#6bcf8a", label: "Green" },
+  { color: "#a855f7", label: "Violet" }
 ];
 var PAPER_COLOR_PRESETS = [
-  { label: "米白", color: "#fffdf7" },
-  { label: "白色", color: "#ffffff" },
-  { label: "浅黄", color: "#fff7cc" },
-  { label: "浅蓝", color: "#eef6ff" },
-  { label: "浅绿", color: "#effaf0" },
-  { label: "灰色", color: "#f3f3f3" }
+  { label: "Cream", color: "#fffdf7" },
+  { label: "White", color: "#ffffff" },
+  { label: "Soft yellow", color: "#fff7cc" },
+  { label: "Blue tint", color: "#eef6ff" },
+  { label: "Green tint", color: "#effaf0" },
+  { label: "Gray", color: "#f3f3f3" }
 ];
 var DEFAULT_TOOL_STATE = {
   activeTool: "pen",
@@ -1472,11 +1498,11 @@ var DEFAULT_SETTINGS = {
   showAnnotatedEmbedHeader: false,
   showDrawingNotices: false,
   showRenderTelemetry: false,
-  inkInputPolicy: "allow-touch",
+  inkInputPolicy: "pen-mouse-only",
   livePreviewMode: "balanced",
   inkRenderSettings: {
     thinning: 0.5,
-    streamline: 0.5,
+    streamline: 0.12,
     smoothing: 0.5,
     easing: "linear",
     taperStart: 0,
@@ -1508,6 +1534,216 @@ function normalizeToolPresets(presets) {
 
 // src/stores/annotationStore.ts
 var import_obsidian = require("obsidian");
+
+// src/settings/settingsController.ts
+function normalizeInkInputPolicy(value) {
+  if (value === "pen-mouse-stylus-touch") {
+    return "allow-touch";
+  }
+  return value === "pen-mouse-only" || value === "allow-touch" ? value : DEFAULT_SETTINGS.inkInputPolicy;
+}
+function normalizeLivePreviewMode(value) {
+  const migratedValue = value === "quality" ? "smooth" : value === "fast" ? "accurate" : value;
+  return migratedValue === "accurate" || migratedValue === "balanced" || migratedValue === "smooth" ? migratedValue : DEFAULT_SETTINGS.livePreviewMode;
+}
+function normalizeColor(value, fallback) {
+  return typeof value === "string" && /^#[0-9a-f]{6}$/i.test(value) ? value : fallback;
+}
+function clampNumber(value, fallback, min, max) {
+  return typeof value === "number" && Number.isFinite(value) ? Math.max(min, Math.min(max, value)) : fallback;
+}
+function normalizeInkPressureMode(value) {
+  return value === "auto" || value === "stylus" || value === "simulate" ? value : DEFAULT_SETTINGS.inkRenderSettings.pressureMode;
+}
+function normalizeInkEasingMode(value) {
+  return value === "ease-in" || value === "ease-out" || value === "ease-in-out" || value === "linear" ? value : DEFAULT_SETTINGS.inkRenderSettings.easing;
+}
+function normalizeInkRenderSettings(value) {
+  const raw = value && typeof value === "object" ? value : {};
+  return {
+    thinning: clampNumber(raw.thinning, DEFAULT_SETTINGS.inkRenderSettings.thinning, -1, 1),
+    streamline: clampNumber(raw.streamline, DEFAULT_SETTINGS.inkRenderSettings.streamline, 0, 1),
+    smoothing: clampNumber(raw.smoothing, DEFAULT_SETTINGS.inkRenderSettings.smoothing, 0, 1),
+    easing: normalizeInkEasingMode(raw.easing),
+    taperStart: clampNumber(raw.taperStart, DEFAULT_SETTINGS.inkRenderSettings.taperStart, 0, 120),
+    taperEnd: clampNumber(raw.taperEnd, DEFAULT_SETTINGS.inkRenderSettings.taperEnd, 0, 120),
+    pressureMode: normalizeInkPressureMode(raw.pressureMode)
+  };
+}
+var PDFAnnotatorSettingsController = class {
+  constructor(loadData, saveData, onBehaviorChanged) {
+    this.loadData = loadData;
+    this.saveData = saveData;
+    this.onBehaviorChanged = onBehaviorChanged;
+    this.settings = this.createDefaultSettings();
+    this.settingsSaveHandle = null;
+  }
+  async load() {
+    var _a2, _b, _c, _d, _e, _f, _g, _h;
+    const loaded = await this.loadData();
+    const toolDefaults = (_a2 = loaded == null ? void 0 : loaded.toolDefaults) != null ? _a2 : {};
+    const loadedWidths = toolDefaults.widths;
+    const normalizedPresets = normalizeToolPresets(loaded == null ? void 0 : loaded.presets);
+    const shouldMigrateLegacyPressure = (loaded == null ? void 0 : loaded.pressureCaptureVersion) !== 1;
+    const loadedLivePreviewMode = loaded == null ? void 0 : loaded.livePreviewMode;
+    const shouldMigrateLegacyPreview = loadedLivePreviewMode === "quality" || loadedLivePreviewMode === "fast";
+    const inkRenderSettings = normalizeInkRenderSettings(loaded == null ? void 0 : loaded.inkRenderSettings);
+    if (shouldMigrateLegacyPressure && inkRenderSettings.pressureMode === "simulate") {
+      inkRenderSettings.pressureMode = "auto";
+    }
+    this.settings = {
+      pressureCaptureVersion: 1,
+      toolDefaults: {
+        ...DEFAULT_SETTINGS.toolDefaults,
+        ...toolDefaults,
+        selectedPresetIds: {
+          ...(_b = DEFAULT_SETTINGS.toolDefaults.selectedPresetIds) != null ? _b : {},
+          ...(_c = toolDefaults.selectedPresetIds) != null ? _c : {}
+        },
+        widths: {
+          pen: clampToolWidth("pen", (_d = loadedWidths == null ? void 0 : loadedWidths.pen) != null ? _d : DEFAULT_SETTINGS.toolDefaults.widths.pen),
+          highlighter: clampToolWidth("highlighter", (_e = loadedWidths == null ? void 0 : loadedWidths.highlighter) != null ? _e : DEFAULT_SETTINGS.toolDefaults.widths.highlighter),
+          eraser: clampToolWidth("eraser", (_f = loadedWidths == null ? void 0 : loadedWidths.eraser) != null ? _f : DEFAULT_SETTINGS.toolDefaults.widths.eraser)
+        }
+      },
+      presets: normalizedPresets,
+      textColor: normalizeColor(loaded == null ? void 0 : loaded.textColor, DEFAULT_SETTINGS.textColor),
+      preferInlineToolbar: typeof (loaded == null ? void 0 : loaded.preferInlineToolbar) === "boolean" ? loaded.preferInlineToolbar : DEFAULT_SETTINGS.preferInlineToolbar,
+      showRegionToolbarButton: typeof (loaded == null ? void 0 : loaded.showRegionToolbarButton) === "boolean" ? loaded.showRegionToolbarButton : DEFAULT_SETTINGS.showRegionToolbarButton,
+      showCopyEmbedToolbarButton: typeof (loaded == null ? void 0 : loaded.showCopyEmbedToolbarButton) === "boolean" ? loaded.showCopyEmbedToolbarButton : DEFAULT_SETTINGS.showCopyEmbedToolbarButton,
+      autoCopyRegionEmbed: typeof (loaded == null ? void 0 : loaded.autoCopyRegionEmbed) === "boolean" ? loaded.autoCopyRegionEmbed : DEFAULT_SETTINGS.autoCopyRegionEmbed,
+      showAnnotatedEmbedHeader: typeof (loaded == null ? void 0 : loaded.showAnnotatedEmbedHeader) === "boolean" ? loaded.showAnnotatedEmbedHeader : DEFAULT_SETTINGS.showAnnotatedEmbedHeader,
+      showDrawingNotices: typeof (loaded == null ? void 0 : loaded.showDrawingNotices) === "boolean" ? loaded.showDrawingNotices : DEFAULT_SETTINGS.showDrawingNotices,
+      showRenderTelemetry: typeof (loaded == null ? void 0 : loaded.showRenderTelemetry) === "boolean" ? loaded.showRenderTelemetry : DEFAULT_SETTINGS.showRenderTelemetry,
+      inkInputPolicy: normalizeInkInputPolicy(loaded == null ? void 0 : loaded.inkInputPolicy),
+      livePreviewMode: normalizeLivePreviewMode(loadedLivePreviewMode),
+      inkRenderSettings,
+      legacyInkRenderSettings: normalizeInkRenderSettings((_g = loaded == null ? void 0 : loaded.legacyInkRenderSettings) != null ? _g : inkRenderSettings),
+      autosaveDelayMs: typeof (loaded == null ? void 0 : loaded.autosaveDelayMs) === "number" ? loaded.autosaveDelayMs : DEFAULT_SETTINGS.autosaveDelayMs
+    };
+    if (!(loaded == null ? void 0 : loaded.legacyInkRenderSettings) || shouldMigrateLegacyPressure || shouldMigrateLegacyPreview || JSON.stringify((_h = loaded == null ? void 0 : loaded.presets) != null ? _h : []) !== JSON.stringify(normalizedPresets)) {
+      this.scheduleSave();
+    }
+  }
+  dispose() {
+    if (this.settingsSaveHandle !== null) {
+      window.clearTimeout(this.settingsSaveHandle);
+      this.settingsSaveHandle = null;
+    }
+  }
+  getToolDefaults() {
+    var _a2;
+    return {
+      ...this.settings.toolDefaults,
+      selectedPresetIds: { ...(_a2 = this.settings.toolDefaults.selectedPresetIds) != null ? _a2 : {} },
+      widths: { ...this.settings.toolDefaults.widths }
+    };
+  }
+  getLegacyInkRenderSettings() {
+    var _a2;
+    return { ...(_a2 = this.settings.legacyInkRenderSettings) != null ? _a2 : this.settings.inkRenderSettings };
+  }
+  getTextColor() {
+    return this.settings.textColor;
+  }
+  getInlineToolbarPreference() {
+    return this.settings.preferInlineToolbar;
+  }
+  getAutosaveDelayMs() {
+    return this.settings.autosaveDelayMs;
+  }
+  shouldShowRegionToolbarButton() {
+    return this.settings.showRegionToolbarButton;
+  }
+  shouldShowCopyEmbedToolbarButton() {
+    return this.settings.showCopyEmbedToolbarButton;
+  }
+  shouldAutoCopyRegionEmbed() {
+    return this.settings.autoCopyRegionEmbed;
+  }
+  shouldShowAnnotatedEmbedHeader() {
+    return this.settings.showAnnotatedEmbedHeader;
+  }
+  shouldShowDrawingNotices() {
+    return this.settings.showDrawingNotices;
+  }
+  shouldShowRenderTelemetry() {
+    return this.settings.showRenderTelemetry;
+  }
+  getInkInputPolicy() {
+    return this.settings.inkInputPolicy;
+  }
+  getLivePreviewMode() {
+    return this.settings.livePreviewMode;
+  }
+  getInkRenderSettings() {
+    return { ...this.settings.inkRenderSettings };
+  }
+  getStoredPresets() {
+    return this.settings.presets.map((preset) => ({ ...preset }));
+  }
+  updateToolPreferences(snapshot, presets) {
+    var _a2;
+    this.settings.toolDefaults = {
+      ...snapshot,
+      selectedPresetIds: { ...(_a2 = snapshot.selectedPresetIds) != null ? _a2 : {} },
+      widths: {
+        pen: clampToolWidth("pen", snapshot.widths.pen),
+        highlighter: clampToolWidth("highlighter", snapshot.widths.highlighter),
+        eraser: clampToolWidth("eraser", snapshot.widths.eraser)
+      }
+    };
+    this.settings.presets = normalizeToolPresets(presets);
+    this.scheduleSave();
+  }
+  updateTextColor(color) {
+    this.settings.textColor = normalizeColor(color, this.settings.textColor);
+    this.scheduleSave();
+  }
+  async updateBehaviorSettings(nextSettings) {
+    this.settings = {
+      ...this.settings,
+      ...nextSettings
+    };
+    this.scheduleSave();
+    this.onBehaviorChanged();
+  }
+  createDefaultSettings() {
+    var _a2;
+    return {
+      pressureCaptureVersion: DEFAULT_SETTINGS.pressureCaptureVersion,
+      toolDefaults: {
+        ...DEFAULT_SETTINGS.toolDefaults,
+        selectedPresetIds: { ...(_a2 = DEFAULT_SETTINGS.toolDefaults.selectedPresetIds) != null ? _a2 : {} },
+        widths: { ...DEFAULT_SETTINGS.toolDefaults.widths }
+      },
+      presets: DEFAULT_SETTINGS.presets.map((preset) => ({ ...preset })),
+      textColor: DEFAULT_SETTINGS.textColor,
+      preferInlineToolbar: DEFAULT_SETTINGS.preferInlineToolbar,
+      showRegionToolbarButton: DEFAULT_SETTINGS.showRegionToolbarButton,
+      showCopyEmbedToolbarButton: DEFAULT_SETTINGS.showCopyEmbedToolbarButton,
+      autoCopyRegionEmbed: DEFAULT_SETTINGS.autoCopyRegionEmbed,
+      showAnnotatedEmbedHeader: DEFAULT_SETTINGS.showAnnotatedEmbedHeader,
+      showDrawingNotices: DEFAULT_SETTINGS.showDrawingNotices,
+      showRenderTelemetry: DEFAULT_SETTINGS.showRenderTelemetry,
+      inkInputPolicy: DEFAULT_SETTINGS.inkInputPolicy,
+      livePreviewMode: DEFAULT_SETTINGS.livePreviewMode,
+      inkRenderSettings: { ...DEFAULT_SETTINGS.inkRenderSettings },
+      autosaveDelayMs: DEFAULT_SETTINGS.autosaveDelayMs
+    };
+  }
+  scheduleSave() {
+    if (this.settingsSaveHandle !== null) {
+      window.clearTimeout(this.settingsSaveHandle);
+    }
+    this.settingsSaveHandle = window.setTimeout(() => {
+      this.settingsSaveHandle = null;
+      void this.saveData(this.settings);
+    }, 150);
+  }
+};
+
+// src/stores/annotationStore.ts
 var DEFAULT_STROKE_REFERENCE_WIDTH = 1524;
 var MAX_STROKE_WIDTH_SCALE = 0.08;
 var MAX_TEXT_FONT_SCALE = 0.08;
@@ -1551,8 +1787,8 @@ function createEmptyDocument(file) {
     removedPages: []
   };
 }
-function cloneDocument(document2) {
-  return JSON.parse(JSON.stringify(document2));
+function cloneDocument(document) {
+  return JSON.parse(JSON.stringify(document));
 }
 function normalizeAnnotationZIndexes(strokes, textItems, shapes, eraserPaths = []) {
   let changed = false;
@@ -1577,41 +1813,41 @@ function normalizeAnnotationZIndexes(strokes, textItems, shapes, eraserPaths = [
   });
   return changed;
 }
-function normalizeDocumentZIndexes(document2) {
+function normalizeDocumentZIndexes(document) {
   var _a2, _b;
   const pages = /* @__PURE__ */ new Set([
-    ...document2.strokes.map((stroke) => stroke.page),
-    ...document2.textItems.map((item) => item.page),
-    ...document2.shapes.map((shape) => shape.page),
-    ...((_a2 = document2.eraserPaths) != null ? _a2 : []).map((eraserPath) => eraserPath.page)
+    ...document.strokes.map((stroke) => stroke.page),
+    ...document.textItems.map((item) => item.page),
+    ...document.shapes.map((shape) => shape.page),
+    ...((_a2 = document.eraserPaths) != null ? _a2 : []).map((eraserPath) => eraserPath.page)
   ]);
   let changed = false;
   for (const page of pages) {
     const pageChanged = normalizeAnnotationZIndexes(
-      document2.strokes.filter((stroke) => stroke.page === page),
-      document2.textItems.filter((item) => item.page === page),
-      document2.shapes.filter((shape) => shape.page === page),
-      ((_b = document2.eraserPaths) != null ? _b : []).filter((eraserPath) => eraserPath.page === page)
+      document.strokes.filter((stroke) => stroke.page === page),
+      document.textItems.filter((item) => item.page === page),
+      document.shapes.filter((shape) => shape.page === page),
+      ((_b = document.eraserPaths) != null ? _b : []).filter((eraserPath) => eraserPath.page === page)
     );
     changed = changed || pageChanged;
   }
   return changed;
 }
-function normalizeDocumentStrokeScales(document2) {
+function normalizeDocumentStrokeScales(document) {
   let changed = false;
-  for (const stroke of document2.strokes) {
+  for (const stroke of document.strokes) {
     if (!isUsableStoredScale(stroke.width, stroke.widthScale, MAX_STROKE_WIDTH_SCALE, 5e-4)) {
       stroke.widthScale = getStableScale(stroke.width, MAX_STROKE_WIDTH_SCALE, 5e-4);
       changed = true;
     }
   }
-  for (const shape of document2.shapes) {
+  for (const shape of document.shapes) {
     if (!isUsableStoredScale(shape.width, shape.widthScale, MAX_STROKE_WIDTH_SCALE, 5e-4)) {
       shape.widthScale = getStableScale(shape.width, MAX_STROKE_WIDTH_SCALE, 5e-4);
       changed = true;
     }
   }
-  for (const textItem of document2.textItems) {
+  for (const textItem of document.textItems) {
     if (!isUsableStoredScale(textItem.fontSize, textItem.fontScale, MAX_TEXT_FONT_SCALE, 4e-3)) {
       textItem.fontScale = getStableScale(textItem.fontSize, MAX_TEXT_FONT_SCALE, 4e-3);
       changed = true;
@@ -1620,8 +1856,19 @@ function normalizeDocumentStrokeScales(document2) {
   return changed;
 }
 var AnnotationStore = class {
-  constructor(app) {
+  constructor(app, legacyInkSettings = DEFAULT_SETTINGS.inkRenderSettings) {
     this.app = app;
+    this.baselines = /* @__PURE__ */ new WeakMap();
+    this.writes = /* @__PURE__ */ new Map();
+    this.recoveryCopies = /* @__PURE__ */ new WeakMap();
+    this.renames = /* @__PURE__ */ new Map();
+    this.legacyInkSettings = normalizeInkRenderSettings(legacyInkSettings);
+  }
+  inheritBaseline(previous, next) {
+    const baseline = previous ? this.baselines.get(previous) : void 0;
+    if (baseline) {
+      this.baselines.set(next, baseline);
+    }
   }
   getSidecarPath(file) {
     return `${file.path}${ANNOTATION_FILE_SUFFIX}`;
@@ -1630,8 +1877,9 @@ var AnnotationStore = class {
     return (await this.loadWithInfo(file)).document;
   }
   async loadWithInfo(file) {
-    var _a2, _b, _c, _d, _e;
+    var _a2, _b, _c, _d, _e, _f, _g;
     const expectedSidecarPath = this.getSidecarPath(file);
+    await this.writes.get(expectedSidecarPath);
     let path = this.getSidecarPath(file);
     let exists = await this.app.vault.adapter.exists(path);
     if (!exists) {
@@ -1643,8 +1891,10 @@ var AnnotationStore = class {
       }
     }
     if (!exists) {
+      const document = createEmptyDocument(file);
+      this.baselines.set(document, { path: expectedSidecarPath, raw: null });
       return {
-        document: createEmptyDocument(file),
+        document,
         sidecarPath: null,
         expectedSidecarPath,
         recoveredFromDifferentPath: false,
@@ -1654,8 +1904,11 @@ var AnnotationStore = class {
     try {
       const raw = await this.app.vault.adapter.read(path);
       const parsed = JSON.parse(raw);
+      if (!parsed || typeof parsed !== "object" || !Array.isArray(parsed.strokes)) {
+        throw new Error("Invalid annotation document structure.");
+      }
       const sourcePdfPath = typeof ((_a2 = parsed.sourcePdf) == null ? void 0 : _a2.path) === "string" ? parsed.sourcePdf.path : parsed.sourceFile;
-      const document2 = {
+      const document = {
         version: Math.max(8, (_b = parsed.version) != null ? _b : 4),
         sourceFile: (_c = parsed.sourceFile) != null ? _c : file.path,
         sourcePdf: this.normalizeSourcePdf(parsed.sourcePdf, file),
@@ -1733,7 +1986,7 @@ var AnnotationStore = class {
           var _a3;
           return !!((_a3 = entry == null ? void 0 : entry.page) == null ? void 0 : _a3.id);
         }).map((entry, index) => {
-          var _a3, _b2, _c2, _d2, _e2, _f, _g, _h, _i, _j, _k;
+          var _a3, _b2, _c2, _d2, _e2, _f2, _g2, _h, _i, _j, _k;
           return {
             page: {
               ...entry.page,
@@ -1751,9 +2004,9 @@ var AnnotationStore = class {
               imageItems: []
             },
             originalIndex: Math.max(0, Math.round(Number(entry.originalIndex) || 0)),
-            removedAt: (_f = entry.removedAt) != null ? _f : (/* @__PURE__ */ new Date()).toISOString(),
+            removedAt: (_f2 = entry.removedAt) != null ? _f2 : (/* @__PURE__ */ new Date()).toISOString(),
             annotations: {
-              strokes: Array.isArray((_g = entry.annotations) == null ? void 0 : _g.strokes) ? entry.annotations.strokes.map((stroke) => {
+              strokes: Array.isArray((_g2 = entry.annotations) == null ? void 0 : _g2.strokes) ? entry.annotations.strokes.map((stroke) => {
                 var _a4;
                 return { ...stroke, page: (_a4 = stroke.page) != null ? _a4 : 1 };
               }) : [],
@@ -1788,37 +2041,41 @@ var AnnotationStore = class {
           };
         }) : []
       };
-      let migratedStrokeMasks = migrateStrokeEraseMasks(document2.strokes, () => generateId("stroke"));
-      for (const removedPage of (_e = document2.removedPages) != null ? _e : []) {
+      let migratedInkSettings = false;
+      const allStrokes = [...document.strokes, ...((_e = document.removedPages) != null ? _e : []).flatMap((page) => page.annotations.strokes)];
+      for (const stroke of allStrokes) {
+        if (!stroke.inkSettings) {
+          migratedInkSettings = true;
+        }
+        stroke.inkSettings = normalizeInkRenderSettings((_f = stroke.inkSettings) != null ? _f : this.legacyInkSettings);
+      }
+      let migratedStrokeMasks = migrateStrokeEraseMasks(document.strokes, () => generateId("stroke"));
+      for (const removedPage of (_g = document.removedPages) != null ? _g : []) {
         migratedStrokeMasks = migrateStrokeEraseMasks(removedPage.annotations.strokes, () => generateId("stroke")) || migratedStrokeMasks;
       }
-      const migratedLegacyErasers = migrateLegacyEraserPaths(document2) || migratedStrokeMasks;
+      const migratedLegacyErasers = migrateLegacyEraserPaths(document) || migratedStrokeMasks;
+      this.baselines.set(document, { path, raw });
       return {
-        document: document2,
+        document,
         sidecarPath: path,
         expectedSidecarPath,
         recoveredFromDifferentPath: path !== expectedSidecarPath,
         sourcePathMismatch: !!sourcePdfPath && sourcePdfPath !== file.path,
         sourcePdfPath,
-        migratedLegacyErasers
+        migratedLegacyErasers,
+        migratedInkSettings
       };
     } catch (error) {
       console.error("freedraw-pdf: failed to load sidecar", error);
-      new import_obsidian.Notice("Could not load annotation sidecar. Starting with a blank layer.");
-      return {
-        document: createEmptyDocument(file),
-        sidecarPath: null,
-        expectedSidecarPath,
-        recoveredFromDifferentPath: false,
-        sourcePathMismatch: false
-      };
+      throw new Error("Could not read annotation data. The original sidecar is preserved; repair it or restore a backup before editing.");
     }
   }
-  async save(file, document2) {
+  async save(file, document) {
+    var _a2;
     const path = this.getSidecarPath(file);
     const payload = JSON.stringify(
       {
-        ...document2,
+        ...document,
         sourceFile: file.path,
         sourcePdf: getPdfIdentity(file),
         updatedAt: (/* @__PURE__ */ new Date()).toISOString()
@@ -1826,47 +2083,101 @@ var AnnotationStore = class {
       null,
       2
     );
-    await this.app.vault.adapter.write(path, payload);
+    const previous = (_a2 = this.writes.get(path)) != null ? _a2 : Promise.resolve();
+    const write = previous.catch(() => void 0).then(async () => {
+      var _a3, _b;
+      const baseline = this.baselines.get(document);
+      const existing = await this.app.vault.adapter.exists(path) ? await this.app.vault.adapter.read(path) : null;
+      let expectedPath = baseline == null ? void 0 : baseline.path;
+      let expectedRaw = baseline == null ? void 0 : baseline.raw;
+      const visited = /* @__PURE__ */ new Set();
+      while (expectedPath && expectedPath !== path && !visited.has(expectedPath)) {
+        visited.add(expectedPath);
+        const rename = this.renames.get(expectedPath);
+        if (!rename || rename.before !== expectedRaw) {
+          break;
+        }
+        expectedPath = rename.to;
+        expectedRaw = rename.after;
+      }
+      const expected = expectedPath === path ? expectedRaw : null;
+      if (existing !== expected) {
+        throw new Error("Annotation data changed in another view or device. Your edits remain in this view; reopen after resolving the conflict.");
+      }
+      const indexedFile = (_b = (_a3 = this.app.vault).getAbstractFileByPath) == null ? void 0 : _b.call(_a3, path);
+      if (indexedFile instanceof import_obsidian.TFile) {
+        await this.app.vault.process(indexedFile, (current) => {
+          if (current !== expected) {
+            throw new Error("Annotation data changed during saving. Both versions must be kept.");
+          }
+          return payload;
+        });
+      } else {
+        await this.app.vault.adapter.write(path, payload);
+      }
+      if (baseline) {
+        baseline.path = path;
+        baseline.raw = payload;
+      } else {
+        this.baselines.set(document, { path, raw: payload });
+      }
+    });
+    this.writes.set(path, write);
+    try {
+      await write;
+    } finally {
+      if (this.writes.get(path) === write) this.writes.delete(path);
+    }
   }
-  async relinkSidecarToFile(file, document2, sourceSidecarPath) {
+  async saveRecoveryCopy(file, document) {
+    const payload = JSON.stringify({ ...document, sourceFile: file.path, sourcePdf: getPdfIdentity(file) }, null, 2);
+    const previous = this.recoveryCopies.get(document);
+    if ((previous == null ? void 0 : previous.payload) === payload && await this.app.vault.adapter.exists(previous.path)) {
+      return previous.path;
+    }
+    const path = `${file.path}.${generateId("recovery")}${ANNOTATION_FILE_SUFFIX}`;
+    await this.app.vault.adapter.write(path, payload);
+    this.recoveryCopies.set(document, { payload, path });
+    return path;
+  }
+  async relinkSidecarToFile(file, document, sourceSidecarPath) {
     const expectedSidecarPath = this.getSidecarPath(file);
-    await this.save(file, document2);
+    await this.save(file, document);
     if (sourceSidecarPath && sourceSidecarPath !== expectedSidecarPath && await this.app.vault.adapter.exists(sourceSidecarPath)) {
-      await this.app.vault.adapter.remove(sourceSidecarPath);
+      new import_obsidian.Notice("Original annotation data retained for recovery.");
     }
     return expectedSidecarPath;
   }
   async migrateForRename(file, oldPath) {
     const oldSidecarPath = `${oldPath}${ANNOTATION_FILE_SUFFIX}`;
     const newSidecarPath = this.getSidecarPath(file);
-    const exists = await this.app.vault.adapter.exists(oldSidecarPath);
-    if (!exists) {
+    if (oldSidecarPath === newSidecarPath) {
       return;
     }
-    const raw = await this.app.vault.adapter.read(oldSidecarPath);
-    const parsed = JSON.parse(raw);
-    const payload = JSON.stringify(
-      {
-        ...parsed,
-        sourceFile: file.path,
-        sourcePdf: getPdfIdentity(file),
-        updatedAt: (/* @__PURE__ */ new Date()).toISOString()
-      },
-      null,
-      2
-    );
-    await this.app.vault.adapter.write(newSidecarPath, payload);
-    if (oldSidecarPath !== newSidecarPath && await this.app.vault.adapter.exists(oldSidecarPath)) {
-      await this.app.vault.adapter.remove(oldSidecarPath);
+    const identity = getPdfIdentity(file);
+    const previous = Promise.all([this.writes.get(oldSidecarPath), this.writes.get(newSidecarPath)]);
+    const migration = previous.then(async () => {
+      if (!await this.app.vault.adapter.exists(oldSidecarPath)) {
+        return;
+      }
+      const raw = await this.app.vault.adapter.read(oldSidecarPath);
+      const parsed = JSON.parse(raw);
+      const payload = JSON.stringify({ ...parsed, sourceFile: identity.path, sourcePdf: identity, updatedAt: (/* @__PURE__ */ new Date()).toISOString() }, null, 2);
+      if (await this.app.vault.adapter.exists(newSidecarPath) && await this.app.vault.adapter.read(newSidecarPath) !== raw) {
+        throw new Error("Annotation destination already exists. Both sidecars were preserved.");
+      }
+      await this.app.vault.adapter.write(newSidecarPath, payload);
+      this.renames.set(oldSidecarPath, { to: newSidecarPath, before: raw, after: payload });
+    });
+    this.writes.set(newSidecarPath, migration);
+    try {
+      await migration;
+    } finally {
+      if (this.writes.get(newSidecarPath) === migration) this.writes.delete(newSidecarPath);
     }
   }
-  async deleteForPdfPath(pdfPath) {
-    const sidecarPath = `${pdfPath}${ANNOTATION_FILE_SUFFIX}`;
-    if (!await this.app.vault.adapter.exists(sidecarPath)) {
-      return false;
-    }
-    await this.app.vault.adapter.remove(sidecarPath);
-    return true;
+  async deleteForPdfPath(_pdfPath) {
+    return false;
   }
   normalizeSourcePdf(sourcePdf, file) {
     return {
@@ -1878,30 +2189,8 @@ var AnnotationStore = class {
       mtime: typeof (sourcePdf == null ? void 0 : sourcePdf.mtime) === "number" ? sourcePdf.mtime : file.stat.mtime
     };
   }
-  async findRenameCandidateSidecarPath(file) {
-    var _a2, _b, _c;
-    const folderPath = (_b = (_a2 = file.parent) == null ? void 0 : _a2.path) != null ? _b : "";
-    try {
-      const listed = await this.app.vault.adapter.list(folderPath);
-      const candidates = [];
-      for (const candidatePath of listed.files) {
-        if (!candidatePath.endsWith(ANNOTATION_FILE_SUFFIX) || candidatePath === this.getSidecarPath(file)) {
-          continue;
-        }
-        try {
-          const raw = await this.app.vault.adapter.read(candidatePath);
-          const parsed = JSON.parse(raw);
-          if (((_c = parsed.sourcePdf) == null ? void 0 : _c.size) === file.stat.size) {
-            candidates.push(candidatePath);
-          }
-        } catch (e2) {
-        }
-      }
-      return candidates.length === 1 ? candidates[0] : null;
-    } catch (error) {
-      console.warn("freedraw-pdf: failed to scan for renamed sidecar", error);
-      return null;
-    }
+  async findRenameCandidateSidecarPath(_file) {
+    return null;
   }
 };
 
@@ -1952,15 +2241,15 @@ var LRUCache = class {
 // src/notebook/pageModel.ts
 var NOTEBOOK_TEMPLATES = ["blank", "ruled", "grid", "dot"];
 var NOTEBOOK_PAGE_SIZES = ["a4", "letter", "compact", "long"];
-function hasEditableNativePageTemplates(document2, realPdfPageCount) {
+function hasEditableNativePageTemplates(document, realPdfPageCount) {
   var _a2;
-  if (document2.nativePageTemplatesEditable === true) {
+  if (document.nativePageTemplatesEditable === true) {
     return true;
   }
-  if (document2.nativePageTemplatesEditable === false || realPdfPageCount < 1) {
+  if (document.nativePageTemplatesEditable === false || realPdfPageCount < 1) {
     return false;
   }
-  const templatePages = new Set(((_a2 = document2.pdfPageTemplates) != null ? _a2 : []).map((template) => template.page));
+  const templatePages = new Set(((_a2 = document.pdfPageTemplates) != null ? _a2 : []).map((template) => template.page));
   if (templatePages.size !== realPdfPageCount) {
     return false;
   }
@@ -1988,27 +2277,27 @@ function createTemplateNotebookPage(title, template, pageSize, paperColor) {
 function getNotebookTemplateLabel(template) {
   switch (template) {
     case "blank":
-      return "空白";
+      return "Blank";
     case "grid":
-      return "方格";
+      return "Grid";
     case "dot":
-      return "点阵";
+      return "Dot grid";
     case "ruled":
     default:
-      return "横线";
+      return "Ruled lines";
   }
 }
 function getNotebookPageSizeLabel(pageSize) {
   switch (pageSize) {
     case "compact":
-      return "紧凑";
+      return "Compact";
     case "letter":
-      return "Letter 纵向";
+      return "Letter portrait";
     case "long":
-      return "长笔记";
+      return "Long notes";
     case "a4":
     default:
-      return "A4 纵向";
+      return "A4 portrait";
   }
 }
 function getNotebookPageSizeDimensions(pageSize) {
@@ -2232,34 +2521,6 @@ function resizeInlineTextEditor(editor, maxHeight) {
   editor.setCssStyles({ height: "auto" });
   editor.setCssStyles({ height: `${Math.min(Math.max(40, editor.scrollHeight + 2), Math.max(80, maxHeight))}px` });
 }
-function getHorizontalTextCaretIndex(text, index, direction, byWord = false) {
-  const safeIndex = clamp2(Math.round(index), 0, text.length);
-  if (byWord) {
-    let cursor = safeIndex;
-    if (direction === "left") {
-      while (cursor > 0 && /\s/.test(text[cursor - 1])) {
-        cursor -= 1;
-      }
-      while (cursor > 0 && !/\s/.test(text[cursor - 1])) {
-        cursor -= 1;
-      }
-      return cursor;
-    }
-    while (cursor < text.length && !/\s/.test(text[cursor])) {
-      cursor += 1;
-    }
-    while (cursor < text.length && /\s/.test(text[cursor])) {
-      cursor += 1;
-    }
-    return cursor;
-  }
-  if (direction === "left") {
-    const previousCharacter = Array.from(text.slice(0, safeIndex)).pop();
-    return previousCharacter ? safeIndex - previousCharacter.length : 0;
-  }
-  const nextCharacter = Array.from(text.slice(safeIndex))[0];
-  return nextCharacter ? safeIndex + nextCharacter.length : text.length;
-}
 function getCanvasTextLines(context, text, maxWidth, wordWrap = true) {
   return wordWrap ? getWrappedCanvasTextLines(context, text, maxWidth) : getTextLines(text);
 }
@@ -2298,6 +2559,11 @@ function getWrappedCanvasTextLines(context, text, maxWidth) {
     }
   }
   return lines.length > 0 ? lines : [""];
+}
+
+// src/utils/imageData.ts
+function isEmbeddedImageDataUrl(value) {
+  return typeof value === "string" && /^data:image\/[a-z0-9.+-]+(?:;[a-z0-9=+.-]+)*,/i.test(value);
 }
 
 // src/markdown/embedRender.ts
@@ -2376,7 +2642,7 @@ function formatAnnotatedPdfEmbedBlock(path, page, rect, width = 720) {
   lines.push("```");
   return lines.join("\n");
 }
-function renderAnnotationDocumentPage(context, document2, pageNumber, width, height) {
+function renderAnnotationDocumentPage(context, document, pageNumber, width, height) {
   const annotationCanvas = createEl("canvas");
   annotationCanvas.width = Math.max(1, Math.round(width));
   annotationCanvas.height = Math.max(1, Math.round(height));
@@ -2384,9 +2650,9 @@ function renderAnnotationDocumentPage(context, document2, pageNumber, width, hei
   if (!annotationContext) {
     return;
   }
-  const strokes = document2.strokes.filter((stroke) => stroke.page === pageNumber);
-  const textItems = document2.textItems.filter((item) => item.page === pageNumber);
-  const shapes = document2.shapes.filter((shape) => shape.page === pageNumber);
+  const strokes = document.strokes.filter((stroke) => stroke.page === pageNumber);
+  const textItems = document.textItems.filter((item) => item.page === pageNumber);
+  const shapes = document.shapes.filter((shape) => shape.page === pageNumber);
   const renderables = getAnnotationRenderables(strokes, textItems, shapes);
   for (const renderable of renderables) {
     if (renderable.kind === "stroke") {
@@ -2399,9 +2665,9 @@ function renderAnnotationDocumentPage(context, document2, pageNumber, width, hei
   }
   context.drawImage(annotationCanvas, 0, 0);
 }
-async function renderAnnotationDocumentPageImages(context, document2, pageNumber, width, height) {
+async function renderAnnotationDocumentPageImages(context, document, pageNumber, width, height) {
   var _a2, _b;
-  const imageItems = (_b = (_a2 = document2.imageItems) == null ? void 0 : _a2.filter((image) => image.page === pageNumber)) != null ? _b : [];
+  const imageItems = (_b = (_a2 = document.imageItems) == null ? void 0 : _a2.filter((image) => image.page === pageNumber)) != null ? _b : [];
   for (const imageItem of imageItems) {
     const image = await loadImageAnnotation(imageItem);
     context.drawImage(
@@ -2414,6 +2680,9 @@ async function renderAnnotationDocumentPageImages(context, document2, pageNumber
   }
 }
 function loadImageAnnotation(imageItem) {
+  if (!isEmbeddedImageDataUrl(imageItem.dataUrl)) {
+    return Promise.reject(new Error("Image annotations must contain embedded image data."));
+  }
   return new Promise((resolve, reject) => {
     const image = new Image();
     image.onload = () => resolve(image);
@@ -2434,8 +2703,11 @@ function renderEmbedStroke(context, stroke, width, height) {
   context.lineJoin = "round";
   drawSmoothInkStroke(context, stroke.points, width, height, baseWidth, stroke.tool !== "highlighter", false, {
     renderMode: "committed",
+    inkSettings: stroke.inkSettings,
     startTaper: stroke.cutStart ? 0 : void 0,
-    endTaper: stroke.cutEnd ? 0 : void 0
+    endTaper: stroke.cutEnd ? 0 : void 0,
+    startCap: true,
+    endCap: true
   });
   context.restore();
 }
@@ -2643,11 +2915,11 @@ var AnnotatedEmbedController = class {
   }
   openEmbedContextMenu(event, file, page, rect, render) {
     const menu = new import_obsidian3.Menu();
-    menu.addItem((item) => item.setTitle(rect ? "打开带批注的区域" : "打开带批注的页面").setIcon("file-text").onClick(() => void this.host.openPdfPage(file, page, rect)));
-    menu.addItem((item) => item.setTitle("刷新预览").setIcon("refresh-cw").onClick(() => render(true)));
+    menu.addItem((item) => item.setTitle(rect ? "Open annotated region" : "Open annotated page").setIcon("file-text").onClick(() => void this.host.openPdfPage(file, page, rect)));
+    menu.addItem((item) => item.setTitle("Refresh preview").setIcon("refresh-cw").onClick(() => render(true)));
     menu.addSeparator();
-    menu.addItem((item) => item.setTitle("复制嵌入代码块").setIcon("code").onClick(() => void this.copyBlock(file, page, rect)));
-    menu.addItem((item) => item.setTitle(rect ? "复制区域引用" : "复制页面链接").setIcon("link").onClick(() => void this.copyReference(file, page, rect)));
+    menu.addItem((item) => item.setTitle("Copy embed block").setIcon("code").onClick(() => void this.copyBlock(file, page, rect)));
+    menu.addItem((item) => item.setTitle(rect ? "Copy region reference" : "Copy page link").setIcon("link").onClick(() => void this.copyReference(file, page, rect)));
     menu.showAtPosition({ x: event.clientX, y: event.clientY });
   }
   async copyReference(file, page, rect) {
@@ -2884,40 +3156,40 @@ function removePage(items, pageNumber) {
 function setAnnotationPage(items, pageNumber) {
   return items.map((item) => ({ ...item, page: pageNumber }));
 }
-function ensurePageCollections(document2) {
+function ensurePageCollections(document) {
   var _a2, _b, _c, _d, _e, _f;
-  (_a2 = document2.appendedPages) != null ? _a2 : document2.appendedPages = [];
-  (_b = document2.eraserPaths) != null ? _b : document2.eraserPaths = [];
-  (_c = document2.imageItems) != null ? _c : document2.imageItems = [];
-  (_d = document2.deletedPdfPages) != null ? _d : document2.deletedPdfPages = [];
-  (_e = document2.permanentlyDeletedPdfPages) != null ? _e : document2.permanentlyDeletedPdfPages = [];
-  (_f = document2.removedPages) != null ? _f : document2.removedPages = [];
+  (_a2 = document.appendedPages) != null ? _a2 : document.appendedPages = [];
+  (_b = document.eraserPaths) != null ? _b : document.eraserPaths = [];
+  (_c = document.imageItems) != null ? _c : document.imageItems = [];
+  (_d = document.deletedPdfPages) != null ? _d : document.deletedPdfPages = [];
+  (_e = document.permanentlyDeletedPdfPages) != null ? _e : document.permanentlyDeletedPdfPages = [];
+  (_f = document.removedPages) != null ? _f : document.removedPages = [];
 }
-function insertSyntheticPage(document2, realPdfPageCount, insertIndex, page) {
-  ensurePageCollections(document2);
-  const pages = document2.appendedPages;
+function insertSyntheticPage(document, realPdfPageCount, insertIndex, page) {
+  ensurePageCollections(document);
+  const pages = document.appendedPages;
   const boundedIndex = Math.max(0, Math.min(Math.round(insertIndex), pages.length));
   const pageNumber = Math.max(0, realPdfPageCount) + boundedIndex + 1;
-  document2.strokes = shiftPages(document2.strokes, pageNumber, 1);
-  document2.eraserPaths = shiftPages(document2.eraserPaths, pageNumber, 1);
-  document2.textItems = shiftPages(document2.textItems, pageNumber, 1);
-  document2.shapes = shiftPages(document2.shapes, pageNumber, 1);
-  document2.imageItems = shiftPages(document2.imageItems, pageNumber, 1);
+  document.strokes = shiftPages(document.strokes, pageNumber, 1);
+  document.eraserPaths = shiftPages(document.eraserPaths, pageNumber, 1);
+  document.textItems = shiftPages(document.textItems, pageNumber, 1);
+  document.shapes = shiftPages(document.shapes, pageNumber, 1);
+  document.imageItems = shiftPages(document.imageItems, pageNumber, 1);
   pages.splice(boundedIndex, 0, page);
   return pageNumber;
 }
-function removeSyntheticPageToTrash(document2, realPdfPageCount, pageIndex, removedAt = (/* @__PURE__ */ new Date()).toISOString()) {
-  ensurePageCollections(document2);
-  const pages = document2.appendedPages;
+function removeSyntheticPageToTrash(document, realPdfPageCount, pageIndex, removedAt = (/* @__PURE__ */ new Date()).toISOString()) {
+  ensurePageCollections(document);
+  const pages = document.appendedPages;
   if (pageIndex < 0 || pageIndex >= pages.length) {
     return null;
   }
   const pageNumber = Math.max(0, realPdfPageCount) + pageIndex + 1;
-  const strokeResult = removePage(document2.strokes, pageNumber);
-  const eraserResult = removePage(document2.eraserPaths, pageNumber);
-  const textResult = removePage(document2.textItems, pageNumber);
-  const shapeResult = removePage(document2.shapes, pageNumber);
-  const imageResult = removePage(document2.imageItems, pageNumber);
+  const strokeResult = removePage(document.strokes, pageNumber);
+  const eraserResult = removePage(document.eraserPaths, pageNumber);
+  const textResult = removePage(document.textItems, pageNumber);
+  const shapeResult = removePage(document.shapes, pageNumber);
+  const imageResult = removePage(document.imageItems, pageNumber);
   const [page] = pages.splice(pageIndex, 1);
   const removedPage = {
     page,
@@ -2931,73 +3203,73 @@ function removeSyntheticPageToTrash(document2, realPdfPageCount, pageIndex, remo
       imageItems: imageResult.removed
     }
   };
-  document2.strokes = shiftPages(strokeResult.kept, pageNumber + 1, -1);
-  document2.eraserPaths = shiftPages(eraserResult.kept, pageNumber + 1, -1);
-  document2.textItems = shiftPages(textResult.kept, pageNumber + 1, -1);
-  document2.shapes = shiftPages(shapeResult.kept, pageNumber + 1, -1);
-  document2.imageItems = shiftPages(imageResult.kept, pageNumber + 1, -1);
-  document2.removedPages = document2.removedPages.filter((entry) => entry.page.id !== page.id);
-  document2.removedPages.push(removedPage);
+  document.strokes = shiftPages(strokeResult.kept, pageNumber + 1, -1);
+  document.eraserPaths = shiftPages(eraserResult.kept, pageNumber + 1, -1);
+  document.textItems = shiftPages(textResult.kept, pageNumber + 1, -1);
+  document.shapes = shiftPages(shapeResult.kept, pageNumber + 1, -1);
+  document.imageItems = shiftPages(imageResult.kept, pageNumber + 1, -1);
+  document.removedPages = document.removedPages.filter((entry) => entry.page.id !== page.id);
+  document.removedPages.push(removedPage);
   return removedPage;
 }
-function restoreSyntheticPageFromTrash(document2, realPdfPageCount, pageId) {
-  ensurePageCollections(document2);
-  const removedIndex = document2.removedPages.findIndex((entry) => entry.page.id === pageId);
+function restoreSyntheticPageFromTrash(document, realPdfPageCount, pageId) {
+  ensurePageCollections(document);
+  const removedIndex = document.removedPages.findIndex((entry) => entry.page.id === pageId);
   if (removedIndex < 0) {
     return null;
   }
-  const [removedPage] = document2.removedPages.splice(removedIndex, 1);
+  const [removedPage] = document.removedPages.splice(removedIndex, 1);
   const pageNumber = insertSyntheticPage(
-    document2,
+    document,
     realPdfPageCount,
-    Math.max(0, Math.min(removedPage.originalIndex, document2.appendedPages.length)),
+    Math.max(0, Math.min(removedPage.originalIndex, document.appendedPages.length)),
     removedPage.page
   );
-  document2.strokes.push(...setAnnotationPage(removedPage.annotations.strokes, pageNumber));
-  document2.eraserPaths.push(...setAnnotationPage(removedPage.annotations.eraserPaths, pageNumber));
-  document2.textItems.push(...setAnnotationPage(removedPage.annotations.textItems, pageNumber));
-  document2.shapes.push(...setAnnotationPage(removedPage.annotations.shapes, pageNumber));
-  document2.imageItems.push(...setAnnotationPage(removedPage.annotations.imageItems, pageNumber));
+  document.strokes.push(...setAnnotationPage(removedPage.annotations.strokes, pageNumber));
+  document.eraserPaths.push(...setAnnotationPage(removedPage.annotations.eraserPaths, pageNumber));
+  document.textItems.push(...setAnnotationPage(removedPage.annotations.textItems, pageNumber));
+  document.shapes.push(...setAnnotationPage(removedPage.annotations.shapes, pageNumber));
+  document.imageItems.push(...setAnnotationPage(removedPage.annotations.imageItems, pageNumber));
   return pageNumber;
 }
-function permanentlyDeleteRemovedPage(document2, pageId) {
-  ensurePageCollections(document2);
-  const previousLength = document2.removedPages.length;
-  document2.removedPages = document2.removedPages.filter((entry) => entry.page.id !== pageId);
-  return document2.removedPages.length !== previousLength;
+function permanentlyDeleteRemovedPage(document, pageId) {
+  ensurePageCollections(document);
+  const previousLength = document.removedPages.length;
+  document.removedPages = document.removedPages.filter((entry) => entry.page.id !== pageId);
+  return document.removedPages.length !== previousLength;
 }
-function hidePdfPage(document2, pageNumber) {
-  ensurePageCollections(document2);
+function hidePdfPage(document, pageNumber) {
+  ensurePageCollections(document);
   const normalizedPage = Math.max(1, Math.round(pageNumber));
-  if (document2.deletedPdfPages.includes(normalizedPage) || document2.permanentlyDeletedPdfPages.includes(normalizedPage)) {
+  if (document.deletedPdfPages.includes(normalizedPage) || document.permanentlyDeletedPdfPages.includes(normalizedPage)) {
     return false;
   }
-  document2.deletedPdfPages.push(normalizedPage);
-  document2.deletedPdfPages.sort((left, right) => left - right);
+  document.deletedPdfPages.push(normalizedPage);
+  document.deletedPdfPages.sort((left, right) => left - right);
   return true;
 }
-function restorePdfPage(document2, pageNumber) {
-  ensurePageCollections(document2);
+function restorePdfPage(document, pageNumber) {
+  ensurePageCollections(document);
   const normalizedPage = Math.max(1, Math.round(pageNumber));
-  if (document2.permanentlyDeletedPdfPages.includes(normalizedPage)) {
+  if (document.permanentlyDeletedPdfPages.includes(normalizedPage)) {
     return false;
   }
-  const previousLength = document2.deletedPdfPages.length;
-  document2.deletedPdfPages = document2.deletedPdfPages.filter((page) => page !== normalizedPage);
-  return document2.deletedPdfPages.length !== previousLength;
+  const previousLength = document.deletedPdfPages.length;
+  document.deletedPdfPages = document.deletedPdfPages.filter((page) => page !== normalizedPage);
+  return document.deletedPdfPages.length !== previousLength;
 }
-function permanentlyDeleteHiddenPdfPage(document2, pageNumber) {
-  ensurePageCollections(document2);
+function permanentlyDeleteHiddenPdfPage(document, pageNumber) {
+  ensurePageCollections(document);
   const normalizedPage = Math.max(1, Math.round(pageNumber));
-  const wasHidden = document2.deletedPdfPages.includes(normalizedPage);
-  const wasPermanent = document2.permanentlyDeletedPdfPages.includes(normalizedPage);
+  const wasHidden = document.deletedPdfPages.includes(normalizedPage);
+  const wasPermanent = document.permanentlyDeletedPdfPages.includes(normalizedPage);
   if (!wasHidden && wasPermanent) {
     return false;
   }
-  document2.deletedPdfPages = document2.deletedPdfPages.filter((page) => page !== normalizedPage);
+  document.deletedPdfPages = document.deletedPdfPages.filter((page) => page !== normalizedPage);
   if (!wasPermanent) {
-    document2.permanentlyDeletedPdfPages.push(normalizedPage);
-    document2.permanentlyDeletedPdfPages.sort((left, right) => left - right);
+    document.permanentlyDeletedPdfPages.push(normalizedPage);
+    document.permanentlyDeletedPdfPages.sort((left, right) => left - right);
   }
   return true;
 }
@@ -3298,7 +3570,7 @@ function isStylusLikePointerEvent(event) {
   if (typeof tiltX === "number" && tiltX !== 0 || typeof tiltY === "number" && tiltY !== 0) {
     return true;
   }
-  return compactContact && typeof event.pressure === "number" && event.pressure > 0.01 && event.pressure !== 0.5;
+  return false;
 }
 function isWebKitStylusTouch(touch) {
   if (touch.touchType === "stylus") {
@@ -3357,209 +3629,6 @@ function resolvePointerPressure(event, lastPoint, lastPointTime, pressureMode = 
   return inputMethod === "touch" && isTabletWebKitTouchDevice() ? 0.42 : 0.5;
 }
 
-// src/settings/settingsController.ts
-function normalizeInkInputPolicy(value) {
-  if (value === "pen-mouse-stylus-touch") {
-    return "allow-touch";
-  }
-  return value === "pen-mouse-only" || value === "allow-touch" ? value : DEFAULT_SETTINGS.inkInputPolicy;
-}
-function normalizeLivePreviewMode(value) {
-  const migratedValue = value === "quality" ? "smooth" : value === "fast" ? "accurate" : value;
-  return migratedValue === "accurate" || migratedValue === "balanced" || migratedValue === "smooth" ? migratedValue : DEFAULT_SETTINGS.livePreviewMode;
-}
-function normalizeColor(value, fallback) {
-  return typeof value === "string" && /^#[0-9a-f]{6}$/i.test(value) ? value : fallback;
-}
-function clampNumber(value, fallback, min, max) {
-  return typeof value === "number" && Number.isFinite(value) ? Math.max(min, Math.min(max, value)) : fallback;
-}
-function normalizeInkPressureMode(value) {
-  return value === "auto" || value === "stylus" || value === "simulate" ? value : DEFAULT_SETTINGS.inkRenderSettings.pressureMode;
-}
-function normalizeInkEasingMode(value) {
-  return value === "ease-in" || value === "ease-out" || value === "ease-in-out" || value === "linear" ? value : DEFAULT_SETTINGS.inkRenderSettings.easing;
-}
-function normalizeInkRenderSettings(value) {
-  const raw = value && typeof value === "object" ? value : {};
-  return {
-    thinning: clampNumber(raw.thinning, DEFAULT_SETTINGS.inkRenderSettings.thinning, -1, 1),
-    streamline: clampNumber(raw.streamline, DEFAULT_SETTINGS.inkRenderSettings.streamline, 0, 1),
-    smoothing: clampNumber(raw.smoothing, DEFAULT_SETTINGS.inkRenderSettings.smoothing, 0, 1),
-    easing: normalizeInkEasingMode(raw.easing),
-    taperStart: clampNumber(raw.taperStart, DEFAULT_SETTINGS.inkRenderSettings.taperStart, 0, 120),
-    taperEnd: clampNumber(raw.taperEnd, DEFAULT_SETTINGS.inkRenderSettings.taperEnd, 0, 120),
-    pressureMode: normalizeInkPressureMode(raw.pressureMode)
-  };
-}
-var PDFAnnotatorSettingsController = class {
-  constructor(loadData, saveData, onBehaviorChanged) {
-    this.loadData = loadData;
-    this.saveData = saveData;
-    this.onBehaviorChanged = onBehaviorChanged;
-    this.settings = this.createDefaultSettings();
-    this.settingsSaveHandle = null;
-  }
-  async load() {
-    var _a2, _b, _c, _d, _e, _f, _g;
-    const loaded = await this.loadData();
-    const toolDefaults = (_a2 = loaded == null ? void 0 : loaded.toolDefaults) != null ? _a2 : {};
-    const loadedWidths = toolDefaults.widths;
-    const normalizedPresets = normalizeToolPresets(loaded == null ? void 0 : loaded.presets);
-    const shouldMigrateLegacyPressure = (loaded == null ? void 0 : loaded.pressureCaptureVersion) !== 1;
-    const loadedLivePreviewMode = loaded == null ? void 0 : loaded.livePreviewMode;
-    const shouldMigrateLegacyPreview = loadedLivePreviewMode === "quality" || loadedLivePreviewMode === "fast";
-    const inkRenderSettings = normalizeInkRenderSettings(loaded == null ? void 0 : loaded.inkRenderSettings);
-    if (shouldMigrateLegacyPressure && inkRenderSettings.pressureMode === "simulate") {
-      inkRenderSettings.pressureMode = "auto";
-    }
-    this.settings = {
-      pressureCaptureVersion: 1,
-      toolDefaults: {
-        ...DEFAULT_SETTINGS.toolDefaults,
-        ...toolDefaults,
-        selectedPresetIds: {
-          ...(_b = DEFAULT_SETTINGS.toolDefaults.selectedPresetIds) != null ? _b : {},
-          ...(_c = toolDefaults.selectedPresetIds) != null ? _c : {}
-        },
-        widths: {
-          pen: clampToolWidth("pen", (_d = loadedWidths == null ? void 0 : loadedWidths.pen) != null ? _d : DEFAULT_SETTINGS.toolDefaults.widths.pen),
-          highlighter: clampToolWidth("highlighter", (_e = loadedWidths == null ? void 0 : loadedWidths.highlighter) != null ? _e : DEFAULT_SETTINGS.toolDefaults.widths.highlighter),
-          eraser: clampToolWidth("eraser", (_f = loadedWidths == null ? void 0 : loadedWidths.eraser) != null ? _f : DEFAULT_SETTINGS.toolDefaults.widths.eraser)
-        }
-      },
-      presets: normalizedPresets,
-      textColor: normalizeColor(loaded == null ? void 0 : loaded.textColor, DEFAULT_SETTINGS.textColor),
-      preferInlineToolbar: typeof (loaded == null ? void 0 : loaded.preferInlineToolbar) === "boolean" ? loaded.preferInlineToolbar : DEFAULT_SETTINGS.preferInlineToolbar,
-      showRegionToolbarButton: typeof (loaded == null ? void 0 : loaded.showRegionToolbarButton) === "boolean" ? loaded.showRegionToolbarButton : DEFAULT_SETTINGS.showRegionToolbarButton,
-      showCopyEmbedToolbarButton: typeof (loaded == null ? void 0 : loaded.showCopyEmbedToolbarButton) === "boolean" ? loaded.showCopyEmbedToolbarButton : DEFAULT_SETTINGS.showCopyEmbedToolbarButton,
-      autoCopyRegionEmbed: typeof (loaded == null ? void 0 : loaded.autoCopyRegionEmbed) === "boolean" ? loaded.autoCopyRegionEmbed : DEFAULT_SETTINGS.autoCopyRegionEmbed,
-      showAnnotatedEmbedHeader: typeof (loaded == null ? void 0 : loaded.showAnnotatedEmbedHeader) === "boolean" ? loaded.showAnnotatedEmbedHeader : DEFAULT_SETTINGS.showAnnotatedEmbedHeader,
-      showDrawingNotices: typeof (loaded == null ? void 0 : loaded.showDrawingNotices) === "boolean" ? loaded.showDrawingNotices : DEFAULT_SETTINGS.showDrawingNotices,
-      showRenderTelemetry: typeof (loaded == null ? void 0 : loaded.showRenderTelemetry) === "boolean" ? loaded.showRenderTelemetry : DEFAULT_SETTINGS.showRenderTelemetry,
-      inkInputPolicy: normalizeInkInputPolicy(loaded == null ? void 0 : loaded.inkInputPolicy),
-      livePreviewMode: normalizeLivePreviewMode(loadedLivePreviewMode),
-      inkRenderSettings,
-      autosaveDelayMs: typeof (loaded == null ? void 0 : loaded.autosaveDelayMs) === "number" ? loaded.autosaveDelayMs : DEFAULT_SETTINGS.autosaveDelayMs
-    };
-    if (shouldMigrateLegacyPressure || shouldMigrateLegacyPreview || JSON.stringify((_g = loaded == null ? void 0 : loaded.presets) != null ? _g : []) !== JSON.stringify(normalizedPresets)) {
-      this.scheduleSave();
-    }
-  }
-  dispose() {
-    if (this.settingsSaveHandle !== null) {
-      window.clearTimeout(this.settingsSaveHandle);
-      this.settingsSaveHandle = null;
-    }
-  }
-  getToolDefaults() {
-    var _a2;
-    return {
-      ...this.settings.toolDefaults,
-      selectedPresetIds: { ...(_a2 = this.settings.toolDefaults.selectedPresetIds) != null ? _a2 : {} },
-      widths: { ...this.settings.toolDefaults.widths }
-    };
-  }
-  getTextColor() {
-    return this.settings.textColor;
-  }
-  getInlineToolbarPreference() {
-    return this.settings.preferInlineToolbar;
-  }
-  getAutosaveDelayMs() {
-    return this.settings.autosaveDelayMs;
-  }
-  shouldShowRegionToolbarButton() {
-    return this.settings.showRegionToolbarButton;
-  }
-  shouldShowCopyEmbedToolbarButton() {
-    return this.settings.showCopyEmbedToolbarButton;
-  }
-  shouldAutoCopyRegionEmbed() {
-    return this.settings.autoCopyRegionEmbed;
-  }
-  shouldShowAnnotatedEmbedHeader() {
-    return this.settings.showAnnotatedEmbedHeader;
-  }
-  shouldShowDrawingNotices() {
-    return this.settings.showDrawingNotices;
-  }
-  shouldShowRenderTelemetry() {
-    return this.settings.showRenderTelemetry;
-  }
-  getInkInputPolicy() {
-    return this.settings.inkInputPolicy;
-  }
-  getLivePreviewMode() {
-    return this.settings.livePreviewMode;
-  }
-  getInkRenderSettings() {
-    return { ...this.settings.inkRenderSettings };
-  }
-  getStoredPresets() {
-    return this.settings.presets.map((preset) => ({ ...preset }));
-  }
-  updateToolPreferences(snapshot, presets) {
-    var _a2;
-    this.settings.toolDefaults = {
-      ...snapshot,
-      selectedPresetIds: { ...(_a2 = snapshot.selectedPresetIds) != null ? _a2 : {} },
-      widths: {
-        pen: clampToolWidth("pen", snapshot.widths.pen),
-        highlighter: clampToolWidth("highlighter", snapshot.widths.highlighter),
-        eraser: clampToolWidth("eraser", snapshot.widths.eraser)
-      }
-    };
-    this.settings.presets = normalizeToolPresets(presets);
-    this.scheduleSave();
-  }
-  updateTextColor(color) {
-    this.settings.textColor = normalizeColor(color, this.settings.textColor);
-    this.scheduleSave();
-  }
-  async updateBehaviorSettings(nextSettings) {
-    this.settings = {
-      ...this.settings,
-      ...nextSettings
-    };
-    this.scheduleSave();
-    this.onBehaviorChanged();
-  }
-  createDefaultSettings() {
-    var _a2;
-    return {
-      pressureCaptureVersion: DEFAULT_SETTINGS.pressureCaptureVersion,
-      toolDefaults: {
-        ...DEFAULT_SETTINGS.toolDefaults,
-        selectedPresetIds: { ...(_a2 = DEFAULT_SETTINGS.toolDefaults.selectedPresetIds) != null ? _a2 : {} },
-        widths: { ...DEFAULT_SETTINGS.toolDefaults.widths }
-      },
-      presets: DEFAULT_SETTINGS.presets.map((preset) => ({ ...preset })),
-      textColor: DEFAULT_SETTINGS.textColor,
-      preferInlineToolbar: DEFAULT_SETTINGS.preferInlineToolbar,
-      showRegionToolbarButton: DEFAULT_SETTINGS.showRegionToolbarButton,
-      showCopyEmbedToolbarButton: DEFAULT_SETTINGS.showCopyEmbedToolbarButton,
-      autoCopyRegionEmbed: DEFAULT_SETTINGS.autoCopyRegionEmbed,
-      showAnnotatedEmbedHeader: DEFAULT_SETTINGS.showAnnotatedEmbedHeader,
-      showDrawingNotices: DEFAULT_SETTINGS.showDrawingNotices,
-      showRenderTelemetry: DEFAULT_SETTINGS.showRenderTelemetry,
-      inkInputPolicy: DEFAULT_SETTINGS.inkInputPolicy,
-      livePreviewMode: DEFAULT_SETTINGS.livePreviewMode,
-      inkRenderSettings: { ...DEFAULT_SETTINGS.inkRenderSettings },
-      autosaveDelayMs: DEFAULT_SETTINGS.autosaveDelayMs
-    };
-  }
-  scheduleSave() {
-    if (this.settingsSaveHandle !== null) {
-      window.clearTimeout(this.settingsSaveHandle);
-    }
-    this.settingsSaveHandle = window.setTimeout(() => {
-      this.settingsSaveHandle = null;
-      void this.saveData(this.settings);
-    }, 150);
-  }
-};
-
 // src/settings/settingTab.ts
 var import_obsidian4 = require("obsidian");
 var PDFAnnotatorSettingTab = class extends import_obsidian4.PluginSettingTab {
@@ -3573,8 +3642,8 @@ var PDFAnnotatorSettingTab = class extends import_obsidian4.PluginSettingTab {
         name: "Toolbar placement",
         desc: "Keep annotation controls inside the PDF toolbar, or use a floating toolbar when another extension causes overlap.",
         render: (setting) => {
-          setting.setName("工具栏位置").setDesc("将标注控件保留在 PDF 工具栏中；若与其他插件重叠，可改用悬浮工具栏。").addDropdown((dropdown) => {
-            dropdown.addOption("inline", "PDF 工具栏内").addOption("floating", "悬浮工具栏").setValue(this.plugin.getInlineToolbarPreference() ? "inline" : "floating").onChange(async (value) => {
+          setting.setName("Toolbar placement").setDesc("Keep annotation controls inside the PDF toolbar, or use a floating toolbar when another extension causes overlap.").addDropdown((dropdown) => {
+            dropdown.addOption("inline", "Inside PDF toolbar").addOption("floating", "Floating").setValue(this.plugin.getInlineToolbarPreference() ? "inline" : "floating").onChange(async (value) => {
               await this.plugin.updateBehaviorSettings({ preferInlineToolbar: value === "inline" });
             });
           });
@@ -3584,7 +3653,7 @@ var PDFAnnotatorSettingTab = class extends import_obsidian4.PluginSettingTab {
         name: "Region capture button",
         desc: "Show Region directly in the toolbar. When hidden, Region remains available from More.",
         render: (setting) => {
-          setting.setName("区域截取按钮").setDesc("直接在工具栏中显示“区域”。隐藏后仍可从“更多”菜单使用。").addToggle((toggle) => {
+          setting.setName("Region capture button").setDesc("Show Region directly in the toolbar. When hidden, Region remains available from More.").addToggle((toggle) => {
             toggle.setValue(this.plugin.shouldShowRegionToolbarButton()).onChange(async (value) => {
               await this.plugin.updateBehaviorSettings({ showRegionToolbarButton: value });
             });
@@ -3595,7 +3664,7 @@ var PDFAnnotatorSettingTab = class extends import_obsidian4.PluginSettingTab {
         name: "Copy embed button",
         desc: "Show Copy embed after selecting a region. When hidden, the action remains in the Region menu.",
         render: (setting) => {
-          setting.setName("复制嵌入按钮").setDesc("选中区域后显示“复制嵌入”。隐藏后仍可从“区域”菜单使用。").addToggle((toggle) => {
+          setting.setName("Copy embed button").setDesc("Show Copy embed after selecting a region. When hidden, the action remains in the Region menu.").addToggle((toggle) => {
             toggle.setValue(this.plugin.shouldShowCopyEmbedToolbarButton()).onChange(async (value) => {
               await this.plugin.updateBehaviorSettings({ showCopyEmbedToolbarButton: value });
             });
@@ -3606,7 +3675,7 @@ var PDFAnnotatorSettingTab = class extends import_obsidian4.PluginSettingTab {
         name: "Automatic region embed copy",
         desc: "Copy the annotated Markdown embed block as soon as a region is captured.",
         render: (setting) => {
-          setting.setName("自动复制区域嵌入").setDesc("截取区域后，立即复制带批注的 Markdown 嵌入代码块。").addToggle((toggle) => {
+          setting.setName("Automatic region embed copy").setDesc("Copy the annotated Markdown embed block as soon as a region is captured.").addToggle((toggle) => {
             toggle.setValue(this.plugin.shouldAutoCopyRegionEmbed()).onChange(async (value) => {
               await this.plugin.updateBehaviorSettings({ autoCopyRegionEmbed: value });
             });
@@ -3617,7 +3686,7 @@ var PDFAnnotatorSettingTab = class extends import_obsidian4.PluginSettingTab {
         name: "Embed controls",
         desc: "Show the title and Open, Refresh, and Copy controls above annotated PDF embeds in notes.",
         render: (setting) => {
-          setting.setName("嵌入控件").setDesc("在笔记中的带批注 PDF 嵌入上方显示标题、“打开”“刷新”和“复制”控件。").addToggle((toggle) => {
+          setting.setName("Embed controls").setDesc("Show the title and Open, Refresh, and Copy controls above annotated PDF embeds in notes.").addToggle((toggle) => {
             toggle.setValue(this.plugin.shouldShowAnnotatedEmbedHeader()).onChange(async (value) => {
               await this.plugin.updateBehaviorSettings({ showAnnotatedEmbedHeader: value });
             });
@@ -3628,7 +3697,7 @@ var PDFAnnotatorSettingTab = class extends import_obsidian4.PluginSettingTab {
         name: "Action notices",
         desc: "Show brief confirmations after drawing, undo, and redo actions.",
         render: (setting) => {
-          setting.setName("操作提示").setDesc("绘制、撤销和重做后显示简短确认提示。").addToggle((toggle) => {
+          setting.setName("Action notices").setDesc("Show brief confirmations after drawing, undo, and redo actions.").addToggle((toggle) => {
             toggle.setValue(this.plugin.shouldShowDrawingNotices()).onChange(async (value) => {
               await this.plugin.updateBehaviorSettings({ showDrawingNotices: value });
             });
@@ -3639,7 +3708,7 @@ var PDFAnnotatorSettingTab = class extends import_obsidian4.PluginSettingTab {
         name: "Rendering diagnostics",
         desc: "Show live input and rendering timings. Enable only while investigating drawing problems.",
         render: (setting) => {
-          setting.setName("渲染诊断").setDesc("显示实时输入与渲染耗时。仅在排查绘制问题时启用。").addToggle((toggle) => {
+          setting.setName("Rendering diagnostics").setDesc("Show live input and rendering timings. Enable only while investigating drawing problems.").addToggle((toggle) => {
             toggle.setValue(this.plugin.shouldShowRenderTelemetry()).onChange(async (value) => {
               await this.plugin.updateBehaviorSettings({ showRenderTelemetry: value });
             });
@@ -3650,8 +3719,8 @@ var PDFAnnotatorSettingTab = class extends import_obsidian4.PluginSettingTab {
         name: "Finger input",
         desc: "Choose what one finger does on the page. Apple Pencil and mouse draw in both modes.",
         render: (setting) => {
-          setting.setName("手指输入").setDesc("选择单指在页面上的行为。Apple Pencil 和鼠标在两种模式下都可绘制。").addDropdown((dropdown) => {
-            dropdown.addOption("allow-touch", "手指绘制").addOption("pen-mouse-only", "手指平移").setValue(this.plugin.getInkInputPolicy()).onChange(async (value) => {
+          setting.setName("Finger input").setDesc("Choose what one finger does on the page. Apple Pencil and mouse draw in both modes.").addDropdown((dropdown) => {
+            dropdown.addOption("allow-touch", "Draw with finger").addOption("pen-mouse-only", "Pan with finger").setValue(this.plugin.getInkInputPolicy()).onChange(async (value) => {
               await this.plugin.updateBehaviorSettings({ inkInputPolicy: value });
             });
           });
@@ -3661,8 +3730,8 @@ var PDFAnnotatorSettingTab = class extends import_obsidian4.PluginSettingTab {
         name: "Stroke preview",
         desc: "Balance an exact match to the saved stroke against a smoother, more responsive tip. Pressure rendering stays enabled in every mode.",
         render: (setting) => {
-          setting.setName("笔迹预览").setDesc("在与保存笔迹完全一致和更平滑、响应更快的笔尖效果之间取舍。所有模式均保留压感渲染。").addDropdown((dropdown) => {
-            dropdown.addOption("accurate", "最接近保存效果").addOption("balanced", "均衡").addOption("smooth", "最平滑").setValue(this.plugin.getLivePreviewMode()).onChange(async (value) => {
+          setting.setName("Stroke preview").setDesc("Balance an exact match to the saved stroke against a smoother, more responsive tip. Pressure rendering stays enabled in every mode.").addDropdown((dropdown) => {
+            dropdown.addOption("accurate", "Closest to saved").addOption("balanced", "Balanced").addOption("smooth", "Smoothest").setValue(this.plugin.getLivePreviewMode()).onChange(async (value) => {
               await this.plugin.updateBehaviorSettings({ livePreviewMode: value });
             });
           });
@@ -3684,10 +3753,10 @@ var PDFAnnotatorSettingTab = class extends import_obsidian4.PluginSettingTab {
     return [
       {
         name: "Pressure input",
-        desc: "Use drawing speed on any device, or pressure reported by an active stylus such as Apple Pencil.",
+        desc: "Applies to new strokes only. Use drawing speed or pressure reported by an active stylus.",
         render: (setting) => {
-          setting.setName("压感输入").setDesc("可使用任意设备的绘制速度，或使用 Apple Pencil 等手写笔报告的压力。").addDropdown((dropdown) => {
-            dropdown.addOption("auto", "自动").addOption("simulate", "绘制速度").addOption("stylus", "手写笔压力").setValue(this.plugin.getInkRenderSettings().pressureMode).onChange(async (value) => {
+          setting.setName("Pressure input").setDesc("Applies to new strokes only. Use drawing speed or pressure reported by an active stylus.").addDropdown((dropdown) => {
+            dropdown.addOption("auto", "Automatic").addOption("simulate", "Drawing speed").addOption("stylus", "Stylus pressure").setValue(this.plugin.getInkRenderSettings().pressureMode).onChange(async (value) => {
               await updateInkRenderSettings({ pressureMode: value });
             });
           });
@@ -3697,7 +3766,7 @@ var PDFAnnotatorSettingTab = class extends import_obsidian4.PluginSettingTab {
         name: "Stroke width response",
         desc: "How strongly pressure changes line width. Higher values produce more variation.",
         render: (setting) => {
-          setting.setName("笔画宽度响应").setDesc("压力对线宽的影响程度。数值越高，宽度变化越明显。").addSlider((slider) => {
+          setting.setName("Stroke width response").setDesc("How strongly pressure changes line width. Higher values produce more variation.").addSlider((slider) => {
             slider.setLimits(-1, 1, 0.05).setValue(this.plugin.getInkRenderSettings().thinning).setDynamicTooltip().onChange(async (value) => {
               await updateInkRenderSettings({ thinning: value });
             });
@@ -3706,9 +3775,9 @@ var PDFAnnotatorSettingTab = class extends import_obsidian4.PluginSettingTab {
       },
       {
         name: "Stabilization",
-        desc: "Reduce hand wobble. Higher values are steadier but follow movement less immediately.",
+        desc: "0 disables path stabilization. Higher values smooth hand wobble more strongly and follow the pen less immediately. Changes apply only to new strokes.",
         render: (setting) => {
-          setting.setName("防抖").setDesc("减少手部抖动。数值越高越稳定，但对移动的跟随越慢。").addSlider((slider) => {
+          setting.setName("Stabilization").setDesc("0 disables path stabilization. Higher values smooth hand wobble more strongly and follow the pen less immediately. Changes apply only to new strokes.").addSlider((slider) => {
             slider.setLimits(0, 1, 0.05).setValue(this.plugin.getInkRenderSettings().streamline).setDynamicTooltip().onChange(async (value) => {
               await updateInkRenderSettings({ streamline: value });
             });
@@ -3719,7 +3788,7 @@ var PDFAnnotatorSettingTab = class extends import_obsidian4.PluginSettingTab {
         name: "Stroke smoothing",
         desc: "Round sharp changes in the freehand outline.",
         render: (setting) => {
-          setting.setName("笔画平滑").setDesc("使手绘轮廓中的尖锐变化更圆滑。").addSlider((slider) => {
+          setting.setName("Stroke smoothing").setDesc("Round sharp changes in the freehand outline.").addSlider((slider) => {
             slider.setLimits(0, 1, 0.05).setValue(this.plugin.getInkRenderSettings().smoothing).setDynamicTooltip().onChange(async (value) => {
               await updateInkRenderSettings({ smoothing: value });
             });
@@ -3730,8 +3799,8 @@ var PDFAnnotatorSettingTab = class extends import_obsidian4.PluginSettingTab {
         name: "Pressure curve",
         desc: "Choose how gradually pressure changes are applied to line width.",
         render: (setting) => {
-          setting.setName("压感曲线").setDesc("选择压力变化应用到线宽时的渐变方式。").addDropdown((dropdown) => {
-            dropdown.addOption("linear", "线性").addOption("ease-in", "缓入").addOption("ease-out", "缓出").addOption("ease-in-out", "缓入缓出").setValue(this.plugin.getInkRenderSettings().easing).onChange(async (value) => {
+          setting.setName("Pressure curve").setDesc("Choose how gradually pressure changes are applied to line width.").addDropdown((dropdown) => {
+            dropdown.addOption("linear", "Linear").addOption("ease-in", "Ease in").addOption("ease-out", "Ease out").addOption("ease-in-out", "Ease in-out").setValue(this.plugin.getInkRenderSettings().easing).onChange(async (value) => {
               await updateInkRenderSettings({ easing: value });
             });
           });
@@ -3740,18 +3809,18 @@ var PDFAnnotatorSettingTab = class extends import_obsidian4.PluginSettingTab {
       {
         name: "Taper start",
         desc: "How far the beginning narrows. 0 keeps a flat start.",
-        render: (setting) => this.renderInkSlider(setting, "起笔收尖", "起笔处收窄的程度。0 表示保持平头。", "taperStart", updateInkRenderSettings)
+        render: (setting) => this.renderInkSlider(setting, "Taper start", "How far the beginning narrows. 0 keeps a flat start.", "taperStart", updateInkRenderSettings)
       },
       {
         name: "Taper end",
         desc: "How far the ending narrows. 0 keeps a flat end.",
-        render: (setting) => this.renderInkSlider(setting, "收笔收尖", "收笔处收窄的程度。0 表示保持平头。", "taperEnd", updateInkRenderSettings)
+        render: (setting) => this.renderInkSlider(setting, "Taper end", "How far the ending narrows. 0 keeps a flat end.", "taperEnd", updateInkRenderSettings)
       },
       {
         name: "Save delay",
         desc: "Wait after the last edit before saving annotation data. Lower values save sooner.",
         render: (setting) => {
-          setting.setName("保存延迟").setDesc("最后一次编辑后等待多久才保存批注数据。数值越小，保存越及时。").addSlider((slider) => {
+          setting.setName("Save delay").setDesc("Wait after the last edit before saving annotation data. Lower values save sooner.").addSlider((slider) => {
             slider.setLimits(200, 2e3, 100).setValue(this.plugin.getAutosaveDelayMs()).setDynamicTooltip().onChange(async (value) => {
               await this.plugin.updateBehaviorSettings({ autosaveDelayMs: value });
             });
@@ -3772,17 +3841,17 @@ var PDFAnnotatorSettingTab = class extends import_obsidian4.PluginSettingTab {
       {
         name: "Pen width",
         desc: "Starting width for new pen strokes.",
-        render: (setting) => this.renderDefaultWidthSetting(setting, "画笔宽度", "新建画笔笔迹的初始宽度。", "pen", TOOL_WIDTH_RANGES.pen.min, TOOL_WIDTH_RANGES.pen.max)
+        render: (setting) => this.renderDefaultWidthSetting(setting, "Pen width", "Starting width for new pen strokes.", "pen", TOOL_WIDTH_RANGES.pen.min, TOOL_WIDTH_RANGES.pen.max)
       },
       {
         name: "Highlighter width",
         desc: "Starting width for new highlighter strokes.",
-        render: (setting) => this.renderDefaultWidthSetting(setting, "荧光笔宽度", "新建荧光笔笔迹的初始宽度。", "highlighter", TOOL_WIDTH_RANGES.highlighter.min, TOOL_WIDTH_RANGES.highlighter.max)
+        render: (setting) => this.renderDefaultWidthSetting(setting, "Highlighter width", "Starting width for new highlighter strokes.", "highlighter", TOOL_WIDTH_RANGES.highlighter.min, TOOL_WIDTH_RANGES.highlighter.max)
       },
       {
         name: "Eraser size",
         desc: "Starting contact area for the eraser.",
-        render: (setting) => this.renderDefaultWidthSetting(setting, "橡皮擦大小", "橡皮擦的初始擦除范围。", "eraser", TOOL_WIDTH_RANGES.eraser.min, TOOL_WIDTH_RANGES.eraser.max)
+        render: (setting) => this.renderDefaultWidthSetting(setting, "Eraser size", "Starting contact area for the eraser.", "eraser", TOOL_WIDTH_RANGES.eraser.min, TOOL_WIDTH_RANGES.eraser.max)
       }
     ];
   }
@@ -3818,15 +3887,15 @@ var PDFAnnotatorSettingTab = class extends import_obsidian4.PluginSettingTab {
     const definitions = new Map(
       this.getSettingDefinitions().map((definition) => [definition.name, definition])
     );
-    new import_obsidian4.Setting(containerEl).setName("绘制与批注").setHeading();
+    new import_obsidian4.Setting(containerEl).setName("Drawing and annotation").setHeading();
     containerEl.createEl("p", {
       cls: "freedraw-pdf-settings-intro",
-      text: "设置绘制手感和保留显示的控件。修改会立即应用到已打开的 PDF。"
+      text: "Choose how drawing feels and which controls stay visible. Changes apply to open PDFs immediately."
     });
     this.renderSettingsSection(
       containerEl,
-      "输入方式",
-      "设置批注模式启用时手指、手写笔和鼠标的行为。"
+      "Input",
+      "Set what finger, stylus, and mouse input do while annotation mode is active."
     );
     this.renderSettingDefinitions(containerEl, definitions, [
       "Finger input",
@@ -3835,8 +3904,8 @@ var PDFAnnotatorSettingTab = class extends import_obsidian4.PluginSettingTab {
     ]);
     this.renderSettingsSection(
       containerEl,
-      "工具默认值",
-      "设置选择每种工具时所使用的初始尺寸。"
+      "Tool defaults",
+      "Choose the starting size used when each tool is selected."
     );
     this.renderSettingDefinitions(containerEl, definitions, [
       "Pen width",
@@ -3845,8 +3914,8 @@ var PDFAnnotatorSettingTab = class extends import_obsidian4.PluginSettingTab {
     ]);
     this.renderSettingsSection(
       containerEl,
-      "工具栏",
-      "保留常用操作，并将可选控件移入菜单。"
+      "Toolbar",
+      "Keep frequent actions visible and move optional controls into menus."
     );
     this.renderSettingDefinitions(containerEl, definitions, [
       "Toolbar placement",
@@ -3855,8 +3924,8 @@ var PDFAnnotatorSettingTab = class extends import_obsidian4.PluginSettingTab {
     ]);
     this.renderSettingsSection(
       containerEl,
-      "Markdown 嵌入",
-      "控制笔记中带批注 PDF 预览的显示方式。"
+      "Markdown embeds",
+      "Control the appearance of annotated PDF previews placed in notes."
     );
     this.renderSettingDefinitions(containerEl, definitions, [
       "Automatic region embed copy",
@@ -3864,8 +3933,8 @@ var PDFAnnotatorSettingTab = class extends import_obsidian4.PluginSettingTab {
     ]);
     this.renderSettingsSection(
       containerEl,
-      "保存与反馈",
-      "控制批注数据的保存时机及操作确认提示。"
+      "Saving and feedback",
+      "Control when annotation data is saved and how actions are confirmed."
     );
     this.renderSettingDefinitions(containerEl, definitions, [
       "Save delay",
@@ -3874,9 +3943,9 @@ var PDFAnnotatorSettingTab = class extends import_obsidian4.PluginSettingTab {
     const advancedEl = containerEl.createEl("details", {
       cls: "freedraw-pdf-settings-advanced"
     });
-    advancedEl.createEl("summary", { text: "高级笔迹调节" });
+    advancedEl.createEl("summary", { text: "Advanced ink tuning" });
     advancedEl.createEl("p", {
-      text: "仅当默认笔迹手感需要微调时，再调整笔画几何参数。"
+      text: "Adjust stroke geometry only when the default ink feel needs fine tuning."
     });
     const advancedBodyEl = advancedEl.createDiv({
       cls: "freedraw-pdf-settings-advanced-body"
@@ -3891,8 +3960,8 @@ var PDFAnnotatorSettingTab = class extends import_obsidian4.PluginSettingTab {
     ]);
     this.renderSettingsSection(
       containerEl,
-      "故障排查",
-      "日常使用时请保持诊断功能关闭。"
+      "Troubleshooting",
+      "Leave diagnostics off during normal use."
     );
     this.renderSettingDefinitions(containerEl, definitions, ["Rendering diagnostics"]);
   }
@@ -3943,11 +4012,12 @@ function buildPdfFromJpegPages(pages) {
   pushObject(1, "<< /Type /Catalog /Pages 2 0 R >>");
   pushObject(2, `<< /Type /Pages /Kids [${kids}] /Count ${pages.length} >>`);
   pages.forEach((page, index) => {
+    var _a3, _b;
     const pageObject = 3 + index * 3;
     const contentObject = pageObject + 1;
     const imageObject = pageObject + 2;
-    const widthPt = page.widthPx * 72 / PDF_EXPORT_DPI;
-    const heightPt = page.heightPx * 72 / PDF_EXPORT_DPI;
+    const widthPt = (_a3 = page.widthPt) != null ? _a3 : page.widthPx * 72 / PDF_EXPORT_DPI;
+    const heightPt = (_b = page.heightPt) != null ? _b : page.heightPx * 72 / PDF_EXPORT_DPI;
     const drawCommand = `q
 ${formatNumber(widthPt)} 0 0 ${formatNumber(heightPt)} 0 0 cm
 /Im${index} Do
@@ -4083,6 +4153,7 @@ async function renderPdfPageToCanvas(pdfDocument, annotationDocument, pageNumber
   return canvas;
 }
 async function renderMixedPagesToPdfBytes(app, sourceFile, annotationDocument, mixedEntries, realPdfPageCount, includeAnnotations) {
+  var _a2, _b, _c;
   const binary = await app.vault.adapter.readBinary(sourceFile.path);
   const pdfjsLib = await loadNativePdfJs();
   const loadingTask = pdfjsLib.getDocument({
@@ -4097,7 +4168,21 @@ async function renderMixedPagesToPdfBytes(app, sourceFile, annotationDocument, m
     const pageMap = /* @__PURE__ */ new Map();
     for (const entry of mixedEntries) {
       const canvas = entry.pageNumber <= pdfDocument.numPages ? await renderPdfPageToCanvas(pdfDocument, annotationDocument, entry.pageNumber, realPdfPageCount, includeAnnotations) : await renderSyntheticPageToCanvas(annotationDocument, entry.pageNumber, realPdfPageCount, includeAnnotations);
-      pages.push(canvasToJpegPage(canvas));
+      const imagePage = canvasToJpegPage(canvas);
+      if (entry.pageNumber <= pdfDocument.numPages) {
+        const sourcePage = await pdfDocument.getPage(entry.pageNumber);
+        const physical = sourcePage.getViewport({ scale: 1 });
+        imagePage.widthPt = physical.width;
+        imagePage.heightPt = physical.height;
+      } else {
+        const pageSize = (_c = (_b = (_a2 = annotationDocument.appendedPages) == null ? void 0 : _a2[entry.pageNumber - pdfDocument.numPages - 1]) == null ? void 0 : _b.pageSize) != null ? _c : "a4";
+        const dimensions = getNotebookPageSizeDimensions(pageSize);
+        imagePage.widthPt = pageSize === "letter" ? 612 : 595.276 * dimensions.width / 920;
+        imagePage.heightPt = pageSize === "letter" ? 792 : imagePage.widthPt * dimensions.height / dimensions.width;
+      }
+      pages.push(imagePage);
+      canvas.width = 0;
+      canvas.height = 0;
       pageMap.set(entry.pageNumber, pages.length);
     }
     return {
@@ -4585,29 +4670,29 @@ var BlankAnnotatablePdfModal = class extends import_obsidian6.Modal {
     super(app);
     this.onSubmit = onSubmit;
     this.options = {
-      title: "新的可批注 PDF",
+      title: "New annotatable PDF",
       pageCount: 1,
-      template: "ruled",
+      template: "blank",
       pageSize: "a4",
-      paperColor: "#fffdf7"
+      paperColor: "#ffffff"
     };
-    this.titleEl.setText("新建可批注的 PDF");
+    this.titleEl.setText("Create annotatable PDF");
     this.modalEl.addClass("pdf-native-annotator-native-modal");
   }
   onOpen() {
     const { contentEl } = this;
     contentEl.empty();
     contentEl.createEl("p", {
-      text: "在仓库中新建真实 PDF，并在 Obsidian 原生 PDF 查看器中打开。",
+      text: "Creates a real PDF in the vault and opens it in Obsidian's native PDF viewer.",
       cls: "setting-item-description"
     });
-    new import_obsidian6.Setting(contentEl).setName("标题").setDesc("PDF 文件名。").addText((text) => {
+    new import_obsidian6.Setting(contentEl).setName("Title").setDesc("The PDF filename.").addText((text) => {
       text.setValue(this.options.title);
       text.onChange((value) => {
-        this.options.title = value.trim() || "新的可批注 PDF";
+        this.options.title = value.trim() || "New annotatable PDF";
       });
     });
-    new import_obsidian6.Setting(contentEl).setName("页数").setDesc("要创建的模板页面数量。").addText((text) => {
+    new import_obsidian6.Setting(contentEl).setName("Pages").setDesc("Number of template pages to create.").addText((text) => {
       text.inputEl.type = "number";
       text.inputEl.min = "1";
       text.inputEl.max = "200";
@@ -4617,7 +4702,7 @@ var BlankAnnotatablePdfModal = class extends import_obsidian6.Modal {
         this.options.pageCount = clamp2(Number.isFinite(next) ? next : 1, 1, 200);
       });
     });
-    new import_obsidian6.Setting(contentEl).setName("模板").addDropdown((dropdown) => {
+    new import_obsidian6.Setting(contentEl).setName("Template").addDropdown((dropdown) => {
       NOTEBOOK_TEMPLATES.forEach((template) => {
         dropdown.addOption(template, getNotebookTemplateLabel(template));
       });
@@ -4626,7 +4711,7 @@ var BlankAnnotatablePdfModal = class extends import_obsidian6.Modal {
         this.options.template = value;
       });
     });
-    new import_obsidian6.Setting(contentEl).setName("纸张尺寸").addDropdown((dropdown) => {
+    new import_obsidian6.Setting(contentEl).setName("Paper size").addDropdown((dropdown) => {
       NOTEBOOK_PAGE_SIZES.forEach((pageSize) => {
         dropdown.addOption(pageSize, getNotebookPageSizeLabel(pageSize));
       });
@@ -4635,7 +4720,7 @@ var BlankAnnotatablePdfModal = class extends import_obsidian6.Modal {
         this.options.pageSize = value;
       });
     });
-    new import_obsidian6.Setting(contentEl).setName("纸张颜色").addDropdown((dropdown) => {
+    new import_obsidian6.Setting(contentEl).setName("Paper color").addDropdown((dropdown) => {
       PAPER_COLOR_PRESETS.forEach((preset) => {
         dropdown.addOption(preset.color, preset.label);
       });
@@ -4645,14 +4730,14 @@ var BlankAnnotatablePdfModal = class extends import_obsidian6.Modal {
       });
     });
     contentEl.createDiv("modal-button-container", (buttonContainer) => {
-      buttonContainer.createEl("button", { cls: "mod-cta", text: "创建 PDF" }, (button) => {
+      buttonContainer.createEl("button", { cls: "mod-cta", text: "Create PDF" }, (button) => {
         button.addEventListener("click", () => {
           const options = { ...this.options };
           this.close();
           this.onSubmit(options);
         });
       });
-      buttonContainer.createEl("button", { text: "取消" }, (button) => {
+      buttonContainer.createEl("button", { text: "Cancel" }, (button) => {
         button.addEventListener("click", () => this.close());
       });
     });
@@ -4669,24 +4754,24 @@ var NativeInsertPageModal = class extends import_obsidian6.Modal {
     this.onSubmit = onSubmit;
     this.mode = mode;
     this.options = { ...defaults };
-    this.titleEl.setText(this.mode === "temporary" ? "添加模板页" : "插入原生模板页");
+    this.titleEl.setText(this.mode === "temporary" ? "Add template page" : "Insert native template page");
     this.modalEl.addClass("pdf-native-annotator-native-modal");
   }
   onOpen() {
     const { contentEl } = this;
-    this.titleEl.setText(this.mode === "temporary" ? "添加模板页" : "插入原生模板页");
+    this.titleEl.setText(this.mode === "temporary" ? "Add template page" : "Insert native template page");
     contentEl.empty();
     contentEl.createEl("p", {
-      text: this.mode === "temporary" ? `在${this.anchorLabel}${this.position === "before" ? "前" : "后"}添加临时模板页。它可继续编辑，并会包含在最终导出的 PDF 中。` : `创建新的原生工作 PDF，并在${this.anchorLabel}${this.position === "before" ? "前" : "后"}插入此模板页。已有批注会重新映射并保持可编辑。`,
+      text: this.mode === "temporary" ? `Adds a temporary template page ${this.position} ${this.anchorLabel}. It stays editable and is included when you export the finished PDF.` : `Creates a new native working PDF with this template page inserted ${this.position} ${this.anchorLabel}. Existing annotations are remapped and remain editable.`,
       cls: "setting-item-description"
     });
-    new import_obsidian6.Setting(contentEl).setName("页面标题").addText((text) => {
+    new import_obsidian6.Setting(contentEl).setName("Page title").addText((text) => {
       text.setValue(this.options.title);
       text.onChange((value) => {
-        this.options.title = value.trim() || "插入的页面";
+        this.options.title = value.trim() || "Inserted page";
       });
     });
-    new import_obsidian6.Setting(contentEl).setName("模板").addDropdown((dropdown) => {
+    new import_obsidian6.Setting(contentEl).setName("Template").addDropdown((dropdown) => {
       NOTEBOOK_TEMPLATES.forEach((template) => {
         dropdown.addOption(template, getNotebookTemplateLabel(template));
       });
@@ -4695,7 +4780,7 @@ var NativeInsertPageModal = class extends import_obsidian6.Modal {
         this.options.template = value;
       });
     });
-    new import_obsidian6.Setting(contentEl).setName("纸张尺寸").addDropdown((dropdown) => {
+    new import_obsidian6.Setting(contentEl).setName("Paper size").addDropdown((dropdown) => {
       NOTEBOOK_PAGE_SIZES.forEach((pageSize) => {
         dropdown.addOption(pageSize, getNotebookPageSizeLabel(pageSize));
       });
@@ -4704,7 +4789,7 @@ var NativeInsertPageModal = class extends import_obsidian6.Modal {
         this.options.pageSize = value;
       });
     });
-    new import_obsidian6.Setting(contentEl).setName("纸张颜色").addDropdown((dropdown) => {
+    new import_obsidian6.Setting(contentEl).setName("Paper color").addDropdown((dropdown) => {
       PAPER_COLOR_PRESETS.forEach((preset) => {
         dropdown.addOption(preset.color, preset.label);
       });
@@ -4714,14 +4799,14 @@ var NativeInsertPageModal = class extends import_obsidian6.Modal {
       });
     });
     contentEl.createDiv("modal-button-container", (buttonContainer) => {
-      buttonContainer.createEl("button", { cls: "mod-cta", text: "插入页面" }, (button) => {
+      buttonContainer.createEl("button", { cls: "mod-cta", text: "Insert page" }, (button) => {
         button.addEventListener("click", () => {
           const options = { ...this.options };
           this.close();
           this.onSubmit(options);
         });
       });
-      buttonContainer.createEl("button", { text: "取消" }, (button) => {
+      buttonContainer.createEl("button", { text: "Cancel" }, (button) => {
         button.addEventListener("click", () => this.close());
       });
     });
@@ -4737,33 +4822,33 @@ var ImageInsertModal = class extends import_obsidian6.Modal {
     this.selectedFile = null;
     this.insertButtonEl = null;
     this.statusEl = null;
-    this.titleEl.setText("插入图片");
+    this.titleEl.setText("Insert photo");
     this.modalEl.addClass("pdf-native-annotator-native-modal");
   }
   onOpen() {
     const { contentEl } = this;
     contentEl.empty();
     contentEl.createEl("p", {
-      text: "选择要放置在当前 PDF 或模板页上的图片文件。",
+      text: "Choose an image file to place on the current PDF or template page.",
       cls: "setting-item-description"
     });
-    const fileSetting = new import_obsidian6.Setting(contentEl).setName("图片").setDesc("支持 PNG、JPEG、WebP、GIF 及 Obsidian 支持的其他图片格式。");
+    const fileSetting = new import_obsidian6.Setting(contentEl).setName("Photo").setDesc("PNG, JPEG, WebP, GIF, or any image format supported by Obsidian.");
     const input = fileSetting.controlEl.createEl("input", { type: "file" });
     input.accept = "image/*";
     input.addEventListener("change", () => {
       var _a2, _b, _c;
       this.selectedFile = (_b = (_a2 = input.files) == null ? void 0 : _a2[0]) != null ? _b : null;
-      (_c = this.statusEl) == null ? void 0 : _c.setText(this.selectedFile ? this.selectedFile.name : "尚未选择图片");
+      (_c = this.statusEl) == null ? void 0 : _c.setText(this.selectedFile ? this.selectedFile.name : "No image selected");
       if (this.insertButtonEl) {
         this.insertButtonEl.disabled = !this.selectedFile;
       }
     });
     this.statusEl = contentEl.createEl("p", {
-      text: "尚未选择图片",
+      text: "No image selected",
       cls: "setting-item-description"
     });
     contentEl.createDiv("modal-button-container", (buttonContainer) => {
-      this.insertButtonEl = buttonContainer.createEl("button", { cls: "mod-cta", text: "插入" }, (button) => {
+      this.insertButtonEl = buttonContainer.createEl("button", { cls: "mod-cta", text: "Insert" }, (button) => {
         button.disabled = true;
         button.addEventListener("click", () => {
           if (!this.selectedFile) {
@@ -4774,7 +4859,7 @@ var ImageInsertModal = class extends import_obsidian6.Modal {
           this.onSubmit(file);
         });
       });
-      buttonContainer.createEl("button", { text: "取消" }, (button) => {
+      buttonContainer.createEl("button", { text: "Cancel" }, (button) => {
         button.addEventListener("click", () => this.close());
       });
     });
@@ -4788,6 +4873,8 @@ var NativePdfAnnotatorSession = class {
     this.plugin = plugin;
     this.leaf = leaf;
     this.store = store;
+    this.selectionBackground = null;
+    this.publishedFrames = /* @__PURE__ */ new WeakMap();
     this.file = null;
     this.annotationDocument = null;
     this.annotationLoadInfo = null;
@@ -4864,6 +4951,10 @@ var NativePdfAnnotatorSession = class {
     this.previewState = new PreviewStateController();
     this.annotationMode = false;
     this.isDirty = false;
+    this.documentRevision = 0;
+    this.attachmentGeneration = 0;
+    this.attachPromise = null;
+    this.savePromise = null;
     this.undoStack = [];
     this.redoStack = [];
     this.pageSurfaces = /* @__PURE__ */ new Map();
@@ -4982,9 +5073,9 @@ var NativePdfAnnotatorSession = class {
         startTop: this.floatingToolbarOffset.top
       };
       this.rootEl.classList.add("is-dragging");
-      window.addEventListener("pointermove", this.handleToolbarDragMove, { passive: false });
-      window.addEventListener("pointerup", this.handleToolbarDragEnd, { once: true });
-      window.addEventListener("pointercancel", this.handleToolbarDragEnd, { once: true });
+      this.ownerWindow.addEventListener("pointermove", this.handleToolbarDragMove, { passive: false });
+      this.ownerWindow.addEventListener("pointerup", this.handleToolbarDragEnd, { once: true });
+      this.ownerWindow.addEventListener("pointercancel", this.handleToolbarDragEnd, { once: true });
     };
     this.handleToolbarDragMove = (event) => {
       var _a2, _b, _c;
@@ -4995,8 +5086,8 @@ var NativePdfAnnotatorSession = class {
       const viewContentEl = this.getViewContentEl();
       const bounds = viewContentEl == null ? void 0 : viewContentEl.getBoundingClientRect();
       const toolbarRect = this.rootEl.getBoundingClientRect();
-      const maxTop = Math.max(0, ((_a2 = bounds == null ? void 0 : bounds.height) != null ? _a2 : window.innerHeight) - toolbarRect.height - 8);
-      const maxRight = Math.max(0, ((_b = bounds == null ? void 0 : bounds.width) != null ? _b : window.innerWidth) - Math.min(toolbarRect.width, (_c = bounds == null ? void 0 : bounds.width) != null ? _c : window.innerWidth) - 8);
+      const maxTop = Math.max(0, ((_a2 = bounds == null ? void 0 : bounds.height) != null ? _a2 : this.ownerWindow.innerHeight) - toolbarRect.height - 8);
+      const maxRight = Math.max(0, ((_b = bounds == null ? void 0 : bounds.width) != null ? _b : this.ownerWindow.innerWidth) - Math.min(toolbarRect.width, (_c = bounds == null ? void 0 : bounds.width) != null ? _c : this.ownerWindow.innerWidth) - 8);
       this.floatingToolbarOffset = {
         right: clamp2(this.floatingToolbarDrag.startRight - (event.clientX - this.floatingToolbarDrag.startX), 8, maxRight),
         top: clamp2(this.floatingToolbarDrag.startTop + (event.clientY - this.floatingToolbarDrag.startY), 8, maxTop)
@@ -5007,9 +5098,9 @@ var NativePdfAnnotatorSession = class {
       var _a2;
       (_a2 = this.rootEl) == null ? void 0 : _a2.classList.remove("is-dragging");
       this.floatingToolbarDrag = null;
-      window.removeEventListener("pointermove", this.handleToolbarDragMove);
-      window.removeEventListener("pointerup", this.handleToolbarDragEnd);
-      window.removeEventListener("pointercancel", this.handleToolbarDragEnd);
+      this.ownerWindow.removeEventListener("pointermove", this.handleToolbarDragMove);
+      this.ownerWindow.removeEventListener("pointerup", this.handleToolbarDragEnd);
+      this.ownerWindow.removeEventListener("pointercancel", this.handleToolbarDragEnd);
     };
     this.handleNativePdfThumbnailContextMenu = (event) => {
       if (!this.annotationDocument) {
@@ -5040,9 +5131,9 @@ var NativePdfAnnotatorSession = class {
       }
       this.isPdfScrolling = true;
       if (this.scrollIdleHandle !== null) {
-        window.clearTimeout(this.scrollIdleHandle);
+        this.ownerWindow.clearTimeout(this.scrollIdleHandle);
       }
-      this.scrollIdleHandle = window.setTimeout(() => {
+      this.scrollIdleHandle = this.ownerWindow.setTimeout(() => {
         this.scrollIdleHandle = null;
         this.isPdfScrolling = false;
         this.updateCurrentPageFromScroll();
@@ -5062,12 +5153,12 @@ var NativePdfAnnotatorSession = class {
       this.scheduleRepositionOpenPopovers();
       const frame = this.inlineTextEditorFrameEl;
       const editor = this.inlineTextEditorEl;
-      const viewport = window.visualViewport;
+      const viewport = this.ownerWindow.visualViewport;
       const editorFocused = !!editor && editor.ownerDocument.activeElement === editor;
       if (!editorFocused) {
         this.captureVisualViewportBaseline();
       }
-      const baselineHeight = Math.max(this.visualViewportBaselineHeight, window.innerHeight);
+      const baselineHeight = Math.max(this.visualViewportBaselineHeight, this.ownerWindow.innerHeight);
       const keyboardRaised = !!viewport && Math.abs(viewport.scale - 1) < 0.05 && viewport.height < baselineHeight - 80;
       if (!frame || !editor || !viewport || !editorFocused || !keyboardRaised) {
         return;
@@ -5075,7 +5166,7 @@ var NativePdfAnnotatorSession = class {
       if (this.keyboardAvoidanceHandle !== null) {
         return;
       }
-      this.keyboardAvoidanceHandle = window.requestAnimationFrame(() => {
+      this.keyboardAvoidanceHandle = this.ownerWindow.requestAnimationFrame(() => {
         this.keyboardAvoidanceHandle = null;
         this.keepInlineTextEditorAboveKeyboard();
       });
@@ -5113,6 +5204,16 @@ var NativePdfAnnotatorSession = class {
           this.redo();
           return;
         }
+      }
+      const toolShortcut = resolveToolShortcut(event);
+      if (toolShortcut && this.isSessionShortcutActive(event) && !this.hasActiveTransientRender()) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.closeTransientPopovers();
+        this.setActiveTool(toolShortcut);
+        this.applyOverlayMode();
+        this.refreshToolbar();
+        return;
       }
       if (!this.isSessionKeyboardActive(event)) {
         return;
@@ -5275,7 +5376,7 @@ var NativePdfAnnotatorSession = class {
       this.fingerPanVelocity.y = this.fingerPanVelocity.y * 0.68 + deltaY / deltaTime * 0.32;
       this.fingerPanLastPoint = { clientX: event.clientX, clientY: event.clientY, time: now };
       if (this.fingerPanFrameHandle === null) {
-        this.fingerPanFrameHandle = window.requestAnimationFrame(() => {
+        this.fingerPanFrameHandle = this.ownerWindow.requestAnimationFrame(() => {
           this.fingerPanFrameHandle = null;
           this.applyPendingFingerPan();
         });
@@ -5379,6 +5480,9 @@ var NativePdfAnnotatorSession = class {
         this.refreshToolPreviewFromLastPointer(false);
       }
     };
+    var _a2;
+    this.ownerDocument = this.leaf.view.containerEl.ownerDocument;
+    this.ownerWindow = (_a2 = this.ownerDocument.defaultView) != null ? _a2 : window;
     this.toolState = new ToolStateController(this.plugin.getStoredPresets(), this.plugin.getToolDefaults());
     this.transientPopovers = new TransientPopoverRegistry(
       createTransientPopoverEnvironment(this.leaf.view.containerEl.ownerDocument)
@@ -5427,9 +5531,9 @@ var NativePdfAnnotatorSession = class {
       this.scheduleSyncPages();
     }
     if (this.focusedRegionHandle !== null) {
-      window.clearTimeout(this.focusedRegionHandle);
+      this.ownerWindow.clearTimeout(this.focusedRegionHandle);
     }
-    this.focusedRegionHandle = window.setTimeout(() => {
+    this.focusedRegionHandle = this.ownerWindow.setTimeout(() => {
       this.focusedRegionHandle = null;
       this.focusedRegion = null;
       this.focusedRegionPage = null;
@@ -5441,6 +5545,25 @@ var NativePdfAnnotatorSession = class {
     this.goToMixedPage(page);
   }
   async attach() {
+    const generation = this.attachmentGeneration;
+    if (this.attachPromise) {
+      await this.attachPromise;
+      if (generation !== this.attachmentGeneration) {
+        return;
+      }
+      return this.attach();
+    }
+    const attaching = this.attachFile();
+    this.attachPromise = attaching;
+    try {
+      await attaching;
+    } finally {
+      if (this.attachPromise === attaching) this.attachPromise = null;
+    }
+  }
+  async attachFile() {
+    var _a2;
+    const generation = this.attachmentGeneration;
     try {
       const nextFile = this.getPdfFile();
       if (!nextFile) {
@@ -5449,17 +5572,28 @@ var NativePdfAnnotatorSession = class {
       }
       this.bindSessionKeyListener();
       const fileChanged = !this.file || this.file.path !== nextFile.path;
-      this.file = nextFile;
       this.ensureUi();
       if (fileChanged) {
+        this.applyOverlayMode();
+        this.commitActiveInkBeforeLayoutRefresh();
+        this.finishSessionInlineTextEditor(true);
+        await this.flushSave();
+        if (this.isDirty) {
+          throw new Error("Save the current annotations before switching PDFs.");
+        }
         const loadInfo = await this.store.loadWithInfo(nextFile);
+        if (generation !== this.attachmentGeneration || ((_a2 = this.getPdfFile()) == null ? void 0 : _a2.path) !== nextFile.path) {
+          return;
+        }
+        this.file = nextFile;
         this.annotationDocument = loadInfo.document;
         this.nextPageZIndexCache.clear();
         this.annotationLoadInfo = loadInfo;
         this.isDirty = false;
         const zIndexesChanged = normalizeDocumentZIndexes(this.annotationDocument);
         const strokeScalesChanged = normalizeDocumentStrokeScales(this.annotationDocument);
-        if (loadInfo.migratedLegacyErasers) {
+        if (loadInfo.migratedLegacyErasers || loadInfo.migratedInkSettings) {
+          this.documentRevision += 1;
           this.isDirty = true;
           try {
             await this.store.save(nextFile, this.annotationDocument);
@@ -5469,6 +5603,7 @@ var NativePdfAnnotatorSession = class {
             this.scheduleSave();
           }
         } else if (zIndexesChanged || strokeScalesChanged) {
+          this.documentRevision += 1;
           this.isDirty = true;
           this.scheduleSave();
         }
@@ -5487,6 +5622,7 @@ var NativePdfAnnotatorSession = class {
       this.observePdfDom();
       this.bindNativePdfEvents();
       this.syncPages();
+      this.applyOverlayMode();
       this.refreshToolbar();
     } catch (error) {
       console.error("freedraw-pdf: failed to attach to PDF view", error);
@@ -5494,32 +5630,75 @@ var NativePdfAnnotatorSession = class {
     }
   }
   async flushSave() {
-    if (!this.file || !this.annotationDocument || !this.isDirty) {
-      return;
+    if (this.savePromise) {
+      return this.savePromise;
     }
+    const saving = this.savePendingDocument();
+    this.savePromise = saving;
+    try {
+      await saving;
+    } finally {
+      if (this.savePromise === saving) this.savePromise = null;
+    }
+  }
+  async savePendingDocument() {
     if (this.autosaveHandle !== null) {
-      window.clearTimeout(this.autosaveHandle);
+      this.ownerWindow.clearTimeout(this.autosaveHandle);
       this.autosaveHandle = null;
     }
+    while (this.file && this.annotationDocument && this.isDirty) {
+      const file = this.file;
+      const document = this.annotationDocument;
+      const revision = this.documentRevision;
+      try {
+        await this.store.save(file, document);
+        if (this.file !== file || this.annotationDocument !== document) {
+          return;
+        }
+        this.isDirty = revision !== this.documentRevision;
+        if (!this.isDirty) {
+          this.refreshStatus(`Saved ${this.store.getSidecarPath(file)}`);
+        }
+      } catch (error) {
+        console.error("freedraw-pdf: failed to save", error);
+        new import_obsidian6.Notice(error instanceof Error ? error.message : "Could not save PDF annotations.");
+        this.refreshStatus("Unsaved changes \u2014 save failed");
+        await this.preserveFailedSave(file, document);
+        return;
+      }
+    }
+  }
+  async preserveFailedSave(file, document) {
     try {
-      await this.store.save(this.file, this.annotationDocument);
-      this.isDirty = false;
-      this.refreshStatus(`Saved ${this.store.getSidecarPath(this.file)}`);
+      const path = await this.store.saveRecoveryCopy(file, document);
+      new import_obsidian6.Notice(`Unsaved annotations preserved in ${path}`, 12e3);
     } catch (error) {
-      console.error("freedraw-pdf: failed to save", error);
-      new import_obsidian6.Notice("Could not save PDF annotations.");
-      this.refreshStatus("Save failed");
+      console.error("freedraw-pdf: recovery save failed", error);
+      new import_obsidian6.Notice("Annotation save and recovery failed. Check available storage and vault access.", 12e3);
     }
   }
   detach() {
     var _a2, _b;
+    this.attachmentGeneration += 1;
     this.commitActiveInkBeforeLayoutRefresh();
-    void this.flushSave();
-    this.finishSessionInlineTextEditor(false);
+    this.finishSessionInlineTextEditor(true);
+    const closingFile = this.file;
+    const closingDocument = this.annotationDocument;
+    const closingDirty = this.isDirty;
+    void this.flushSave().then(async () => {
+      if (closingDirty && closingFile && closingDocument) {
+        await this.store.save(closingFile, closingDocument);
+      }
+    }).catch(async () => {
+      if (closingFile && closingDocument) {
+        await this.preserveFailedSave(closingFile, closingDocument);
+      }
+    });
     this.detachNativeMixedPageNavigator();
     this.file = null;
     this.annotationDocument = null;
     this.nextPageZIndexCache.clear();
+    this.selectionBackground = null;
     this.annotationLoadInfo = null;
     this.invalidateAnnotationPageCache();
     this.currentStroke = null;
@@ -5539,12 +5718,12 @@ var NativePdfAnnotatorSession = class {
     this.visiblePageRange = null;
     this.realPdfPageCount = 0;
     this.cleanupNativeMixedPageThumbnails();
-    (_a2 = this.syntheticPageContainer) == null ? void 0 : _a2.remove();
+    (_a2 = this.syntheticPageContainer) == null ? void 0 : _a2.querySelectorAll(".pdf-native-annotator-synthetic-page").forEach((page) => page.remove());
     this.syntheticPageContainer = null;
     this.undoStack = [];
     this.redoStack = [];
     if (this.focusedRegionHandle !== null) {
-      window.clearTimeout(this.focusedRegionHandle);
+      this.ownerWindow.clearTimeout(this.focusedRegionHandle);
       this.focusedRegionHandle = null;
     }
     this.focusedRegion = null;
@@ -5565,18 +5744,18 @@ var NativePdfAnnotatorSession = class {
     if (this.sessionKeyListenerBound) {
       return;
     }
-    window.addEventListener("keydown", this.handleSessionKeyDown, { capture: true });
-    window.addEventListener("keyup", this.handleSessionKeyUp);
-    window.addEventListener("blur", this.handleSessionWindowBlur);
+    this.ownerWindow.addEventListener("keydown", this.handleSessionKeyDown, { capture: true });
+    this.ownerWindow.addEventListener("keyup", this.handleSessionKeyUp);
+    this.ownerWindow.addEventListener("blur", this.handleSessionWindowBlur);
     this.sessionKeyListenerBound = true;
   }
   unbindSessionKeyListener() {
     if (!this.sessionKeyListenerBound) {
       return;
     }
-    window.removeEventListener("keydown", this.handleSessionKeyDown, { capture: true });
-    window.removeEventListener("keyup", this.handleSessionKeyUp);
-    window.removeEventListener("blur", this.handleSessionWindowBlur);
+    this.ownerWindow.removeEventListener("keydown", this.handleSessionKeyDown, { capture: true });
+    this.ownerWindow.removeEventListener("keyup", this.handleSessionKeyUp);
+    this.ownerWindow.removeEventListener("blur", this.handleSessionWindowBlur);
     this.keyboardNudgeHistoryOpen = false;
     this.sessionKeyListenerBound = false;
   }
@@ -5756,6 +5935,9 @@ var NativePdfAnnotatorSession = class {
     });
   }
   getImageDataUrlDimensions(dataUrl) {
+    if (!isEmbeddedImageDataUrl(dataUrl)) {
+      return Promise.reject(new Error("Image annotations must contain embedded image data."));
+    }
     return new Promise((resolve, reject) => {
       const image = new Image();
       image.onload = () => resolve({ width: image.naturalWidth || 1, height: image.naturalHeight || 1 });
@@ -5949,7 +6131,7 @@ var NativePdfAnnotatorSession = class {
     this.refreshStatus("Creating native PDF with inserted page...", 8e3);
     return this.createNativeWorkingPdfFromDocument(sourceDocument, entries, insertedPageNumber);
   }
-  async createNativeWorkingPdfFromDocument(document2, entries, targetPage) {
+  async createNativeWorkingPdfFromDocument(document, entries, targetPage) {
     var _a2, _b;
     if (!this.file) {
       new import_obsidian6.Notice("Open a PDF first.");
@@ -5958,14 +6140,14 @@ var NativePdfAnnotatorSession = class {
     const result = await createNativeMixedWorkingPdf(
       this.plugin.app,
       this.file,
-      document2,
+      document,
       entries,
       this.realPdfPageCount
     );
     if (!result) {
       return null;
     }
-    const nextDocument = cloneDocument(document2);
+    const nextDocument = cloneDocument(document);
     const activePageNumbers = new Set(entries.map((entry) => entry.pageNumber));
     const mapPage = (pageNumber) => {
       var _a3;
@@ -6008,7 +6190,7 @@ var NativePdfAnnotatorSession = class {
       return null;
     }
     const exportCanvas = createEl("canvas");
-    const ratio = window.devicePixelRatio || 1;
+    const ratio = this.ownerWindow.devicePixelRatio || 1;
     const exportWidth = isHtmlCanvasElement(pdfCanvas) ? pdfCanvas.width : Math.max(1, Math.floor(surface.lastWidth * ratio));
     const exportHeight = isHtmlCanvasElement(pdfCanvas) ? pdfCanvas.height : Math.max(1, Math.floor(surface.lastHeight * ratio));
     exportCanvas.width = exportWidth;
@@ -6426,9 +6608,11 @@ var NativePdfAnnotatorSession = class {
     this.objectErasePreviewTargets.clear();
     this.pointerPage = null;
     if ((previousEntry == null ? void 0 : previousEntry.kind) === "document") {
+      this.store.inheritBaseline(this.annotationDocument, previousEntry.document);
       this.annotationDocument = previousEntry.document;
       this.nextPageZIndexCache.clear();
       this.invalidateAnnotationPageCache();
+      this.documentRevision += 1;
       this.isDirty = true;
       this.scheduleSave();
       this.drawAllAnnotations();
@@ -6455,6 +6639,7 @@ var NativePdfAnnotatorSession = class {
     const pages = new Set(this.selectedTargets.map((target) => target.page));
     this.moveSelectedTargetsWithinPage(this.selectedTargets, deltaX, deltaY);
     this.invalidateAnnotationPageCache();
+    this.documentRevision += 1;
     this.isDirty = true;
     this.scheduleSave();
     for (const page of pages) {
@@ -6617,6 +6802,7 @@ var NativePdfAnnotatorSession = class {
     const affectedPage = entry.kind === "stroke-add" ? entry.stroke.page : this.currentPage;
     if (entry.kind === "document") {
       this.redoStack.push({ kind: "document", document: cloneDocument(this.annotationDocument) });
+      this.store.inheritBaseline(this.annotationDocument, entry.document);
       this.annotationDocument = entry.document;
       this.nextPageZIndexCache.clear();
     } else {
@@ -6628,6 +6814,7 @@ var NativePdfAnnotatorSession = class {
     }
     this.lastSelectionRegion = null;
     this.invalidateAnnotationPageCache();
+    this.documentRevision += 1;
     this.isDirty = true;
     this.scheduleSave();
     this.scheduleSyncPages();
@@ -6649,6 +6836,7 @@ var NativePdfAnnotatorSession = class {
     const affectedPage = entry.kind === "stroke-add" ? entry.stroke.page : this.currentPage;
     if (entry.kind === "document") {
       this.undoStack.push({ kind: "document", document: cloneDocument(this.annotationDocument) });
+      this.store.inheritBaseline(this.annotationDocument, entry.document);
       this.annotationDocument = entry.document;
       this.nextPageZIndexCache.clear();
     } else {
@@ -6659,6 +6847,7 @@ var NativePdfAnnotatorSession = class {
     }
     this.lastSelectionRegion = null;
     this.invalidateAnnotationPageCache();
+    this.documentRevision += 1;
     this.isDirty = true;
     this.scheduleSave();
     this.scheduleSyncPages();
@@ -6681,7 +6870,7 @@ var NativePdfAnnotatorSession = class {
     this.cancelPageRenderJobs("history changed");
     this.cancelPendingInteractionRedraw();
     if (this.redrawHandle !== null) {
-      window.cancelAnimationFrame(this.redrawHandle);
+      this.ownerWindow.cancelAnimationFrame(this.redrawHandle);
       this.redrawHandle = null;
     }
     this.pendingRedrawPages.clear();
@@ -6974,9 +7163,9 @@ var NativePdfAnnotatorSession = class {
       return;
     }
     if (this.zoomAnchorRestoreHandle !== null) {
-      window.cancelAnimationFrame(this.zoomAnchorRestoreHandle);
+      this.ownerWindow.cancelAnimationFrame(this.zoomAnchorRestoreHandle);
     }
-    this.zoomAnchorRestoreHandle = window.requestAnimationFrame(() => {
+    this.zoomAnchorRestoreHandle = this.ownerWindow.requestAnimationFrame(() => {
       this.zoomAnchorRestoreHandle = null;
       this.restoreZoomScrollAnchor();
       if (clearAfterRestore) {
@@ -7020,7 +7209,7 @@ var NativePdfAnnotatorSession = class {
     this.rootEl.className = SESSION_ROOT_CLASS;
     this.toolbarEl = createDiv();
     this.toolbarEl.className = "pdf-native-annotator-toolbar";
-    this.toolbarEl.title = "拖动工具栏空白处可移动批注工具栏";
+    this.toolbarEl.title = "Drag empty space to move the annotation toolbar";
     this.toolbarEl.addEventListener("pointerdown", this.handleToolbarDragStart);
     this.statusEl = createDiv();
     this.statusEl.className = "pdf-native-annotator-status";
@@ -7037,12 +7226,12 @@ var NativePdfAnnotatorSession = class {
     viewContentEl.addEventListener("pointerdown", this.handleViewPointerDown, { capture: true });
     viewContentEl.addEventListener("pointermove", this.handleViewPointerMove, { passive: true });
     viewContentEl.addEventListener("pointerleave", this.handleViewPointerLeave, { passive: true });
-    document.addEventListener("pointerdown", this.handleDocumentPointerDown, true);
-    document.addEventListener("touchstart", this.handleDocumentTouchStart, { capture: true, passive: false });
-    window.addEventListener("resize", this.handleViewportResize, { passive: true });
+    this.ownerDocument.addEventListener("pointerdown", this.handleDocumentPointerDown, true);
+    this.ownerDocument.addEventListener("touchstart", this.handleDocumentTouchStart, { capture: true, passive: false });
+    this.ownerWindow.addEventListener("resize", this.handleViewportResize, { passive: true });
     this.captureVisualViewportBaseline();
-    (_a2 = window.visualViewport) == null ? void 0 : _a2.addEventListener("resize", this.handleVisualViewportChange, { passive: true });
-    (_b = window.visualViewport) == null ? void 0 : _b.addEventListener("scroll", this.handleVisualViewportChange, { passive: true });
+    (_a2 = this.ownerWindow.visualViewport) == null ? void 0 : _a2.addEventListener("resize", this.handleVisualViewportChange, { passive: true });
+    (_b = this.ownerWindow.visualViewport) == null ? void 0 : _b.addEventListener("scroll", this.handleVisualViewportChange, { passive: true });
   }
   mountUi() {
     if (!this.rootEl) {
@@ -7160,64 +7349,64 @@ var NativePdfAnnotatorSession = class {
     this.finishFingerPan(false);
     this.cancelFingerPanInertia();
     if (this.syncHandle !== null) {
-      window.cancelAnimationFrame(this.syncHandle);
+      this.ownerWindow.cancelAnimationFrame(this.syncHandle);
       this.syncHandle = null;
     }
     if (this.scrollHandle !== null) {
-      window.cancelAnimationFrame(this.scrollHandle);
+      this.ownerWindow.cancelAnimationFrame(this.scrollHandle);
       this.scrollHandle = null;
     }
     if (this.scrollIdleHandle !== null) {
-      window.clearTimeout(this.scrollIdleHandle);
+      this.ownerWindow.clearTimeout(this.scrollIdleHandle);
       this.scrollIdleHandle = null;
     }
     if (this.redrawHandle !== null) {
-      window.cancelAnimationFrame(this.redrawHandle);
+      this.ownerWindow.cancelAnimationFrame(this.redrawHandle);
       this.redrawHandle = null;
     }
     if (this.committedRedrawHandle !== null) {
-      window.clearTimeout(this.committedRedrawHandle);
+      this.ownerWindow.clearTimeout(this.committedRedrawHandle);
       this.committedRedrawHandle = null;
     }
     if (this.interactionRedrawHandle !== null) {
-      window.cancelAnimationFrame(this.interactionRedrawHandle);
+      this.ownerWindow.cancelAnimationFrame(this.interactionRedrawHandle);
       this.interactionRedrawHandle = null;
     }
     this.cancelPageRenderJobs();
     this.pageRenderSlots.clear();
     if (this.popoverRepositionHandle !== null) {
-      window.cancelAnimationFrame(this.popoverRepositionHandle);
+      this.ownerWindow.cancelAnimationFrame(this.popoverRepositionHandle);
       this.popoverRepositionHandle = null;
     }
     if (this.toolbarScrollRestoreHandle !== null) {
-      window.cancelAnimationFrame(this.toolbarScrollRestoreHandle);
+      this.ownerWindow.cancelAnimationFrame(this.toolbarScrollRestoreHandle);
       this.toolbarScrollRestoreHandle = null;
     }
     if (this.thumbnailScrollRestoreHandle !== null) {
-      window.cancelAnimationFrame(this.thumbnailScrollRestoreHandle);
+      this.ownerWindow.cancelAnimationFrame(this.thumbnailScrollRestoreHandle);
       this.thumbnailScrollRestoreHandle = null;
     }
     if (this.keyboardAvoidanceHandle !== null) {
-      window.cancelAnimationFrame(this.keyboardAvoidanceHandle);
+      this.ownerWindow.cancelAnimationFrame(this.keyboardAvoidanceHandle);
       this.keyboardAvoidanceHandle = null;
     }
     this.clearPendingWebKitTouchPointer();
     this.clearLayoutRefreshHandles();
     if (this.zoomSettleHandle !== null) {
-      window.clearTimeout(this.zoomSettleHandle);
+      this.ownerWindow.clearTimeout(this.zoomSettleHandle);
       this.zoomSettleHandle = null;
     }
     if (this.zoomAnchorRestoreHandle !== null) {
-      window.cancelAnimationFrame(this.zoomAnchorRestoreHandle);
+      this.ownerWindow.cancelAnimationFrame(this.zoomAnchorRestoreHandle);
       this.zoomAnchorRestoreHandle = null;
     }
     if (this.syntheticZoomPreviewHandle !== null) {
-      window.cancelAnimationFrame(this.syntheticZoomPreviewHandle);
+      this.ownerWindow.cancelAnimationFrame(this.syntheticZoomPreviewHandle);
       this.syntheticZoomPreviewHandle = null;
     }
     this.zoomScrollAnchor = null;
     if (this.statusResetHandle !== null) {
-      window.clearTimeout(this.statusResetHandle);
+      this.ownerWindow.clearTimeout(this.statusResetHandle);
       this.statusResetHandle = null;
     }
     (_a2 = this.mutationObserver) == null ? void 0 : _a2.disconnect();
@@ -7239,15 +7428,15 @@ var NativePdfAnnotatorSession = class {
       this.scrollParent.removeEventListener("scroll", this.handleScroll, { capture: false });
       this.scrollParent = null;
     }
-    window.removeEventListener("resize", this.handleViewportResize);
-    (_c = window.visualViewport) == null ? void 0 : _c.removeEventListener("resize", this.handleVisualViewportChange);
-    (_d = window.visualViewport) == null ? void 0 : _d.removeEventListener("scroll", this.handleVisualViewportChange);
+    this.ownerWindow.removeEventListener("resize", this.handleViewportResize);
+    (_c = this.ownerWindow.visualViewport) == null ? void 0 : _c.removeEventListener("resize", this.handleVisualViewportChange);
+    (_d = this.ownerWindow.visualViewport) == null ? void 0 : _d.removeEventListener("scroll", this.handleVisualViewportChange);
   }
   scheduleSyncPages() {
     if (this.syncHandle !== null) {
       return;
     }
-    this.syncHandle = window.requestAnimationFrame(() => {
+    this.syncHandle = this.ownerWindow.requestAnimationFrame(() => {
       this.syncHandle = null;
       this.syncPages();
     });
@@ -7323,7 +7512,7 @@ var NativePdfAnnotatorSession = class {
       if (!viewer.isConnected) {
         continue;
       }
-      const style = window.getComputedStyle(viewer);
+      const style = this.ownerWindow.getComputedStyle(viewer);
       if (style.display === "none" || style.visibility === "hidden") {
         continue;
       }
@@ -7344,7 +7533,7 @@ var NativePdfAnnotatorSession = class {
     var _a2;
     const pdfViewerEl = this.getPrimaryPdfViewerEl(viewContentEl);
     const candidates = pdfViewerEl ? Array.from(pdfViewerEl.querySelectorAll(".page[data-page-number], .pdf-page[data-page-number]")) : Array.from(viewContentEl.querySelectorAll(PAGE_SELECTORS));
-    const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+    const viewportHeight = this.ownerWindow.innerHeight || this.ownerDocument.documentElement.clientHeight || 0;
     const bestByPage = /* @__PURE__ */ new Map();
     for (const pageEl of candidates) {
       if (!pageEl.isConnected) {
@@ -7365,8 +7554,8 @@ var NativePdfAnnotatorSession = class {
         continue;
       }
       const isDeletedPdfPage = pageEl.classList.contains("pdf-native-annotator-deleted-pdf-page");
-      const pageStyle = window.getComputedStyle(pageEl);
-      const hostStyle = window.getComputedStyle(hostEl);
+      const pageStyle = this.ownerWindow.getComputedStyle(pageEl);
+      const hostStyle = this.ownerWindow.getComputedStyle(hostEl);
       if (!isDeletedPdfPage && (pageStyle.display === "none" || hostStyle.display === "none" || pageStyle.visibility === "hidden" || hostStyle.visibility === "hidden")) {
         continue;
       }
@@ -7461,7 +7650,7 @@ var NativePdfAnnotatorSession = class {
     }
     let current = thumbnailView;
     while (current && sidebar.contains(current)) {
-      const style = window.getComputedStyle(current);
+      const style = this.ownerWindow.getComputedStyle(current);
       if (style.overflowY === "auto" || style.overflowY === "scroll") {
         return current;
       }
@@ -7546,7 +7735,7 @@ var NativePdfAnnotatorSession = class {
       return;
     }
     const referenceThumbnail = (_d = nativeByPage.values().next().value) == null ? void 0 : _d.thumbnailEl;
-    const referenceStyles = referenceThumbnail ? window.getComputedStyle(referenceThumbnail) : null;
+    const referenceStyles = referenceThumbnail ? this.ownerWindow.getComputedStyle(referenceThumbnail) : null;
     const thumbnailWidth = (referenceStyles == null ? void 0 : referenceStyles.getPropertyValue("--thumbnail-width").trim()) || "96px";
     const thumbnailHeight = (referenceStyles == null ? void 0 : referenceStyles.getPropertyValue("--thumbnail-height").trim()) || "136px";
     const addedByAnchor = /* @__PURE__ */ new Map();
@@ -7665,9 +7854,9 @@ var NativePdfAnnotatorSession = class {
     };
     restore();
     if (this.thumbnailScrollRestoreHandle !== null) {
-      window.cancelAnimationFrame(this.thumbnailScrollRestoreHandle);
+      this.ownerWindow.cancelAnimationFrame(this.thumbnailScrollRestoreHandle);
     }
-    this.thumbnailScrollRestoreHandle = window.requestAnimationFrame(() => {
+    this.thumbnailScrollRestoreHandle = this.ownerWindow.requestAnimationFrame(() => {
       this.thumbnailScrollRestoreHandle = null;
       restore();
     });
@@ -7679,7 +7868,6 @@ var NativePdfAnnotatorSession = class {
     }
     const pages = (_a2 = this.annotationDocument.appendedPages) != null ? _a2 : [];
     const firstRealPage = realPageEls[0].pageEl;
-    const pdfViewerEl = firstRealPage.closest(".pdfViewer");
     const pageContainer = this.getSyntheticPageContainer(firstRealPage);
     if (!pageContainer) {
       return;
@@ -7687,61 +7875,37 @@ var NativePdfAnnotatorSession = class {
     this.syntheticPageContainer = pageContainer;
     this.isSyncingSyntheticPages = true;
     try {
-      const existingPages = Array.from(pageContainer.querySelectorAll(".pdf-native-annotator-synthetic-page"));
-      if (pdfViewerEl && pdfViewerEl !== pageContainer) {
-        for (const stalePage of Array.from(pdfViewerEl.querySelectorAll(".pdf-native-annotator-synthetic-page"))) {
-          stalePage.remove();
-        }
-      }
-      for (const existingPage of existingPages) {
-        const pageNumber = Number(existingPage.dataset.pageNumber);
-        const index = pageNumber - this.realPdfPageCount - 1;
+      for (const existingPage of Array.from(pageContainer.querySelectorAll(".pdf-native-annotator-synthetic-page"))) {
+        const index = Number(existingPage.dataset.pageNumber) - this.realPdfPageCount - 1;
         if (!Number.isInteger(index) || index < 0 || index >= pages.length) {
           existingPage.remove();
         }
       }
-      const orderedSyntheticPages = [];
+      const lastByAnchor = /* @__PURE__ */ new Map();
       pages.forEach((page, index) => {
+        var _a3, _b;
         const pageNumber = this.realPdfPageCount + index + 1;
         let pageEl = pageContainer.querySelector(`.pdf-native-annotator-synthetic-page[data-page-number="${pageNumber}"]`);
         if (!pageEl) {
           pageEl = createDiv();
-          pageEl.dataset.pageNumber = String(pageNumber);
         }
         pageEl.classList.remove("page");
         pageEl.classList.add("pdf-native-annotator-synthetic-page");
-        const insertAfter = this.getSyntheticPageInsertAfterPdfPage(page);
-        const referenceWidth = this.getSyntheticReferenceWidth(realPageEls, insertAfter);
-        this.updateSyntheticPageElement(pageEl, page, pageNumber, referenceWidth);
-        orderedSyntheticPages.push(pageEl);
-      });
-      for (let index = 0; index < orderedSyntheticPages.length; index += 1) {
-        const pageEl = orderedSyntheticPages[index];
-        const currentAtIndex = pageContainer.children.item(index);
-        if (pageEl !== currentAtIndex) {
-          pageContainer.insertBefore(pageEl, currentAtIndex);
+        const anchor = this.getSyntheticPageInsertAfterPdfPage(page);
+        this.updateSyntheticPageElement(pageEl, page, pageNumber, this.getSyntheticReferenceWidth(realPageEls, anchor));
+        const previous = (_b = lastByAnchor.get(anchor)) != null ? _b : (_a3 = [...realPageEls].reverse().find((entry) => entry.pageNumber <= anchor)) == null ? void 0 : _a3.pageEl;
+        const next = previous ? previous.nextElementSibling : firstRealPage;
+        if (next !== pageEl) {
+          pageContainer.insertBefore(pageEl, next);
         }
-      }
+        lastByAnchor.set(anchor, pageEl);
+      });
     } finally {
       this.isSyncingSyntheticPages = false;
     }
   }
   getSyntheticPageContainer(firstRealPage) {
-    const pdfViewerEl = firstRealPage.closest(".pdfViewer");
-    const anchorEl = pdfViewerEl != null ? pdfViewerEl : firstRealPage;
-    const parentEl = anchorEl.parentElement;
-    if (!parentEl) {
-      return null;
-    }
-    let container = parentEl.querySelector(":scope > .pdf-native-annotator-synthetic-pages");
-    if (!container) {
-      container = createDiv();
-      container.className = "pdf-native-annotator-synthetic-pages";
-      anchorEl.insertAdjacentElement("afterend", container);
-    } else if (container.previousElementSibling !== anchorEl && container.parentElement === parentEl) {
-      anchorEl.insertAdjacentElement("afterend", container);
-    }
-    return container;
+    return firstRealPage.parentElement;
   }
   getSyntheticReferenceWidth(realPageEls, anchorPageNumber) {
     var _a2, _b;
@@ -7816,7 +7980,7 @@ var NativePdfAnnotatorSession = class {
     if (this.syntheticZoomPreviewHandle !== null || !((_b = (_a2 = this.annotationDocument) == null ? void 0 : _a2.appendedPages) == null ? void 0 : _b.length)) {
       return;
     }
-    this.syntheticZoomPreviewHandle = window.requestAnimationFrame(() => {
+    this.syntheticZoomPreviewHandle = this.ownerWindow.requestAnimationFrame(() => {
       this.syntheticZoomPreviewHandle = null;
       this.previewSyntheticPageZoom();
     });
@@ -7917,7 +8081,7 @@ var NativePdfAnnotatorSession = class {
       existing.overlayEl.remove();
       existing.transientEl.remove();
     }
-    if (window.getComputedStyle(hostEl).position === "static") {
+    if (this.ownerWindow.getComputedStyle(hostEl).position === "static") {
       hostEl.setCssStyles({ position: "relative" });
     }
     let overlayEl = hostEl.querySelector(`:scope > .${OVERLAY_CLASS}`);
@@ -7999,16 +8163,16 @@ var NativePdfAnnotatorSession = class {
   }
   scheduleFinishZoomingPages() {
     if (this.zoomSettleHandle !== null) {
-      window.clearTimeout(this.zoomSettleHandle);
+      this.ownerWindow.clearTimeout(this.zoomSettleHandle);
     }
-    this.zoomSettleHandle = window.setTimeout(() => {
+    this.zoomSettleHandle = this.ownerWindow.setTimeout(() => {
       this.finishZoomingPages();
     }, ZOOM_SETTLE_DELAY_MS);
   }
   finishZoomingPages() {
     var _a2, _b;
     if (this.zoomSettleHandle !== null) {
-      window.clearTimeout(this.zoomSettleHandle);
+      this.ownerWindow.clearTimeout(this.zoomSettleHandle);
       this.zoomSettleHandle = null;
     }
     const pages = Array.from(this.zoomingPages);
@@ -8060,10 +8224,11 @@ var NativePdfAnnotatorSession = class {
   syncCanvasBackingSize(canvas, width, height, preservePixels = false) {
     var _a2, _b;
     const ownerWindow = canvas.ownerDocument.defaultView;
-    const ratio = (ownerWindow == null ? void 0 : ownerWindow.devicePixelRatio) || window.devicePixelRatio || 1;
+    const ratio = (ownerWindow == null ? void 0 : ownerWindow.devicePixelRatio) || this.ownerWindow.devicePixelRatio || 1;
     const pixelWidth = Math.max(1, Math.floor(width * ratio));
     const pixelHeight = Math.max(1, Math.floor(height * ratio));
     if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
+      this.publishedFrames.delete(canvas);
       let previousFrame = null;
       if (preservePixels && canvas.width > 0 && canvas.height > 0) {
         previousFrame = canvas.ownerDocument.createElement("canvas");
@@ -8212,26 +8377,26 @@ var NativePdfAnnotatorSession = class {
     this.scrollParent.addEventListener("scroll", this.handleScroll, { passive: true });
   }
   captureVisualViewportBaseline() {
-    const viewport = window.visualViewport;
+    const viewport = this.ownerWindow.visualViewport;
     if (!viewport || Math.abs(viewport.scale - 1) >= 0.05) {
       return;
     }
     this.visualViewportBaselineHeight = Math.max(
       this.visualViewportBaselineHeight,
       viewport.height,
-      window.innerHeight
+      this.ownerWindow.innerHeight
     );
   }
   keepInlineTextEditorAboveKeyboard() {
     var _a2;
     const frame = this.inlineTextEditorFrameEl;
     const editor = this.inlineTextEditorEl;
-    const viewport = window.visualViewport;
+    const viewport = this.ownerWindow.visualViewport;
     const scrollEl = ((_a2 = this.scrollParent) == null ? void 0 : _a2.isConnected) ? this.scrollParent : frame ? findScrollParent(frame) : null;
     if (!frame || !editor || !viewport || !scrollEl || editor.ownerDocument.activeElement !== editor) {
       return;
     }
-    const keyboardRaised = Math.abs(viewport.scale - 1) < 0.05 && viewport.height < Math.max(this.visualViewportBaselineHeight, window.innerHeight) - 80;
+    const keyboardRaised = Math.abs(viewport.scale - 1) < 0.05 && viewport.height < Math.max(this.visualViewportBaselineHeight, this.ownerWindow.innerHeight) - 80;
     if (!keyboardRaised) {
       return;
     }
@@ -8254,7 +8419,7 @@ var NativePdfAnnotatorSession = class {
   }
   clearLayoutRefreshHandles() {
     for (const handle of this.layoutRefreshHandles) {
-      window.clearTimeout(handle);
+      this.ownerWindow.clearTimeout(handle);
     }
     this.layoutRefreshHandles = [];
   }
@@ -8263,7 +8428,7 @@ var NativePdfAnnotatorSession = class {
       return;
     }
     this.clearLayoutRefreshHandles();
-    const handle = window.setTimeout(() => {
+    const handle = this.ownerWindow.setTimeout(() => {
       this.layoutRefreshHandles = this.layoutRefreshHandles.filter((pendingHandle) => pendingHandle !== handle);
       if (this.hasActiveTransientRender() || this.isViewportMotionActive()) {
         this.scheduleLayoutRefresh();
@@ -8294,6 +8459,9 @@ var NativePdfAnnotatorSession = class {
       this.startPageRenderJob(pageNumber);
     }
   }
+  getPageFrameKey(surface) {
+    return JSON.stringify([this.documentRevision, surface.lastWidth, surface.lastHeight, this.ownerWindow.devicePixelRatio, this.selectedTargets, this.inlineTextTargetId, this.inlineTextPageNumber, this.lastSelectionRegion, this.focusedRegion]);
+  }
   forceRedrawVisibleAnnotations() {
     if (!this.annotationDocument) {
       return;
@@ -8316,7 +8484,9 @@ var NativePdfAnnotatorSession = class {
       this.zoomingPages.delete(pageNumber);
       surface.overlayEl.setCssStyles({ visibility: "visible" });
       this.ensureOverlayLayerOrder(surface);
-      this.startPageRenderJob(pageNumber);
+      if (this.publishedFrames.get(surface.overlayEl) !== this.getPageFrameKey(surface)) {
+        this.startPageRenderJob(pageNumber);
+      }
     }
     if (visiblePages.length === 0) {
       this.syncPages();
@@ -8340,7 +8510,7 @@ var NativePdfAnnotatorSession = class {
     if (this.redrawHandle !== null) {
       return;
     }
-    this.redrawHandle = window.requestAnimationFrame(() => {
+    this.redrawHandle = this.ownerWindow.requestAnimationFrame(() => {
       this.redrawHandle = null;
       if (this.hasActiveTransientRender()) {
         return;
@@ -8366,7 +8536,7 @@ var NativePdfAnnotatorSession = class {
     }
     const canvas = pool.canvases[pool.nextIndex];
     pool.nextIndex = (pool.nextIndex + 1) % pool.canvases.length;
-    const ratio = window.devicePixelRatio || 1;
+    const ratio = this.ownerWindow.devicePixelRatio || 1;
     const pixelWidth = Math.max(1, Math.floor(surface.lastWidth * ratio));
     const pixelHeight = Math.max(1, Math.floor(surface.lastHeight * ratio));
     if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
@@ -8391,11 +8561,11 @@ var NativePdfAnnotatorSession = class {
     this.ensureOverlayLayerOrder(surface);
     this.resizeOverlay(surface, true);
     const canvas = this.getNextPageRenderSlot(surface);
-    const context = canvas.getContext("2d", { willReadFrequently: true });
+    const context = canvas.getContext("2d");
     if (!context) {
       return;
     }
-    const ratio = window.devicePixelRatio || 1;
+    const ratio = this.ownerWindow.devicePixelRatio || 1;
     context.setTransform(1, 0, 0, 1, 0, 0);
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.setTransform(ratio, 0, 0, ratio, 0, 0);
@@ -8429,7 +8599,7 @@ var NativePdfAnnotatorSession = class {
       }
     }
     const inlinePreviewText = this.getInlineTextPreviewItem(pageNumber);
-    if (inlinePreviewText) {
+    if (inlinePreviewText && !this.inlineTextEditorEl) {
       steps.push({
         run: () => this.drawText(context, surface, inlinePreviewText),
         expensive: false
@@ -8467,6 +8637,7 @@ var NativePdfAnnotatorSession = class {
       width: surface.lastWidth,
       height: surface.lastHeight,
       version,
+      frameKey: this.getPageFrameKey(surface),
       inputEpoch: this.renderInputEpoch
     });
     this.renderTelemetry.recordRenderQueued(pageNumber, steps.length, this.pageRenderJobs.size);
@@ -8476,7 +8647,7 @@ var NativePdfAnnotatorSession = class {
     if (this.pageRenderTaskHandle !== null || this.pageRenderJobs.size === 0) {
       return;
     }
-    this.pageRenderTaskHandle = window.setTimeout(() => {
+    this.pageRenderTaskHandle = this.ownerWindow.setTimeout(() => {
       this.pageRenderTaskHandle = null;
       if (this.isFingerPanRenderingPaused()) {
         this.cancelPageRenderJobs("cancelled by finger pan");
@@ -8544,7 +8715,7 @@ var NativePdfAnnotatorSession = class {
     const publishing = this.pageRenderPublications.delete(pageNumber);
     this.pageRenderVersions.set(pageNumber, ((_a2 = this.pageRenderVersions.get(pageNumber)) != null ? _a2 : 0) + 1);
     if (this.pageRenderJobs.size === 0 && this.pageRenderTaskHandle !== null) {
-      window.clearTimeout(this.pageRenderTaskHandle);
+      this.ownerWindow.clearTimeout(this.pageRenderTaskHandle);
       this.pageRenderTaskHandle = null;
     }
     if ((cancelled || publishing) && this.pageRenderJobs.size === 0 && this.pageRenderPublications.size === 0) {
@@ -8556,7 +8727,7 @@ var NativePdfAnnotatorSession = class {
     try {
       snapshot = await this.createCanvasSnapshot(job.canvas);
       const currentSurface = this.pageSurfaces.get(job.pageNumber);
-      const isCurrent = currentSurface === surface && surface.overlayEl.isConnected && surface.lastWidth === job.width && surface.lastHeight === job.height && this.pageRenderVersions.get(job.pageNumber) === job.version && this.pageRenderPublications.get(job.pageNumber) === job.version && this.renderInputEpoch === job.inputEpoch && !this.hasActiveTransientRender();
+      const isCurrent = currentSurface === surface && surface.overlayEl.isConnected && surface.lastWidth === job.width && surface.lastHeight === job.height && this.pageRenderVersions.get(job.pageNumber) === job.version && this.pageRenderPublications.get(job.pageNumber) === job.version && this.renderInputEpoch === job.inputEpoch && job.frameKey === this.getPageFrameKey(surface) && !this.hasActiveTransientRender();
       if (!isCurrent) {
         return;
       }
@@ -8570,6 +8741,7 @@ var NativePdfAnnotatorSession = class {
       targetContext.clearRect(0, 0, surface.overlayEl.width, surface.overlayEl.height);
       targetContext.drawImage(snapshot.image, 0, 0, surface.overlayEl.width, surface.overlayEl.height);
       targetContext.restore();
+      this.publishedFrames.set(surface.overlayEl, job.frameKey);
       this.renderTelemetry.recordRenderComplete(job.pageNumber);
     } catch (error) {
       console.warn("freedraw-pdf: asynchronous canvas publication failed", error);
@@ -8621,28 +8793,21 @@ var NativePdfAnnotatorSession = class {
     };
   }
   publishRenderedCanvas(source, target) {
-    const sourceContext = source.getContext("2d", { willReadFrequently: true });
-    const targetContext = target.getContext("2d");
-    if (!sourceContext || !targetContext) {
+    const context = target.getContext("2d");
+    if (!context) {
       return;
     }
-    try {
-      const frame = sourceContext.getImageData(0, 0, source.width, source.height);
-      targetContext.putImageData(frame, 0, 0);
-    } catch (error) {
-      console.warn("freedraw-pdf: pixel-frame publish failed; falling back to canvas copy", error);
-      targetContext.save();
-      targetContext.setTransform(1, 0, 0, 1, 0, 0);
-      targetContext.clearRect(0, 0, target.width, target.height);
-      targetContext.drawImage(source, 0, 0);
-      targetContext.restore();
-    }
+    context.save();
+    context.setTransform(1, 0, 0, 1, 0, 0);
+    context.clearRect(0, 0, target.width, target.height);
+    context.drawImage(source, 0, 0, target.width, target.height);
+    context.restore();
   }
   cancelPageRenderJobs(reason = "cancelled") {
     const hadJobs = this.pageRenderJobs.size > 0 || this.pageRenderPublications.size > 0;
     this.renderInputEpoch += 1;
     if (this.pageRenderTaskHandle !== null) {
-      window.clearTimeout(this.pageRenderTaskHandle);
+      this.ownerWindow.clearTimeout(this.pageRenderTaskHandle);
       this.pageRenderTaskHandle = null;
     }
     this.pageRenderJobs.clear();
@@ -8672,7 +8837,7 @@ var NativePdfAnnotatorSession = class {
       if (this.interactionRedrawHandle !== null) {
         return;
       }
-      this.interactionRedrawHandle = window.requestAnimationFrame(() => {
+      this.interactionRedrawHandle = this.ownerWindow.requestAnimationFrame(() => {
         this.interactionRedrawHandle = null;
         const pages = Array.from(this.pendingInteractionRedrawPages);
         this.pendingInteractionRedrawPages.clear();
@@ -8686,7 +8851,7 @@ var NativePdfAnnotatorSession = class {
     if (this.interactionRedrawHandle !== null) {
       return;
     }
-    this.interactionRedrawHandle = window.requestAnimationFrame(() => {
+    this.interactionRedrawHandle = this.ownerWindow.requestAnimationFrame(() => {
       this.interactionRedrawHandle = null;
       const pages = Array.from(this.pendingInteractionRedrawPages);
       this.pendingInteractionRedrawPages.clear();
@@ -8697,7 +8862,7 @@ var NativePdfAnnotatorSession = class {
   }
   flushInteractionRedraw(pageNumber) {
     if (this.interactionRedrawHandle !== null) {
-      window.cancelAnimationFrame(this.interactionRedrawHandle);
+      this.ownerWindow.cancelAnimationFrame(this.interactionRedrawHandle);
       this.interactionRedrawHandle = null;
     }
     const pages = pageNumber ? [pageNumber] : Array.from(this.pendingInteractionRedrawPages);
@@ -8718,7 +8883,7 @@ var NativePdfAnnotatorSession = class {
   retainCommittedPagePixels(pageNumber) {
     this.pendingCommittedRedrawPages.delete(pageNumber);
     if (this.pendingCommittedRedrawPages.size === 0 && this.committedRedrawHandle !== null) {
-      window.clearTimeout(this.committedRedrawHandle);
+      this.ownerWindow.clearTimeout(this.committedRedrawHandle);
       this.committedRedrawHandle = null;
     }
   }
@@ -8729,10 +8894,10 @@ var NativePdfAnnotatorSession = class {
   }
   scheduleCommittedRedrawAfterIdle(delayMs = 700) {
     if (this.committedRedrawHandle !== null) {
-      window.clearTimeout(this.committedRedrawHandle);
+      this.ownerWindow.clearTimeout(this.committedRedrawHandle);
     }
     const waitMs = Math.max(16, delayMs);
-    this.committedRedrawHandle = window.setTimeout(() => {
+    this.committedRedrawHandle = this.ownerWindow.setTimeout(() => {
       this.committedRedrawHandle = null;
       if (this.hasActiveTransientRender()) {
         this.scheduleCommittedRedrawAfterIdle(waitMs);
@@ -8752,7 +8917,7 @@ var NativePdfAnnotatorSession = class {
   }
   cancelPendingInteractionRedraw() {
     if (this.interactionRedrawHandle !== null) {
-      window.cancelAnimationFrame(this.interactionRedrawHandle);
+      this.ownerWindow.cancelAnimationFrame(this.interactionRedrawHandle);
       this.interactionRedrawHandle = null;
     }
     this.pendingInteractionRedrawPages.clear();
@@ -8762,7 +8927,7 @@ var NativePdfAnnotatorSession = class {
   }
   flushPendingCommittedPageRedraws() {
     if (this.committedRedrawHandle !== null) {
-      window.clearTimeout(this.committedRedrawHandle);
+      this.ownerWindow.clearTimeout(this.committedRedrawHandle);
       this.committedRedrawHandle = null;
     }
     const pages = Array.from(this.pendingCommittedRedrawPages);
@@ -8777,11 +8942,11 @@ var NativePdfAnnotatorSession = class {
     this.cancelPageRenderJobs("cancelled by pointer input");
     this.cancelPendingInteractionRedraw();
     if (this.committedRedrawHandle !== null) {
-      window.clearTimeout(this.committedRedrawHandle);
+      this.ownerWindow.clearTimeout(this.committedRedrawHandle);
       this.committedRedrawHandle = null;
     }
     if (this.redrawHandle !== null) {
-      window.cancelAnimationFrame(this.redrawHandle);
+      this.ownerWindow.cancelAnimationFrame(this.redrawHandle);
       this.redrawHandle = null;
     }
   }
@@ -8797,7 +8962,7 @@ var NativePdfAnnotatorSession = class {
     if (!this.annotationDocument || this.redrawHandle !== null) {
       return;
     }
-    this.redrawHandle = window.requestAnimationFrame(() => {
+    this.redrawHandle = this.ownerWindow.requestAnimationFrame(() => {
       this.redrawHandle = null;
       if (this.hasActiveTransientRender() || this.isViewportMotionActive()) {
         return;
@@ -8826,11 +8991,11 @@ var NativePdfAnnotatorSession = class {
     this.cancelPageRenderJobs("cancelled by viewport motion");
     this.cancelPendingInteractionRedraw();
     if (this.committedRedrawHandle !== null) {
-      window.clearTimeout(this.committedRedrawHandle);
+      this.ownerWindow.clearTimeout(this.committedRedrawHandle);
       this.committedRedrawHandle = null;
     }
     if (this.redrawHandle !== null) {
-      window.cancelAnimationFrame(this.redrawHandle);
+      this.ownerWindow.cancelAnimationFrame(this.redrawHandle);
       this.redrawHandle = null;
     }
   }
@@ -8838,7 +9003,7 @@ var NativePdfAnnotatorSession = class {
     if (this.isViewportMotionActive() || !this.annotationDocument || this.redrawHandle !== null) {
       return;
     }
-    this.redrawHandle = window.requestAnimationFrame(() => {
+    this.redrawHandle = this.ownerWindow.requestAnimationFrame(() => {
       this.redrawHandle = null;
       if (this.isViewportMotionActive() || this.hasActiveTransientRender()) {
         return;
@@ -9017,11 +9182,11 @@ var NativePdfAnnotatorSession = class {
         };
       };
       const onUp = () => {
-        window.removeEventListener("pointermove", onMove, true);
-        window.removeEventListener("pointerup", onUp, true);
+        this.ownerWindow.removeEventListener("pointermove", onMove, true);
+        this.ownerWindow.removeEventListener("pointerup", onUp, true);
       };
-      window.addEventListener("pointermove", onMove, true);
-      window.addEventListener("pointerup", onUp, true);
+      this.ownerWindow.addEventListener("pointermove", onMove, true);
+      this.ownerWindow.addEventListener("pointerup", onUp, true);
     });
     frame.addEventListener("click", (event) => {
       event.stopPropagation();
@@ -9059,7 +9224,7 @@ var NativePdfAnnotatorSession = class {
     editor.dataset.textColor = textColor;
     editor.dataset.fontScale = String(editorFontScale);
     editor.setCssStyles({
-      color: "transparent",
+      color: textColor,
       fontSize: `${baseFontSize}px`,
       fontFamily: `"${fontFamily}", sans-serif`,
       fontWeight,
@@ -9117,14 +9282,13 @@ var NativePdfAnnotatorSession = class {
     editor.addEventListener("input", resizeEditor);
     editor.addEventListener("input", () => {
       this.updateInlineTextEditorBoxFromContent(pageNumber);
-      this.drawPageAnnotations(pageNumber);
       this.updateInlineTextCaretMirror();
     });
     editor.addEventListener("select", () => this.updateInlineTextCaretMirror());
     editor.addEventListener("keyup", () => this.updateInlineTextCaretMirror());
     editor.addEventListener("pointerup", () => this.updateInlineTextCaretMirror());
     editor.addEventListener("blur", () => {
-      window.setTimeout(() => {
+      this.ownerWindow.setTimeout(() => {
         if (this.inlineTextEditorEl !== editor) {
           return;
         }
@@ -9147,7 +9311,7 @@ var NativePdfAnnotatorSession = class {
     this.updateInlineTextEditorBoxFromContent(pageNumber);
     this.drawPageAnnotations(pageNumber);
     this.updateInlineTextCaretMirror();
-    window.setTimeout(() => {
+    this.ownerWindow.setTimeout(() => {
       if (this.inlineTextEditorEl === editor && editor.isConnected && editor.ownerDocument.activeElement !== editor) {
         focusEditor();
         editor.setSelectionRange(editor.value.length, editor.value.length);
@@ -9164,7 +9328,7 @@ var NativePdfAnnotatorSession = class {
     const point = pageNumber === null ? this.inlineTextPoint : this.getInlineTextFramePoint(pageNumber);
     const targetId = this.inlineTextTargetId;
     const autoFit = this.inlineTextAutoFit;
-    const value = (_a2 = editor == null ? void 0 : editor.value.trim()) != null ? _a2 : "";
+    const value = (_a2 = editor == null ? void 0 : editor.value) != null ? _a2 : "";
     const editorColor = (editor == null ? void 0 : editor.dataset.textColor) || this.currentTextColor;
     const frameRect = (_b = frame == null ? void 0 : frame.getBoundingClientRect()) != null ? _b : null;
     const editorRect = (_c = editor == null ? void 0 : editor.getBoundingClientRect()) != null ? _c : null;
@@ -9418,12 +9582,12 @@ var NativePdfAnnotatorSession = class {
           }
         };
         const onUp = () => {
-          window.removeEventListener("pointermove", onMove, true);
-          window.removeEventListener("pointerup", onUp, true);
+          this.ownerWindow.removeEventListener("pointermove", onMove, true);
+          this.ownerWindow.removeEventListener("pointerup", onUp, true);
           editor.focus();
         };
-        window.addEventListener("pointermove", onMove, true);
-        window.addEventListener("pointerup", onUp, true);
+        this.ownerWindow.addEventListener("pointermove", onMove, true);
+        this.ownerWindow.addEventListener("pointerup", onUp, true);
       });
       frame.appendChild(handleEl);
     }
@@ -9796,7 +9960,7 @@ var NativePdfAnnotatorSession = class {
     this.plugin.updateTextColor(color);
     if (this.inlineTextEditorEl) {
       this.inlineTextEditorEl.dataset.textColor = color;
-      this.inlineTextEditorEl.setCssStyles({ color: "transparent" });
+      this.inlineTextEditorEl.setCssStyles({ color });
       this.inlineTextEditorEl.setCssProps({ "--annotator-inline-text-color": color });
       if (this.inlineTextPageNumber !== null) {
         this.drawPageAnnotations(this.inlineTextPageNumber);
@@ -9820,7 +9984,7 @@ var NativePdfAnnotatorSession = class {
     this.inlineTextEditorEl.setCssProps({ "--annotator-inline-text-color": this.currentTextColor });
     this.inlineTextEditorEl.wrap = this.currentTextWordWrap ? "soft" : "off";
     this.inlineTextEditorEl.setCssStyles({
-      color: "transparent",
+      color: this.currentTextColor,
       fontFamily: `"${this.currentTextFontFamily}", sans-serif`,
       fontSize: `${displayFontSize}px`,
       fontWeight: this.currentTextFontWeight,
@@ -9852,21 +10016,8 @@ var NativePdfAnnotatorSession = class {
     }
   }
   updateInlineTextCaretMirror() {
-    var _a2, _b;
-    const editor = this.inlineTextEditorEl;
-    const mirror = this.inlineTextCaretMirrorEl;
-    if (!editor || !mirror) {
-      return;
-    }
-    const selectionStart = (_a2 = editor.selectionStart) != null ? _a2 : editor.value.length;
-    const selectionEnd = (_b = editor.selectionEnd) != null ? _b : selectionStart;
-    const caret = createSpan({ cls: "pdf-native-annotator-inline-text-caret" });
-    caret.classList.toggle("is-hidden", selectionStart !== selectionEnd);
-    mirror.replaceChildren(
-      document.createTextNode(editor.value.slice(0, selectionStart)),
-      caret,
-      document.createTextNode(editor.value.slice(selectionEnd))
-    );
+    var _a2;
+    (_a2 = this.inlineTextCaretMirrorEl) == null ? void 0 : _a2.replaceChildren();
   }
   applyPreset(presetId) {
     var _a2, _b;
@@ -9920,9 +10071,9 @@ var NativePdfAnnotatorSession = class {
     }
     return this.annotationDocument.removedPages;
   }
-  isPdfPageDeleted(pageNumber, document2 = this.annotationDocument) {
+  isPdfPageDeleted(pageNumber, document = this.annotationDocument) {
     var _a2, _b;
-    return !!document2 && (!!((_a2 = document2.deletedPdfPages) == null ? void 0 : _a2.includes(pageNumber)) || !!((_b = document2.permanentlyDeletedPdfPages) == null ? void 0 : _b.includes(pageNumber)));
+    return !!document && (!!((_a2 = document.deletedPdfPages) == null ? void 0 : _a2.includes(pageNumber)) || !!((_b = document.permanentlyDeletedPdfPages) == null ? void 0 : _b.includes(pageNumber)));
   }
   getSyntheticPageIndex(pageNumber = this.currentPage) {
     return pageNumber > this.realPdfPageCount ? pageNumber - this.realPdfPageCount - 1 : -1;
@@ -9981,15 +10132,15 @@ var NativePdfAnnotatorSession = class {
   getMixedPageCount() {
     return Math.max(this.realPdfPageCount, 0) + this.getAppendedPages().length;
   }
-  getAnnotationCountForPage(pageNumber, document2 = this.annotationDocument) {
-    return this.getAnnotationBreakdownForPage(pageNumber, document2).total;
+  getAnnotationCountForPage(pageNumber, document = this.annotationDocument) {
+    return this.getAnnotationBreakdownForPage(pageNumber, document).total;
   }
-  getAnnotationBreakdownForPage(pageNumber, document2 = this.annotationDocument) {
+  getAnnotationBreakdownForPage(pageNumber, document = this.annotationDocument) {
     var _a2, _b, _c, _d, _e;
-    const strokes = (_a2 = document2 == null ? void 0 : document2.strokes.filter((stroke) => stroke.page === pageNumber).length) != null ? _a2 : 0;
-    const text = (_b = document2 == null ? void 0 : document2.textItems.filter((item) => item.page === pageNumber).length) != null ? _b : 0;
-    const shapes = (_c = document2 == null ? void 0 : document2.shapes.filter((shape) => shape.page === pageNumber).length) != null ? _c : 0;
-    const images = (_e = (_d = document2 == null ? void 0 : document2.imageItems) == null ? void 0 : _d.filter((image) => image.page === pageNumber).length) != null ? _e : 0;
+    const strokes = (_a2 = document == null ? void 0 : document.strokes.filter((stroke) => stroke.page === pageNumber).length) != null ? _a2 : 0;
+    const text = (_b = document == null ? void 0 : document.textItems.filter((item) => item.page === pageNumber).length) != null ? _b : 0;
+    const shapes = (_c = document == null ? void 0 : document.shapes.filter((shape) => shape.page === pageNumber).length) != null ? _c : 0;
+    const images = (_e = (_d = document == null ? void 0 : document.imageItems) == null ? void 0 : _d.filter((image) => image.page === pageNumber).length) != null ? _e : 0;
     return {
       strokes,
       text,
@@ -9998,15 +10149,15 @@ var NativePdfAnnotatorSession = class {
       total: strokes + text + shapes + images
     };
   }
-  getMixedPageEntries(document2 = this.annotationDocument) {
+  getMixedPageEntries(document = this.annotationDocument) {
     var _a2, _b, _c, _d, _e, _f;
     const entries = [];
     const addedEntriesByAnchor = /* @__PURE__ */ new Map();
-    const appendedPages = (_a2 = document2 == null ? void 0 : document2.appendedPages) != null ? _a2 : [];
+    const appendedPages = (_a2 = document == null ? void 0 : document.appendedPages) != null ? _a2 : [];
     appendedPages.forEach((page, index) => {
       var _a3;
       const pageNumber = this.realPdfPageCount + index + 1;
-      const annotationCount = this.getAnnotationCountForPage(pageNumber, document2);
+      const annotationCount = this.getAnnotationCountForPage(pageNumber, document);
       const insertAfter = this.getSyntheticPageInsertAfterPdfPage(page);
       const group = (_a3 = addedEntriesByAnchor.get(insertAfter)) != null ? _a3 : [];
       group.push({
@@ -10024,12 +10175,12 @@ var NativePdfAnnotatorSession = class {
     });
     entries.push(...(_b = addedEntriesByAnchor.get(0)) != null ? _b : []);
     for (let pageNumber = 1; pageNumber <= this.realPdfPageCount; pageNumber += 1) {
-      if (this.isPdfPageDeleted(pageNumber, document2)) {
+      if (this.isPdfPageDeleted(pageNumber, document)) {
         entries.push(...(_c = addedEntriesByAnchor.get(pageNumber)) != null ? _c : []);
         continue;
       }
-      const annotationCount = this.getAnnotationCountForPage(pageNumber, document2);
-      const pageTemplate = document2 && hasEditableNativePageTemplates(document2, this.realPdfPageCount) ? (_e = ((_d = document2.pdfPageTemplates) != null ? _d : []).find((template) => template.page === pageNumber)) != null ? _e : null : null;
+      const annotationCount = this.getAnnotationCountForPage(pageNumber, document);
+      const pageTemplate = document && hasEditableNativePageTemplates(document, this.realPdfPageCount) ? (_e = ((_d = document.pdfPageTemplates) != null ? _d : []).find((template) => template.page === pageNumber)) != null ? _e : null : null;
       entries.push({
         pageNumber,
         label: `Page ${pageNumber}`,
@@ -10044,22 +10195,22 @@ var NativePdfAnnotatorSession = class {
     }
     return entries;
   }
-  getRemovedPageEntries(document2 = this.annotationDocument) {
+  getRemovedPageEntries(document = this.annotationDocument) {
     var _a2, _b, _c;
-    if (!document2) {
+    if (!document) {
       return [];
     }
-    const permanentPdfPages = new Set((_a2 = document2.permanentlyDeletedPdfPages) != null ? _a2 : []);
-    const hiddenPdfEntries = ((_b = document2.deletedPdfPages) != null ? _b : []).filter((pageNumber) => pageNumber >= 1 && pageNumber <= this.realPdfPageCount).filter((pageNumber) => !permanentPdfPages.has(pageNumber)).map((pageNumber) => ({
+    const permanentPdfPages = new Set((_a2 = document.permanentlyDeletedPdfPages) != null ? _a2 : []);
+    const hiddenPdfEntries = ((_b = document.deletedPdfPages) != null ? _b : []).filter((pageNumber) => pageNumber >= 1 && pageNumber <= this.realPdfPageCount).filter((pageNumber) => !permanentPdfPages.has(pageNumber)).map((pageNumber) => ({
       pageNumber,
       label: `Page ${pageNumber}`,
       detail: `Removed PDF page - annotations preserved`,
       isAdded: false,
-      annotationCount: this.getAnnotationCountForPage(pageNumber, document2),
+      annotationCount: this.getAnnotationCountForPage(pageNumber, document),
       isRemoved: true,
       removedKind: "pdf"
     }));
-    const removedAddedEntries = ((_c = document2.removedPages) != null ? _c : []).map((entry) => ({
+    const removedAddedEntries = ((_c = document.removedPages) != null ? _c : []).map((entry) => ({
       pageNumber: 0,
       label: entry.page.title.trim() || "Removed added page",
       detail: `${getNotebookTemplateLabel(entry.page.template)} - ${getNotebookPageSizeLabel(entry.page.pageSize)} - removed`,
@@ -10249,7 +10400,7 @@ var NativePdfAnnotatorSession = class {
       return;
     }
     const anchor = clamp2(this.currentPage, 0, Math.max(0, this.realPdfPageCount));
-    this.insertTemplatePageAtIndex(this.findSyntheticInsertIndexAfterPdfPage(anchor), anchor);
+    this.insertTemplatePageAtIndex(this.findFirstSyntheticInsertIndexAfterPdfPage(anchor), anchor);
   }
   openTemplatePageInsertModalAfterPageId(pageId) {
     const target = this.getSyntheticPageById(pageId);
@@ -10695,7 +10846,7 @@ var NativePdfAnnotatorSession = class {
     });
     this.transientPopovers.open("go-to-page", popover);
     this.positionPopoverNearAnchor(popover, anchor);
-    window.setTimeout(() => {
+    this.ownerWindow.setTimeout(() => {
       input.focus();
       input.select();
     }, 0);
@@ -10715,41 +10866,41 @@ var NativePdfAnnotatorSession = class {
     };
     const menu = new import_obsidian6.Menu();
     if (entry.isRemoved) {
-      menu.addItem((item) => item.setTitle("恢复页面").setIcon("rotate-ccw").onClick(openOrRestore));
+      menu.addItem((item) => item.setTitle("Restore page").setIcon("rotate-ccw").onClick(openOrRestore));
       if (entry.removedKind === "pdf") {
         menu.addSeparator();
-        menu.addItem((item) => item.setTitle("永久删除").setIcon("trash").setWarning(true).onClick(() => this.permanentlyDeleteRemovedPdfPageByNumber(entry.pageNumber)));
+        menu.addItem((item) => item.setTitle("Delete permanently").setIcon("trash").setWarning(true).onClick(() => this.permanentlyDeleteRemovedPdfPageByNumber(entry.pageNumber)));
       } else if (entry.removedKind === "added" && entry.pageId) {
         menu.addSeparator();
-        menu.addItem((item) => item.setTitle("永久删除").setIcon("trash").onClick(() => this.permanentlyDeleteRemovedAddedPageById(entry.pageId)));
+        menu.addItem((item) => item.setTitle("Delete permanently").setIcon("trash").onClick(() => this.permanentlyDeleteRemovedAddedPageById(entry.pageId)));
       }
       this.showExclusiveMenuAtMouseEvent(menu, event);
       return;
     }
-    menu.addItem((item) => item.setTitle("打开页面").setIcon("arrow-right").onClick(openOrRestore));
-    menu.addItem((item) => item.setTitle("复制页面链接").setIcon("link").onClick(() => void this.copyPageLink(entry.pageNumber)));
-    menu.addItem((item) => item.setTitle("导出页面快照").setIcon("image-file").onClick(() => void this.exportPageSnapshot(entry.pageNumber)));
+    menu.addItem((item) => item.setTitle("Open page").setIcon("arrow-right").onClick(openOrRestore));
+    menu.addItem((item) => item.setTitle("Copy page link").setIcon("link").onClick(() => void this.copyPageLink(entry.pageNumber)));
+    menu.addItem((item) => item.setTitle("Export page snapshot").setIcon("image-file").onClick(() => void this.exportPageSnapshot(entry.pageNumber)));
     menu.addSeparator();
     if (entry.pageId) {
-      menu.addItem((item) => item.setTitle("在后方添加模板页").setIcon("plus").onClick(() => this.openTemplatePageInsertModalAfterPageId(entry.pageId)));
-      menu.addItem((item) => item.setTitle("重命名新增页面...").setIcon("pencil").onClick(() => this.openRenameAddedPagePopover(anchor, entry.pageId)));
-      menu.addItem((item) => item.setTitle("复制新增页面").setIcon("copy").onClick(() => this.duplicateAddedPageById(entry.pageId)));
+      menu.addItem((item) => item.setTitle("Add template page after").setIcon("plus").onClick(() => this.openTemplatePageInsertModalAfterPageId(entry.pageId)));
+      menu.addItem((item) => item.setTitle("Rename added page...").setIcon("pencil").onClick(() => this.openRenameAddedPagePopover(anchor, entry.pageId)));
+      menu.addItem((item) => item.setTitle("Duplicate added page").setIcon("copy").onClick(() => this.duplicateAddedPageById(entry.pageId)));
       menu.addSeparator();
-      menu.addItem((item) => item.setTitle("页面模板...").setIcon("rows-3").onClick((menuEvent) => this.openAddedPageTemplateMenu(entry.pageId, menuEvent, anchor)));
-      menu.addItem((item) => item.setTitle("页面尺寸...").setIcon("maximize-2").onClick((menuEvent) => this.openAddedPageSizeMenu(entry.pageId, menuEvent, anchor)));
-      menu.addItem((item) => item.setTitle("纸张颜色...").setIcon("palette").onClick((menuEvent) => this.openAddedPagePaperColorMenu(entry.pageId, menuEvent, anchor)));
+      menu.addItem((item) => item.setTitle("Page template...").setIcon("rows-3").onClick((menuEvent) => this.openAddedPageTemplateMenu(entry.pageId, menuEvent, anchor)));
+      menu.addItem((item) => item.setTitle("Page size...").setIcon("maximize-2").onClick((menuEvent) => this.openAddedPageSizeMenu(entry.pageId, menuEvent, anchor)));
+      menu.addItem((item) => item.setTitle("Paper color...").setIcon("palette").onClick((menuEvent) => this.openAddedPagePaperColorMenu(entry.pageId, menuEvent, anchor)));
       menu.addSeparator();
-      menu.addItem((item) => item.setTitle("清空新增页面").setIcon("eraser").onClick(() => this.clearAddedPageById(entry.pageId)));
-      menu.addItem((item) => item.setTitle("将新增页面移至“已移除”").setIcon("trash").onClick(() => this.deleteAddedPageById(entry.pageId)));
+      menu.addItem((item) => item.setTitle("Clear added page").setIcon("eraser").onClick(() => this.clearAddedPageById(entry.pageId)));
+      menu.addItem((item) => item.setTitle("Move added page to Removed").setIcon("trash").onClick(() => this.deleteAddedPageById(entry.pageId)));
     } else {
-      menu.addItem((item) => item.setTitle("在此 PDF 页面后添加模板页").setIcon("plus").onClick(() => this.openTemplatePageInsertModalAfterPdfPage(entry.pageNumber)));
+      menu.addItem((item) => item.setTitle("Add template page after this PDF page").setIcon("plus").onClick(() => this.openTemplatePageInsertModalAfterPdfPage(entry.pageNumber)));
       if (this.canEditPdfPageTemplate(entry.pageNumber)) {
         menu.addSeparator();
-        menu.addItem((item) => item.setTitle("页面模板...").setIcon("rows-3").onClick((menuEvent) => this.openPdfPageTemplateMenu(entry.pageNumber, menuEvent, anchor)));
-        menu.addItem((item) => item.setTitle("纸张颜色...").setIcon("palette").onClick((menuEvent) => this.openPdfPagePaperColorMenu(entry.pageNumber, menuEvent, anchor)));
+        menu.addItem((item) => item.setTitle("Page template...").setIcon("rows-3").onClick((menuEvent) => this.openPdfPageTemplateMenu(entry.pageNumber, menuEvent, anchor)));
+        menu.addItem((item) => item.setTitle("Paper color...").setIcon("palette").onClick((menuEvent) => this.openPdfPagePaperColorMenu(entry.pageNumber, menuEvent, anchor)));
         menu.addSeparator();
       }
-      menu.addItem((item) => item.setTitle("从会话中移除 PDF 页面").setIcon("trash").onClick(() => {
+      menu.addItem((item) => item.setTitle("Remove PDF page from session").setIcon("trash").onClick(() => {
         this.closePageListPopover();
         this.currentPage = entry.pageNumber;
         this.deleteCurrentPage(false);
@@ -11054,7 +11205,7 @@ var NativePdfAnnotatorSession = class {
     this.transientPopovers.open("page-list", popover, { onClose: () => pageListDocument.body.classList.remove("pdf-native-annotator-page-list-open") });
     pageListDocument.body.classList.add("pdf-native-annotator-page-list-open");
     this.positionPopoverNearAnchor(popover, anchor, "left");
-    window.setTimeout(() => {
+    this.ownerWindow.setTimeout(() => {
       var _a2;
       return (_a2 = list.querySelector(".pdf-native-annotator-page-list-item.is-active")) == null ? void 0 : _a2.scrollIntoView({ block: "nearest" });
     }, 0);
@@ -11157,7 +11308,7 @@ var NativePdfAnnotatorSession = class {
     });
     this.transientPopovers.open("rename", popover);
     this.positionPopoverNearRect(popover, anchorRect);
-    window.setTimeout(() => {
+    this.ownerWindow.setTimeout(() => {
       input.focus();
       input.select();
     }, 0);
@@ -11240,10 +11391,10 @@ var NativePdfAnnotatorSession = class {
   }
   openDocumentActionsMenu(button) {
     const menu = new import_obsidian6.Menu();
-    menu.addItem((item) => item.setTitle("插入图片...").setIcon("image-file").onClick(() => void this.insertPhotoOnCurrentPage()));
-    menu.addItem((item) => item.setTitle("新建可批注的空白 PDF...").setIcon("file-plus-2").onClick(() => this.plugin.openBlankAnnotatablePdfModal()));
+    menu.addItem((item) => item.setTitle("Insert photo...").setIcon("image-file").onClick(() => void this.insertPhotoOnCurrentPage()));
+    menu.addItem((item) => item.setTitle("Create blank annotatable PDF...").setIcon("file-plus-2").onClick(() => this.plugin.openBlankAnnotatablePdfModal()));
     if (!this.plugin.shouldShowRegionToolbarButton()) {
-      menu.addItem((item) => item.setTitle("选择区域嵌入").setIcon("crop").onClick(() => {
+      menu.addItem((item) => item.setTitle("Select region embed").setIcon("crop").onClick(() => {
         this.setActiveTool("region");
         this.applyOverlayMode();
         this.refreshToolbar();
@@ -11251,56 +11402,67 @@ var NativePdfAnnotatorSession = class {
       }));
     }
     menu.addSeparator();
-    menu.addItem((item) => item.setTitle("复制当前页面链接").setIcon("link").onClick(() => void this.copyCurrentPageLink()));
-    menu.addItem((item) => item.setTitle("复制带批注页面的嵌入代码").setIcon("code").onClick(() => void this.copyCurrentPageEmbedBlock()));
+    menu.addItem((item) => item.setTitle("Copy current page link").setIcon("link").onClick(() => void this.copyCurrentPageLink()));
+    menu.addItem((item) => item.setTitle("Copy annotated page embed").setIcon("code").onClick(() => void this.copyCurrentPageEmbedBlock()));
     if (this.selectedTargets.length > 0) {
-      menu.addItem((item) => item.setTitle("复制所选内容").setIcon("copy").onClick(() => this.copySelectedTargets()));
-      menu.addItem((item) => item.setTitle("复制一份所选内容").setIcon("copy-plus").onClick(() => this.duplicateSelectedTargets()));
-      menu.addItem((item) => item.setTitle("删除所选内容").setIcon("trash").setWarning(true).onClick(() => this.deleteSelectedTargets()));
+      menu.addItem((item) => item.setTitle("Copy selection").setIcon("copy").onClick(() => this.copySelectedTargets()));
+      menu.addItem((item) => item.setTitle("Duplicate selection").setIcon("copy-plus").onClick(() => this.duplicateSelectedTargets()));
+      menu.addItem((item) => item.setTitle("Delete selection").setIcon("trash").setWarning(true).onClick(() => this.deleteSelectedTargets()));
     }
     if (this.plugin.hasClipboard()) {
-      menu.addItem((item) => item.setTitle("粘贴已复制的批注").setIcon("clipboard").onClick(() => this.pasteClipboard()));
+      menu.addItem((item) => item.setTitle("Paste copied annotations").setIcon("clipboard").onClick(() => this.pasteClipboard()));
     }
     menu.addSeparator();
-    menu.addItem((item) => item.setTitle("当前页面快照").setIcon("image-file").onClick(() => void this.exportCurrentPageSnapshot()));
-    menu.addItem((item) => item.setTitle("带批注的混合 PDF").setIcon("file-output").onClick(() => void this.exportAnnotatedMixedDocumentPdf()));
+    menu.addItem((item) => item.setTitle("Current page snapshot").setIcon("image-file").onClick(() => void this.exportCurrentPageSnapshot()));
+    menu.addItem((item) => item.setTitle("Annotated mixed PDF").setIcon("file-output").onClick(() => void this.exportAnnotatedMixedDocumentPdf()));
     menu.addSeparator();
-    menu.addItem((item) => item.setTitle("打开批注数据 JSON").setIcon("database").onClick(() => void this.openAnnotationDataJson()));
+    menu.addItem((item) => item.setTitle("Open annotation data JSON").setIcon("database").onClick(() => void this.openAnnotationDataJson()));
     if (this.shouldShowRelinkAnnotationDataAction()) {
-      menu.addItem((item) => item.setTitle("重新关联批注数据").setIcon("replace").onClick(() => void this.relinkAnnotationDataToCurrentPdf()));
+      menu.addItem((item) => item.setTitle("Relink annotation data").setIcon("replace").onClick(() => void this.relinkAnnotationDataToCurrentPdf()));
     }
-    menu.addItem((item) => item.setTitle("创建原生混合工作 PDF").setIcon("file-plus-2").onClick(() => void this.materializeNativeMixedWorkingPdf()));
+    menu.addItem((item) => item.setTitle("Create native mixed working PDF").setIcon("file-plus-2").onClick(() => void this.materializeNativeMixedWorkingPdf()));
     const rect = button.getBoundingClientRect();
     this.showExclusiveMenuAtPosition(menu, { x: rect.left, y: rect.bottom + 6 });
   }
   openAddPageMenu(button) {
-    var _a2, _b;
+    var _a2, _b, _c, _d;
     this.syncCurrentPageForPageAction();
     const menu = new import_obsidian6.Menu();
     const currentSyntheticPage = this.getCurrentSyntheticPage();
-    menu.addItem((item) => item.setTitle(`转到页面...（${this.getCurrentMixedPageOrdinal()} / ${Math.max(1, this.getMixedPageEntries().length)}）`).setIcon("arrow-right-square").onClick(() => this.openGoToPagePopover(button)));
-    menu.addItem((item) => item.setTitle("管理页面...").setIcon("files").onClick(() => this.openPageListPopover(button)));
+    const currentPageNumber = this.currentPage;
+    const afterLocation = this.getNativeInsertPageLocation("after");
+    const beforeLocation = this.getNativeInsertPageLocation("before");
+    const quickDefaults = this.getNativeInsertPageDefaults("after", afterLocation);
+    menu.addItem((item) => item.setTitle(`Go to page... (${this.getCurrentMixedPageOrdinal()} of ${Math.max(1, this.getMixedPageEntries().length)})`).setIcon("arrow-right-square").onClick(() => this.openGoToPagePopover(button)));
+    menu.addItem((item) => item.setTitle("Manage pages...").setIcon("files").onClick(() => this.openPageListPopover(button)));
     menu.addSeparator();
-    menu.addItem((item) => item.setTitle("在当前页后快速添加").setIcon("plus").onClick(() => this.insertTemplatePageAfterCurrent()));
-    menu.addItem((item) => item.setTitle("在前方添加...").setIcon("file-plus").onClick(() => this.openTemplatePageInsertModal("before")));
-    menu.addItem((item) => item.setTitle("在后方添加...").setIcon("file-plus").onClick(() => this.openTemplatePageInsertModal("after")));
+    menu.addItem((item) => item.setTitle("Quick add after current").setIcon("plus").onClick(() => this.insertTemplatePageAtLocation(afterLocation, quickDefaults)));
+    menu.addItem((item) => item.setTitle("Add before...").setIcon("file-plus").onClick(() => this.openTemplatePageInsertModalAtLocation("before", beforeLocation)));
+    menu.addItem((item) => item.setTitle("Add after...").setIcon("file-plus").onClick(() => this.openTemplatePageInsertModalAtLocation("after", afterLocation)));
     if (currentSyntheticPage) {
       menu.addSeparator();
-      menu.addItem((item) => item.setTitle("重命名...").setIcon("pencil").onClick(() => this.openRenameAddedPagePopover(button, currentSyntheticPage.id)));
-      menu.addItem((item) => item.setTitle("连同批注一起复制").setIcon("copy").onClick(() => this.duplicateCurrentTemplatePage()));
-      menu.addItem((item) => item.setTitle("仅复制页面").setIcon("copy-plus").onClick(() => this.duplicateCurrentTemplatePage(false)));
-      menu.addItem((item) => item.setTitle(`模板：${getNotebookTemplateLabel(currentSyntheticPage.template)}`).setIcon("rows-3").onClick(() => this.openCurrentAddedPageTemplateMenu(button)));
-      menu.addItem((item) => item.setTitle(`尺寸：${getNotebookPageSizeLabel(currentSyntheticPage.pageSize)}`).setIcon("maximize-2").onClick(() => this.openCurrentAddedPageSizeMenu(button)));
-      const currentPaper = (_b = (_a2 = PAPER_COLOR_PRESETS.find((preset) => preset.color.toLowerCase() === currentSyntheticPage.paperColor.toLowerCase())) == null ? void 0 : _a2.label) != null ? _b : "自定义";
-      menu.addItem((item) => item.setTitle(`纸张：${currentPaper}`).setIcon("palette").onClick(() => this.openCurrentAddedPagePaperColorMenu(button)));
-      menu.addItem((item) => item.setTitle("清空内容").setIcon("eraser").onClick(() => this.clearCurrentTemplatePageContents()));
-      menu.addItem((item) => item.setTitle("移至“已移除”").setIcon("trash").setWarning(true).onClick(() => this.deleteCurrentPage()));
+      menu.addItem((item) => item.setTitle("Rename...").setIcon("pencil").onClick(() => this.openRenameAddedPagePopover(button, currentSyntheticPage.id)));
+      menu.addItem((item) => item.setTitle("Duplicate with annotations").setIcon("copy").onClick(() => this.duplicateCurrentTemplatePage()));
+      menu.addItem((item) => item.setTitle("Duplicate page only").setIcon("copy-plus").onClick(() => this.duplicateCurrentTemplatePage(false)));
+      menu.addItem((item) => item.setTitle(`Template: ${getNotebookTemplateLabel(currentSyntheticPage.template)}`).setIcon("rows-3").onClick(() => this.openCurrentAddedPageTemplateMenu(button)));
+      menu.addItem((item) => item.setTitle(`Size: ${getNotebookPageSizeLabel(currentSyntheticPage.pageSize)}`).setIcon("maximize-2").onClick(() => this.openCurrentAddedPageSizeMenu(button)));
+      const currentPaper = (_b = (_a2 = PAPER_COLOR_PRESETS.find((preset) => preset.color.toLowerCase() === currentSyntheticPage.paperColor.toLowerCase())) == null ? void 0 : _a2.label) != null ? _b : "Custom";
+      menu.addItem((item) => item.setTitle(`Paper: ${currentPaper}`).setIcon("palette").onClick(() => this.openCurrentAddedPagePaperColorMenu(button)));
+      menu.addItem((item) => item.setTitle("Clear contents").setIcon("eraser").onClick(() => this.clearCurrentTemplatePageContents()));
+      menu.addItem((item) => item.setTitle("Move to Removed").setIcon("trash").setWarning(true).onClick(() => this.deleteCurrentPage()));
     } else {
       menu.addSeparator();
-      menu.addItem((item) => item.setTitle("从本次会话中移除").setIcon("trash").onClick(() => this.deleteCurrentPage()));
+      const pageTemplate = this.canEditPdfPageTemplate(currentPageNumber) ? this.getPdfPageTemplate(currentPageNumber) : null;
+      if (pageTemplate) {
+        menu.addItem((item) => item.setTitle(`Template: ${getNotebookTemplateLabel(pageTemplate.template)}`).setIcon("rows-3").onClick((event) => this.openPdfPageTemplateMenu(currentPageNumber, event, button)));
+        const paperLabel = (_d = (_c = PAPER_COLOR_PRESETS.find((preset) => preset.color.toLowerCase() === pageTemplate.paperColor.toLowerCase())) == null ? void 0 : _c.label) != null ? _d : "Custom";
+        menu.addItem((item) => item.setTitle(`Paper: ${paperLabel}`).setIcon("palette").onClick((event) => this.openPdfPagePaperColorMenu(currentPageNumber, event, button)));
+        menu.addSeparator();
+      }
+      menu.addItem((item) => item.setTitle("Remove from this session").setIcon("trash").onClick(() => this.deleteCurrentPage()));
     }
     menu.addSeparator();
-    menu.addItem((item) => item.setTitle("导出带批注的 PDF").setIcon("file-output").onClick(() => void this.exportAnnotatedMixedDocumentPdf()));
+    menu.addItem((item) => item.setTitle("Export annotated PDF").setIcon("file-output").onClick(() => void this.exportAnnotatedMixedDocumentPdf()));
     const rect = button.getBoundingClientRect();
     this.showExclusiveMenuAtPosition(menu, { x: rect.left, y: rect.bottom + 6 });
   }
@@ -11323,13 +11485,13 @@ var NativePdfAnnotatorSession = class {
     });
     this.transientPopovers.open("confirm", popover);
     const popoverRect = popover.getBoundingClientRect();
-    const left = clamp2(window.innerWidth / 2 - popoverRect.width / 2, 12, window.innerWidth - popoverRect.width - 12);
-    const top = clamp2(88, 12, window.innerHeight - popoverRect.height - 12);
+    const left = clamp2(this.ownerWindow.innerWidth / 2 - popoverRect.width / 2, 12, this.ownerWindow.innerWidth - popoverRect.width - 12);
+    const top = clamp2(88, 12, this.ownerWindow.innerHeight - popoverRect.height - 12);
     popover.setCssStyles({
       left: `${left}px`,
       top: `${top}px`
     });
-    window.setTimeout(() => confirmButton.focus(), 0);
+    this.ownerWindow.setTimeout(() => confirmButton.focus(), 0);
   }
   setCurrentTemplatePageColorValue(color, pushHistory = true) {
     const page = this.getCurrentSyntheticPage();
@@ -11384,13 +11546,13 @@ var NativePdfAnnotatorSession = class {
       });
       selectionSummary.textContent = summary;
       selectionSummary.classList.toggle("is-hidden", summary.length === 0);
-      if (fontSelect && fontSelect !== document.activeElement) {
+      if (fontSelect && fontSelect !== this.ownerDocument.activeElement) {
         fontSelect.value = family;
       }
-      if (sizeInput && sizeInput !== document.activeElement) {
+      if (sizeInput && sizeInput !== this.ownerDocument.activeElement) {
         sizeInput.value = String(size);
       }
-      if (lineSpacingInput && lineSpacingInput !== document.activeElement) {
+      if (lineSpacingInput && lineSpacingInput !== this.ownerDocument.activeElement) {
         lineSpacingInput.value = lineSpacing.toFixed(2);
       }
       boldButton == null ? void 0 : boldButton.classList.toggle("is-active", fontWeight === "bold");
@@ -11720,27 +11882,29 @@ var NativePdfAnnotatorSession = class {
     this.updateNativeMixedPageThumbnailSelection();
     this.syncNativeMixedPageNavigator();
     const previousToolScrollLeft = (_b = (_a2 = this.toolbarEl.querySelector(".pdf-native-annotator-group.is-tools")) == null ? void 0 : _a2.scrollLeft) != null ? _b : 0;
+    const previousToolbarScrollTop = this.toolbarEl.scrollTop;
     this.toolbarEl.replaceChildren();
     const leftGroup = createDiv();
     leftGroup.className = "pdf-native-annotator-group is-tools";
-    leftGroup.appendChild(this.createButton(this.annotationMode ? "完成" : "批注", this.annotationMode, () => {
+    leftGroup.appendChild(this.createButton(this.annotationMode ? "Finish" : "Annotate", this.annotationMode, () => {
       this.toggleAnnotationMode();
     }));
     if (!this.annotationMode) {
       const readModeHint = createSpan();
       readModeHint.className = "pdf-native-annotator-read-mode-hint";
-      readModeHint.textContent = "阅读模式";
+      readModeHint.textContent = "Read mode";
       leftGroup.appendChild(readModeHint);
       const rightGroup2 = createDiv();
       rightGroup2.className = "pdf-native-annotator-group is-actions";
       const addPageButton2 = this.createPageMenuButton();
       rightGroup2.appendChild(addPageButton2);
-      const moreButton2 = this.createIconButton("more-vertical", "更多批注操作", false, () => {
+      const moreButton2 = this.createIconButton("more-vertical", "More annotation actions", false, () => {
         this.openDocumentActionsMenu(moreButton2);
       });
       rightGroup2.appendChild(moreButton2);
       this.toolbarEl.appendChild(leftGroup);
       this.toolbarEl.appendChild(rightGroup2);
+      this.toolbarEl.scrollTop = previousToolbarScrollTop;
       this.restoreToolbarToolScroll(leftGroup, previousToolScrollLeft);
       this.repositionOpenPopovers();
       return;
@@ -11748,17 +11912,17 @@ var NativePdfAnnotatorSession = class {
     if (isTabletWebKitTouchDevice()) {
       const touchDrawing = this.getInkInputPolicy() !== "pen-mouse-only";
       const touchModeButton = this.createButton(
-        touchDrawing ? "手指绘制" : "手指平移",
+        touchDrawing ? "Finger draws" : "Finger pans",
         touchDrawing,
         () => this.toggleTabletTouchInputMode()
       );
       touchModeButton.classList.add("pdf-native-annotator-mode-button", "pdf-native-annotator-touch-mode-button");
       touchModeButton.setAttribute("aria-pressed", String(touchDrawing));
-      touchModeButton.title = touchDrawing ? "手指绘制批注。点击后可用单指平移页面。" : "手指平移页面。Apple Pencil 和鼠标仍可绘制。";
+      touchModeButton.title = touchDrawing ? "Finger draws annotations. Tap to pan the page with one finger." : "Finger pans the page. Apple Pencil and mouse continue drawing.";
       leftGroup.appendChild(touchModeButton);
     }
     let selectButton;
-    selectButton = this.createIconButton("move", "选择", this.currentTool === "select", () => {
+    selectButton = this.createIconButton("move", "Select", this.currentTool === "select", () => {
       if (this.currentTool === "select") {
         this.openSelectionMenu(selectButton);
         return;
@@ -11770,7 +11934,7 @@ var NativePdfAnnotatorSession = class {
     leftGroup.appendChild(selectButton);
     if (this.currentTool === "select") {
       const selectionModeButton = this.createButton(
-        this.toolState.selectionMode === "lasso" ? "套索" : this.toolState.selectionMode === "box" ? "框选" : "单选",
+        this.toolState.selectionMode === "lasso" ? "Lasso" : this.toolState.selectionMode === "box" ? "Box" : "Single",
         false,
         () => {
           const targetButton = selectionModeButton;
@@ -11781,24 +11945,24 @@ var NativePdfAnnotatorSession = class {
       leftGroup.appendChild(selectionModeButton);
     }
     if (this.plugin.shouldShowRegionToolbarButton()) {
-      leftGroup.appendChild(this.createIconButton("crop", "区域嵌入", this.currentTool === "region", () => {
+      leftGroup.appendChild(this.createIconButton("crop", "Region embed", this.currentTool === "region", () => {
         this.setActiveTool("region");
         this.applyOverlayMode();
         this.refreshToolbar();
-        this.refreshStatus("区域工具：拖动以框选区域");
+        this.refreshStatus("Region tool: drag a crop box");
       }));
     }
-    leftGroup.appendChild(this.createIconButton("pen-tool", "画笔", this.currentTool === "pen", () => {
+    leftGroup.appendChild(this.createIconButton("pen-tool", "Pen", this.currentTool === "pen", () => {
       this.setActiveTool("pen");
       this.applyOverlayMode();
       this.refreshToolbar();
     }));
-    leftGroup.appendChild(this.createIconButton("highlighter", "荧光笔", this.currentTool === "highlighter", () => {
+    leftGroup.appendChild(this.createIconButton("highlighter", "Highlighter", this.currentTool === "highlighter", () => {
       this.setActiveTool("highlighter");
       this.applyOverlayMode();
       this.refreshToolbar();
     }));
-    leftGroup.appendChild(this.createIconButton("eraser", `橡皮擦（${this.eraserMode === "segment" ? "触碰擦除" : "对象擦除"}）`, this.currentTool === "eraser", () => {
+    leftGroup.appendChild(this.createIconButton("eraser", `Eraser (${this.eraserMode})`, this.currentTool === "eraser", () => {
       if (this.currentTool === "eraser") {
         this.toggleEraserMode();
         return;
@@ -11806,11 +11970,11 @@ var NativePdfAnnotatorSession = class {
       this.setActiveTool("eraser");
       this.applyOverlayMode();
       this.refreshToolbar();
-      this.refreshStatus(`工具：橡皮擦（${this.eraserMode === "segment" ? "触碰擦除" : "对象擦除"}）`);
+      this.refreshStatus(`Tool: Eraser (${this.eraserMode})`);
     }));
     if (this.currentTool === "eraser") {
       const eraserModeButton = this.createButton(
-        this.eraserMode === "segment" ? "触碰擦除" : "对象擦除",
+        this.eraserMode === "segment" ? "Touch erase" : "Object erase",
         false,
         () => {
           this.toggleEraserMode();
@@ -11819,7 +11983,7 @@ var NativePdfAnnotatorSession = class {
       eraserModeButton.classList.add("pdf-native-annotator-mode-button");
       leftGroup.appendChild(eraserModeButton);
     }
-    leftGroup.appendChild(this.createIconButton("type", "文字", this.currentTool === "text", () => {
+    leftGroup.appendChild(this.createIconButton("type", "Text", this.currentTool === "text", () => {
       this.setActiveTool("text");
       this.applyOverlayMode();
       this.refreshToolbar();
@@ -11827,24 +11991,24 @@ var NativePdfAnnotatorSession = class {
     if (isTabletWebKitTouchDevice()) {
       const shapeButton = this.createIconButton(
         "shapes",
-        isShapeTool(this.currentTool) ? `形状（${this.currentTool}）` : "形状",
+        isShapeTool(this.currentTool) ? `Shapes (${this.currentTool})` : "Shapes",
         isShapeTool(this.currentTool),
         () => this.openShapeToolMenu(shapeButton)
       );
       shapeButton.classList.add("pdf-native-annotator-shape-menu-button");
       leftGroup.appendChild(shapeButton);
     } else {
-      leftGroup.appendChild(this.createIconButton("square", "矩形", this.currentTool === "rectangle", () => {
+      leftGroup.appendChild(this.createIconButton("square", "Rectangle", this.currentTool === "rectangle", () => {
         this.setActiveTool("rectangle");
         this.applyOverlayMode();
         this.refreshToolbar();
       }));
-      leftGroup.appendChild(this.createIconButton("circle", "椭圆", this.currentTool === "ellipse", () => {
+      leftGroup.appendChild(this.createIconButton("circle", "Ellipse", this.currentTool === "ellipse", () => {
         this.setActiveTool("ellipse");
         this.applyOverlayMode();
         this.refreshToolbar();
       }));
-      leftGroup.appendChild(this.createIconButton("minus", "直线", this.currentTool === "line", () => {
+      leftGroup.appendChild(this.createIconButton("minus", "Line", this.currentTool === "line", () => {
         this.setActiveTool("line");
         this.applyOverlayMode();
         this.refreshToolbar();
@@ -11870,7 +12034,7 @@ var NativePdfAnnotatorSession = class {
       leftGroup.appendChild(strokeControl);
     }
     if (this.currentTool === "text" || this.currentTool === "select" && this.hasSelectedText()) {
-      const textStyleButton = this.createButton("字体", false, () => {
+      const textStyleButton = this.createButton("Font", false, () => {
         this.openTextStyleMenu(textStyleButton);
       });
       textStyleButton.classList.add("pdf-native-annotator-mode-button", "pdf-native-annotator-font-button");
@@ -11879,7 +12043,7 @@ var NativePdfAnnotatorSession = class {
     const rightGroup = createDiv();
     rightGroup.className = "pdf-native-annotator-group is-actions";
     if (this.selectedTargets.length > 0) {
-      const selectionLabel = `已选 ${this.selectedTargets.length} 项`;
+      const selectionLabel = `Selection ${this.selectedTargets.length}`;
       const selectionActionsButton = this.createButton(selectionLabel, false, () => {
         this.openSelectionActionsMenu(selectionActionsButton);
       });
@@ -11887,42 +12051,43 @@ var NativePdfAnnotatorSession = class {
       rightGroup.appendChild(selectionActionsButton);
     }
     if (this.lastSelectionRegion) {
-      const regionActionsButton = this.createButton("区域", false, () => {
+      const regionActionsButton = this.createButton("Region", false, () => {
         this.openRegionActionsMenu(regionActionsButton);
       });
       regionActionsButton.classList.add("pdf-native-annotator-mode-button");
       rightGroup.appendChild(regionActionsButton);
     }
     if (this.lastSelectionRegion && this.plugin.shouldShowCopyEmbedToolbarButton()) {
-      const copyRegionButton = this.createButton("复制嵌入", false, () => {
+      const copyRegionButton = this.createButton("Copy embed", false, () => {
         void this.copySelectionAnnotatedEmbedBlock();
       });
       copyRegionButton.classList.add("pdf-native-annotator-mode-button");
-      copyRegionButton.title = "复制所选矩形区域的带批注 Markdown 嵌入代码";
+      copyRegionButton.title = "Copy an annotated markdown embed for the selected box region";
       rightGroup.appendChild(copyRegionButton);
     }
     if (this.plugin.hasClipboard()) {
-      rightGroup.appendChild(this.createIconButton("clipboard", "粘贴已复制的批注", false, () => this.pasteClipboard()));
+      rightGroup.appendChild(this.createIconButton("clipboard", "Paste copied annotations", false, () => this.pasteClipboard()));
     }
-    rightGroup.appendChild(this.createHistoryIconButton("undo-2", "撤销", () => this.undoFromToolbar()));
-    rightGroup.appendChild(this.createHistoryIconButton("redo-2", "重做", () => this.redoFromToolbar()));
+    rightGroup.appendChild(this.createHistoryIconButton("undo-2", "Undo", () => this.undoFromToolbar()));
+    rightGroup.appendChild(this.createHistoryIconButton("redo-2", "Redo", () => this.redoFromToolbar()));
     const addPageButton = this.createPageMenuButton();
     rightGroup.appendChild(addPageButton);
-    const moreButton = this.createIconButton("more-vertical", "更多批注操作", false, () => {
+    const moreButton = this.createIconButton("more-vertical", "More annotation actions", false, () => {
       this.openDocumentActionsMenu(moreButton);
     });
     rightGroup.appendChild(moreButton);
     this.toolbarEl.appendChild(leftGroup);
     this.toolbarEl.appendChild(rightGroup);
+    this.toolbarEl.scrollTop = previousToolbarScrollTop;
     this.restoreToolbarToolScroll(leftGroup, previousToolScrollLeft);
     this.repositionOpenPopovers();
   }
   restoreToolbarToolScroll(group, scrollLeft) {
     group.scrollLeft = scrollLeft;
     if (this.toolbarScrollRestoreHandle !== null) {
-      window.cancelAnimationFrame(this.toolbarScrollRestoreHandle);
+      this.ownerWindow.cancelAnimationFrame(this.toolbarScrollRestoreHandle);
     }
-    this.toolbarScrollRestoreHandle = window.requestAnimationFrame(() => {
+    this.toolbarScrollRestoreHandle = this.ownerWindow.requestAnimationFrame(() => {
       this.toolbarScrollRestoreHandle = null;
       if (group.isConnected) {
         group.scrollLeft = scrollLeft;
@@ -11954,7 +12119,7 @@ var NativePdfAnnotatorSession = class {
       handledMousePointerUp = true;
       event.preventDefault();
       onActivate(event);
-      window.setTimeout(() => {
+      this.ownerWindow.setTimeout(() => {
         handledMousePointerUp = false;
       }, 0);
     });
@@ -11982,10 +12147,10 @@ var NativePdfAnnotatorSession = class {
     const button = createEl("button");
     button.type = "button";
     button.className = "pdf-native-annotator-button pdf-native-annotator-labeled-icon-button pdf-native-annotator-page-menu-button";
-    button.setAttribute("aria-label", "页面");
-    button.title = "跳转、新增和管理页面";
+    button.setAttribute("aria-label", "Page");
+    button.title = "Navigate, add, and manage pages";
     (0, import_obsidian6.setIcon)(button, "files");
-    button.createSpan({ text: "页面" });
+    button.createSpan({ text: "Page" });
     let openedFromPointerDown = false;
     button.addEventListener("pointerdown", (event) => {
       event.stopPropagation();
@@ -11995,7 +12160,7 @@ var NativePdfAnnotatorSession = class {
       event.preventDefault();
       openedFromPointerDown = true;
       this.openAddPageMenu(button);
-      window.setTimeout(() => {
+      this.ownerWindow.setTimeout(() => {
         openedFromPointerDown = false;
       }, 0);
     });
@@ -12027,7 +12192,7 @@ var NativePdfAnnotatorSession = class {
       handledPointerDown = true;
       event.preventDefault();
       onActivate();
-      window.setTimeout(() => {
+      this.ownerWindow.setTimeout(() => {
         handledPointerDown = false;
       }, 0);
     });
@@ -12063,8 +12228,8 @@ var NativePdfAnnotatorSession = class {
     const button = createEl("button");
     button.type = "button";
     button.className = "modal-close-button pdf-native-annotator-popover-close";
-    button.setAttribute("aria-label", "关闭");
-    button.title = "关闭";
+    button.setAttribute("aria-label", "Close");
+    button.title = "Close";
     (0, import_obsidian6.setIcon)(button, "x");
     button.addEventListener("pointerdown", (event) => {
       event.preventDefault();
@@ -12084,11 +12249,11 @@ var NativePdfAnnotatorSession = class {
     var _a2, _b, _c, _d;
     popover.setCssStyles({ maxHeight: "" });
     const popoverRect = popover.getBoundingClientRect();
-    const visualViewport = window.visualViewport;
+    const visualViewport = this.ownerWindow.visualViewport;
     const viewportLeft = (_a2 = visualViewport == null ? void 0 : visualViewport.offsetLeft) != null ? _a2 : 0;
     const viewportTop = (_b = visualViewport == null ? void 0 : visualViewport.offsetTop) != null ? _b : 0;
-    const viewportWidth = (_c = visualViewport == null ? void 0 : visualViewport.width) != null ? _c : window.innerWidth;
-    const viewportHeight = (_d = visualViewport == null ? void 0 : visualViewport.height) != null ? _d : window.innerHeight;
+    const viewportWidth = (_c = visualViewport == null ? void 0 : visualViewport.width) != null ? _c : this.ownerWindow.innerWidth;
+    const viewportHeight = (_d = visualViewport == null ? void 0 : visualViewport.height) != null ? _d : this.ownerWindow.innerHeight;
     const placement = resolveAnchoredPopoverPlacement(
       anchorRect,
       popoverRect,
@@ -12110,7 +12275,7 @@ var NativePdfAnnotatorSession = class {
     if (this.popoverRepositionHandle !== null) {
       return;
     }
-    this.popoverRepositionHandle = window.requestAnimationFrame(() => {
+    this.popoverRepositionHandle = this.ownerWindow.requestAnimationFrame(() => {
       this.popoverRepositionHandle = null;
       this.repositionOpenPopovers();
     });
@@ -12223,8 +12388,8 @@ var NativePdfAnnotatorSession = class {
     const button = createEl("button");
     button.type = "button";
     button.className = "pdf-native-annotator-color-button";
-    button.title = "选择颜色";
-    button.setAttribute("aria-label", this.usesTextColorControl() ? "选择文字颜色" : "选择笔迹颜色");
+    button.title = "Choose color";
+    button.setAttribute("aria-label", this.usesTextColorControl() ? "Choose text color" : "Choose ink color");
     const preview = button.createSpan({ cls: "pdf-native-annotator-color-button-preview" });
     preview.setCssStyles({ backgroundColor: this.getToolbarColor() });
     this.bindToolbarButtonActivation(button, () => {
@@ -12239,7 +12404,7 @@ var NativePdfAnnotatorSession = class {
     const controlsTextColor = this.usesTextColorControl();
     const title = popover.createDiv({
       cls: "pdf-native-annotator-color-popover-title",
-      text: controlsTextColor ? "文字颜色" : "笔迹颜色"
+      text: controlsTextColor ? "Text color" : "Ink color"
     });
     title.appendChild(this.createPopoverCloseButton(() => this.closeColorPopover()));
     const swatches = popover.createDiv({ cls: "pdf-native-annotator-color-popover-swatches" });
@@ -12251,7 +12416,7 @@ var NativePdfAnnotatorSession = class {
       swatches.appendChild(swatch);
     }
     const customRow = popover.createDiv({ cls: "pdf-native-annotator-color-popover-custom" });
-    customRow.createSpan({ text: "自定义" });
+    customRow.createSpan({ text: "Custom" });
     const colorInput = createEl("input");
     colorInput.type = "color";
     colorInput.value = this.getToolbarColor();
@@ -12358,8 +12523,8 @@ var NativePdfAnnotatorSession = class {
     slider.step = String(widthRange.step);
     slider.value = String(initialWidth);
     const tickRow = sliderWrap.createDiv({ cls: "pdf-native-annotator-stroke-ticks" });
-    tickRow.createSpan({ text: "细" });
-    tickRow.createSpan({ text: "粗" });
+    tickRow.createSpan({ text: "Thin" });
+    tickRow.createSpan({ text: "Thick" });
     let historyCaptured = false;
     slider.addEventListener("input", () => {
       if (!historyCaptured && this.shouldApplyStyleToSelection()) {
@@ -12411,7 +12576,7 @@ var NativePdfAnnotatorSession = class {
     if (!editor) {
       return;
     }
-    window.setTimeout(() => {
+    this.ownerWindow.setTimeout(() => {
       if (this.inlineTextEditorEl === editor && editor.isConnected) {
         editor.focus();
         this.updateInlineTextCaretMirror();
@@ -12423,18 +12588,18 @@ var NativePdfAnnotatorSession = class {
   }
   getStrokePopoverTitle() {
     if (this.currentTool === "eraser") {
-      return "橡皮擦粗细";
+      return "Eraser thickness";
     }
     if (this.currentTool === "highlighter") {
-      return "荧光笔粗细";
+      return "Highlighter thickness";
     }
     if (this.currentTool === "line") {
-      return "直线粗细";
+      return "Line thickness";
     }
     if (this.currentTool === "rectangle" || this.currentTool === "ellipse") {
-      return "形状线条粗细";
+      return "Shape thickness";
     }
-    return "画笔粗细";
+    return "Pen thickness";
   }
   getWidthRange(tool = this.currentTool) {
     if (tool === "highlighter") {
@@ -12535,9 +12700,9 @@ var NativePdfAnnotatorSession = class {
   openShapeToolMenu(button) {
     const menu = new import_obsidian6.Menu();
     const shapeTools = [
-      { tool: "rectangle", label: "矩形", icon: "square" },
-      { tool: "ellipse", label: "椭圆", icon: "circle" },
-      { tool: "line", label: "直线", icon: "minus" }
+      { tool: "rectangle", label: "Rectangle", icon: "square" },
+      { tool: "ellipse", label: "Ellipse", icon: "circle" },
+      { tool: "line", label: "Line", icon: "minus" }
     ];
     addMenuDescriptors(menu, shapeTools.map((shape) => ({
       title: shape.label,
@@ -12559,14 +12724,14 @@ var NativePdfAnnotatorSession = class {
     this.persistToolDefaults();
     this.refreshToolbar();
     this.refreshToolPreviewFromLastPointer(false);
-    this.refreshStatus(nextMode === "object" ? "橡皮擦模式：整对象擦除" : "橡皮擦模式：触碰擦除");
+    this.refreshStatus(nextMode === "object" ? "Eraser mode: whole object" : "Eraser mode: touch section");
   }
   openSelectionMenu(button) {
     const menu = new import_obsidian6.Menu();
     addMenuDescriptors(menu, [
-      { mode: "single", title: "单选", status: "选择模式：单选" },
-      { mode: "box", title: "框选", status: "选择模式：框选" },
-      { mode: "lasso", title: "自由套索", status: "选择模式：自由套索" }
+      { mode: "single", title: "Single select", status: "Selection mode: single" },
+      { mode: "box", title: "Box select", status: "Selection mode: box" },
+      { mode: "lasso", title: "Freehand lasso", status: "Selection mode: lasso" }
     ].map((definition) => ({
       title: definition.title,
       checked: this.toolState.selectionMode === definition.mode,
@@ -12582,25 +12747,25 @@ var NativePdfAnnotatorSession = class {
     const menu = new import_obsidian6.Menu();
     const hasAnnotationSelection = this.selectedTargets.length > 0;
     const descriptors = [
-      { title: "全选本页（Ctrl/Cmd+A）", icon: "list-plus", run: () => this.selectAllCurrentPageAnnotations() }
+      { title: "Select all on page (Ctrl/Cmd+A)", icon: "list-plus", run: () => this.selectAllCurrentPageAnnotations() }
     ];
     if (hasAnnotationSelection) {
       descriptors.push(
         menuSeparator,
-        { title: "复制所选内容（Ctrl/Cmd+C）", icon: "copy", run: () => this.copySelectedTargets() },
-        { title: "剪切所选内容（Ctrl/Cmd+X）", icon: "scissors", run: () => this.cutSelectedTargets() },
-        { title: "复制一份所选内容", icon: "copy", run: () => this.duplicateSelectedTargets() },
-        { title: "删除所选内容（Del）", icon: "trash", run: () => this.deleteSelectedTargets() },
+        { title: "Copy selection (Ctrl/Cmd+C)", icon: "copy", run: () => this.copySelectedTargets() },
+        { title: "Cut selection (Ctrl/Cmd+X)", icon: "scissors", run: () => this.cutSelectedTargets() },
+        { title: "Duplicate selection", icon: "copy", run: () => this.duplicateSelectedTargets() },
+        { title: "Delete selection (Del)", icon: "trash", run: () => this.deleteSelectedTargets() },
         menuSeparator,
-        { title: "置于最前（Ctrl/Cmd+]）", icon: "bring-to-front", run: () => this.reorderSelectedTargets("front") },
-        { title: "置于最后（Ctrl/Cmd+[）", icon: "send-to-back", run: () => this.reorderSelectedTargets("back") }
+        { title: "Bring to front (Ctrl/Cmd+])", icon: "bring-to-front", run: () => this.reorderSelectedTargets("front") },
+        { title: "Send to back (Ctrl/Cmd+[)", icon: "send-to-back", run: () => this.reorderSelectedTargets("back") }
       );
     }
     if (this.plugin.hasClipboard()) {
       descriptors.push(
         menuSeparator,
-        { title: "粘贴已复制的批注（Ctrl/Cmd+V）", icon: "clipboard", run: () => this.pasteClipboard() },
-        { title: "原位粘贴已复制的批注（Ctrl/Cmd+Shift+V）", icon: "clipboard-copy", run: () => this.pasteClipboard(true) }
+        { title: "Paste copied annotations (Ctrl/Cmd+V)", icon: "clipboard", run: () => this.pasteClipboard() },
+        { title: "Paste copied annotation in place (Ctrl/Cmd+Shift+V)", icon: "clipboard-copy", run: () => this.pasteClipboard(true) }
       );
     }
     addMenuDescriptors(menu, descriptors);
@@ -12611,38 +12776,40 @@ var NativePdfAnnotatorSession = class {
     const menu = new import_obsidian6.Menu();
     const region = this.lastSelectionRegion;
     if (!region) {
-      addMenuDescriptors(menu, [{ title: "没有活动区域", icon: "info", disabled: true }]);
+      addMenuDescriptors(menu, [{ title: "No active region", icon: "info", disabled: true }]);
       const emptyRect = button.getBoundingClientRect();
       this.showExclusiveMenuAtPosition(menu, { x: emptyRect.left, y: emptyRect.bottom + 6 });
       return;
     }
     addMenuDescriptors(menu, [
-      { title: "复制区域嵌入代码块", icon: "code", run: () => this.copySelectionAnnotatedEmbedBlock() },
-      { title: "复制区域引用", icon: "link", run: () => this.copySelectionRegionReference() },
-      { title: "导出区域图片", icon: "image-file", run: () => this.exportSelectionSnapshot() },
-      { title: "打开源页面", icon: "file-text", run: () => this.goToMixedPage(region.page) },
+      { title: "Copy region embed block", icon: "code", run: () => this.copySelectionAnnotatedEmbedBlock() },
+      { title: "Copy region reference", icon: "link", run: () => this.copySelectionRegionReference() },
+      { title: "Export region image", icon: "image-file", run: () => this.exportSelectionSnapshot() },
+      { title: "Open source page", icon: "file-text", run: () => this.goToMixedPage(region.page) },
       menuSeparator,
-      { title: "清除区域", icon: "x", run: () => this.clearRegion() }
+      { title: "Clear region", icon: "x", run: () => this.clearRegion() }
     ]);
     const rect = button.getBoundingClientRect();
     this.showExclusiveMenuAtPosition(menu, { x: rect.left, y: rect.bottom + 6 });
   }
   applyOverlayMode() {
+    var _a2, _b;
+    const enabled = this.annotationMode && ((_a2 = this.file) == null ? void 0 : _a2.path) === ((_b = this.getPdfFile()) == null ? void 0 : _b.path);
     if (!this.annotationMode || !isInkDrawingTool(this.currentTool) || this.getInkInputPolicy() !== "pen-mouse-only") {
       this.finishFingerPan(false);
     }
     for (const surface of this.pageSurfaces.values()) {
-      const cursorTool = this.annotationMode ? this.currentTool : "disabled";
+      const cursorTool = enabled ? this.currentTool : "disabled";
       const cursor = resolveOverlayModeCursor(
         cursorTool,
         surface.overlayEl.dataset.cursorTool,
         surface.overlayEl.style.cursor,
         this.getDefaultOverlayCursor()
       );
-      surface.overlayEl.classList.toggle("is-enabled", this.annotationMode);
+      surface.overlayEl.classList.toggle("is-enabled", enabled);
       surface.overlayEl.setCssStyles({
-        pointerEvents: this.annotationMode ? "auto" : "none",
-        touchAction: this.annotationMode ? this.getOverlayTouchAction() : ""
+        pointerEvents: enabled ? "auto" : "none",
+        touchAction: enabled ? this.getOverlayTouchAction() : ""
       });
       this.setOverlayCursor(surface, cursor, cursorTool);
     }
@@ -12664,7 +12831,7 @@ var NativePdfAnnotatorSession = class {
     this.forceFinishStalePdfInteraction("Input mode changed");
     void this.plugin.updateBehaviorSettings({ inkInputPolicy: nextPolicy });
     this.refreshStatus(
-      nextPolicy === "allow-touch" ? "手指绘制；Apple Pencil 和鼠标也可绘制" : "手指平移；Apple Pencil 和鼠标可绘制",
+      nextPolicy === "allow-touch" ? "Finger draws; Apple Pencil and mouse also draw" : "Finger pans; Apple Pencil and mouse draw",
       3e3
     );
   }
@@ -12675,14 +12842,8 @@ var NativePdfAnnotatorSession = class {
     }
     const key = event.key.toLowerCase();
     const isModifierShortcut = (event.ctrlKey || event.metaKey) && !event.altKey;
-    if (key === "arrowleft" || key === "arrowright") {
-      this.moveInlineTextCaretHorizontally(
-        editor,
-        key === "arrowleft" ? "left" : "right",
-        event.shiftKey,
-        isModifierShortcut || event.altKey
-      );
-      return true;
+    if (event.isComposing) {
+      return false;
     }
     if (isModifierShortcut && key === "b") {
       this.setTextFontWeight(this.currentTextFontWeight === "bold" ? "normal" : "bold");
@@ -12701,32 +12862,6 @@ var NativePdfAnnotatorSession = class {
       return true;
     }
     return false;
-  }
-  moveInlineTextCaretHorizontally(editor, direction, extendSelection, byWord) {
-    const start = editor.selectionStart;
-    const end = editor.selectionEnd;
-    if (!extendSelection && start !== end) {
-      const collapsedPosition = direction === "left" ? start : end;
-      editor.setSelectionRange(collapsedPosition, collapsedPosition);
-      this.updateInlineTextCaretMirror();
-      return;
-    }
-    if (!extendSelection) {
-      const nextPosition = getHorizontalTextCaretIndex(editor.value, start, direction, byWord);
-      editor.setSelectionRange(nextPosition, nextPosition);
-      this.updateInlineTextCaretMirror();
-      return;
-    }
-    const selectionDirection = editor.selectionDirection;
-    const anchor = selectionDirection === "backward" ? end : start;
-    const focus = selectionDirection === "backward" ? start : end;
-    const nextFocus = getHorizontalTextCaretIndex(editor.value, focus, direction, byWord);
-    editor.setSelectionRange(
-      Math.min(anchor, nextFocus),
-      Math.max(anchor, nextFocus),
-      nextFocus < anchor ? "backward" : "forward"
-    );
-    this.updateInlineTextCaretMirror();
   }
   isSessionEscapeEligible(event) {
     if (!this.annotationMode || !this.isLeafActive()) {
@@ -12758,7 +12893,8 @@ var NativePdfAnnotatorSession = class {
     return this.isSessionShortcutActive(event);
   }
   isSessionShortcutActive(event) {
-    if (!this.annotationMode || !this.isLeafActive()) {
+    var _a2, _b;
+    if (((_a2 = this.file) == null ? void 0 : _a2.path) !== ((_b = this.getPdfFile()) == null ? void 0 : _b.path) || event.isComposing || !this.annotationMode || !this.isLeafActive()) {
       return false;
     }
     if (this.hasOpenTransientPopover()) {
@@ -12857,14 +12993,14 @@ var NativePdfAnnotatorSession = class {
   rememberPotentialWebKitStylusPointer(event) {
     this.clearPendingWebKitTouchPointer();
     this.pendingWebKitTouchPointer = event;
-    this.pendingWebKitTouchHandle = window.setTimeout(() => {
+    this.pendingWebKitTouchHandle = this.ownerWindow.setTimeout(() => {
       this.pendingWebKitTouchHandle = null;
       this.pendingWebKitTouchPointer = null;
     }, 350);
   }
   clearPendingWebKitTouchPointer() {
     if (this.pendingWebKitTouchHandle !== null) {
-      window.clearTimeout(this.pendingWebKitTouchHandle);
+      this.ownerWindow.clearTimeout(this.pendingWebKitTouchHandle);
       this.pendingWebKitTouchHandle = null;
     }
     this.pendingWebKitTouchPointer = null;
@@ -12904,9 +13040,9 @@ var NativePdfAnnotatorSession = class {
       surface.overlayEl.setPointerCapture(event.pointerId);
     } catch (e2) {
     }
-    document.addEventListener("pointermove", this.handleFingerPanPointerMove, true);
-    document.addEventListener("pointerup", this.handleFingerPanPointerUp, true);
-    document.addEventListener("pointercancel", this.handleFingerPanPointerCancel, true);
+    this.ownerDocument.addEventListener("pointermove", this.handleFingerPanPointerMove, true);
+    this.ownerDocument.addEventListener("pointerup", this.handleFingerPanPointerUp, true);
+    this.ownerDocument.addEventListener("pointercancel", this.handleFingerPanPointerCancel, true);
     return true;
   }
   applyPendingFingerPan() {
@@ -12922,7 +13058,7 @@ var NativePdfAnnotatorSession = class {
   }
   finishFingerPan(startInertia) {
     if (this.fingerPanFrameHandle !== null) {
-      window.cancelAnimationFrame(this.fingerPanFrameHandle);
+      this.ownerWindow.cancelAnimationFrame(this.fingerPanFrameHandle);
       this.fingerPanFrameHandle = null;
     }
     if (startInertia) {
@@ -12930,9 +13066,9 @@ var NativePdfAnnotatorSession = class {
     } else {
       this.fingerPanPendingDelta = { x: 0, y: 0 };
     }
-    document.removeEventListener("pointermove", this.handleFingerPanPointerMove, true);
-    document.removeEventListener("pointerup", this.handleFingerPanPointerUp, true);
-    document.removeEventListener("pointercancel", this.handleFingerPanPointerCancel, true);
+    this.ownerDocument.removeEventListener("pointermove", this.handleFingerPanPointerMove, true);
+    this.ownerDocument.removeEventListener("pointerup", this.handleFingerPanPointerUp, true);
+    this.ownerDocument.removeEventListener("pointercancel", this.handleFingerPanPointerCancel, true);
     if (this.fingerPanCanvas && this.fingerPanPointerId !== null) {
       try {
         this.fingerPanCanvas.releasePointerCapture(this.fingerPanPointerId);
@@ -12978,13 +13114,13 @@ var NativePdfAnnotatorSession = class {
         this.resumeCommittedRenderingAfterFingerPan();
         return;
       }
-      this.fingerPanInertiaHandle = window.requestAnimationFrame(step);
+      this.fingerPanInertiaHandle = this.ownerWindow.requestAnimationFrame(step);
     };
-    this.fingerPanInertiaHandle = window.requestAnimationFrame(step);
+    this.fingerPanInertiaHandle = this.ownerWindow.requestAnimationFrame(step);
   }
   cancelFingerPanInertia() {
     if (this.fingerPanInertiaHandle !== null) {
-      window.cancelAnimationFrame(this.fingerPanInertiaHandle);
+      this.ownerWindow.cancelAnimationFrame(this.fingerPanInertiaHandle);
       this.fingerPanInertiaHandle = null;
     }
   }
@@ -13056,7 +13192,7 @@ var NativePdfAnnotatorSession = class {
     let bestSurface = null;
     let bestArea = Number.POSITIVE_INFINITY;
     for (const surface of this.pageSurfaces.values()) {
-      if (!surface.overlayEl.isConnected || window.getComputedStyle(surface.overlayEl).visibility === "hidden") {
+      if (!surface.overlayEl.isConnected || this.ownerWindow.getComputedStyle(surface.overlayEl).visibility === "hidden") {
         continue;
       }
       const rect = surface.overlayEl.getBoundingClientRect();
@@ -13120,6 +13256,7 @@ var NativePdfAnnotatorSession = class {
   }
   handlePointerDownForCanvas(event, canvas, forceWebKitStylus = false) {
     var _a2, _b;
+    this.selectionBackground = null;
     if (!this.annotationMode) {
       this.refreshStatus("Could not start ink: annotation mode is off", 4e3);
       return;
@@ -13327,6 +13464,7 @@ var NativePdfAnnotatorSession = class {
     const strokeWidth = this.currentTool === "highlighter" ? this.toolState.getWidth("highlighter") : this.toolState.getWidth("pen");
     const zIndex = this.getNextPageZIndex(pageNumber);
     this.currentStroke = {
+      inkSettings: { ...this.plugin.getInkRenderSettings() },
       id: generateId("stroke"),
       page: pageNumber,
       tool: this.currentTool,
@@ -13388,6 +13526,7 @@ var NativePdfAnnotatorSession = class {
       this.dragMoved = false;
       this.unbindPdfPointerDocumentTracking();
       this.invalidateAnnotationPageCache();
+      this.documentRevision += 1;
       this.isDirty = true;
       this.scheduleSave();
       this.retainCommittedPagePixels(pageNumber2);
@@ -13451,6 +13590,7 @@ var NativePdfAnnotatorSession = class {
       this.dragMoved = false;
       this.unbindPdfPointerDocumentTracking();
       this.invalidateAnnotationPageCache();
+      this.documentRevision += 1;
       this.isDirty = true;
       this.scheduleSave();
       this.retainCommittedPagePixels(pageNumber);
@@ -13473,6 +13613,7 @@ var NativePdfAnnotatorSession = class {
       this.dragMoved = false;
       this.unbindPdfPointerDocumentTracking();
       this.invalidateAnnotationPageCache();
+      this.documentRevision += 1;
       this.isDirty = true;
       this.scheduleSave();
       this.drawPageAnnotations(pageNumber);
@@ -13484,14 +13625,14 @@ var NativePdfAnnotatorSession = class {
     this.activePdfPointerCanvas = canvas;
     this.activePdfPointerRect = pointerRect;
     this.webKitStylusPointerId = forceWebKitStylus ? pointerId : null;
-    document.addEventListener("pointermove", this.handleDocumentPointerMove, true);
-    document.addEventListener("pointerup", this.handleDocumentPointerUp, true);
-    document.addEventListener("pointercancel", this.handleDocumentPointerCancel, true);
+    this.ownerDocument.addEventListener("pointermove", this.handleDocumentPointerMove, true);
+    this.ownerDocument.addEventListener("pointerup", this.handleDocumentPointerUp, true);
+    this.ownerDocument.addEventListener("pointercancel", this.handleDocumentPointerCancel, true);
   }
   unbindPdfPointerDocumentTracking() {
-    document.removeEventListener("pointermove", this.handleDocumentPointerMove, true);
-    document.removeEventListener("pointerup", this.handleDocumentPointerUp, true);
-    document.removeEventListener("pointercancel", this.handleDocumentPointerCancel, true);
+    this.ownerDocument.removeEventListener("pointermove", this.handleDocumentPointerMove, true);
+    this.ownerDocument.removeEventListener("pointerup", this.handleDocumentPointerUp, true);
+    this.ownerDocument.removeEventListener("pointercancel", this.handleDocumentPointerCancel, true);
     this.activePdfPointerId = null;
     this.activePdfPointerCanvas = null;
     this.activePdfPointerRect = null;
@@ -13651,11 +13792,14 @@ var NativePdfAnnotatorSession = class {
         this.lastEraserPoint = point;
       }
     }
-    if (this.currentStroke && canvas && event.pointerType === "touch") {
+    if (this.currentStroke && canvas && (event.pointerType === "touch" || event.pointerType === "pen")) {
       const surface = this.pageSurfaces.get(pageNumber);
       if (surface) {
         const releasePoint = this.getNormalizedPoint(surface, event);
         const previousPoint = this.currentStroke.points[this.currentStroke.points.length - 1];
+        if (previousPoint && event.pressure === 0) {
+          releasePoint.pressure = previousPoint.pressure;
+        }
         if (!previousPoint || distanceBetween2(previousPoint, releasePoint) >= this.getStrokeMergeThreshold(surface)) {
           appendStrokePoints(this.currentStroke, [releasePoint], { mergeThreshold: this.getStrokeMergeThreshold(surface) });
         }
@@ -13818,6 +13962,7 @@ var NativePdfAnnotatorSession = class {
       this.refreshStatus(`Stroke recorded (${pointCount} points, ${this.annotationDocument.strokes.length} strokes)`, 900);
     }
     this.invalidateAnnotationPageCache();
+    this.documentRevision += 1;
     this.isDirty = true;
     this.scheduleSave();
     if (committedPreviewStroke || committedPreviewShape) {
@@ -13868,13 +14013,14 @@ var NativePdfAnnotatorSession = class {
     return this.getNormalizedPointFromRect(rect, event);
   }
   getNormalizedPointFromRect(rect, event) {
+    var _a2, _b, _c;
     const width = rect.width || 1;
     const height = rect.height || 1;
     const pressure = resolvePointerPressure(
       event,
       this.lastPdfPoint,
       this.lastPdfPointTime,
-      this.plugin.getInkRenderSettings().pressureMode,
+      (_c = (_b = (_a2 = this.currentStroke) == null ? void 0 : _a2.inkSettings) == null ? void 0 : _b.pressureMode) != null ? _c : this.plugin.getInkRenderSettings().pressureMode,
       this.webKitStylusPointerId === event.pointerId
     );
     const point = {
@@ -13931,6 +14077,7 @@ var NativePdfAnnotatorSession = class {
     const changed = this.eraserMode === "object" ? this.applyObjectEraserSession(pageNumber, points, threshold) : this.applySegmentEraserSession(pageNumber, points, threshold);
     if (changed) {
       this.invalidateAnnotationPageCache();
+      this.documentRevision += 1;
       this.isDirty = true;
       this.scheduleSave();
     }
@@ -14028,11 +14175,11 @@ var NativePdfAnnotatorSession = class {
     this.ensureOverlayLayerOrder(surface);
     this.resizeOverlay(surface);
     const renderCanvas = this.getNextPageRenderSlot(surface);
-    const context = renderCanvas.getContext("2d", { willReadFrequently: true });
+    const context = renderCanvas.getContext("2d");
     if (!context || !surface.overlayEl.getContext("2d")) {
       return;
     }
-    const ratio = window.devicePixelRatio || 1;
+    const ratio = this.ownerWindow.devicePixelRatio || 1;
     const excludedKeys = new Set(this.objectErasePreviewTargets.keys());
     context.setTransform(1, 0, 0, 1, 0, 0);
     context.clearRect(0, 0, renderCanvas.width, renderCanvas.height);
@@ -14061,7 +14208,7 @@ var NativePdfAnnotatorSession = class {
       }
     }
     const inlinePreviewText = this.getInlineTextPreviewItem(pageNumber);
-    if (inlinePreviewText) {
+    if (inlinePreviewText && !this.inlineTextEditorEl) {
       this.drawText(context, surface, inlinePreviewText);
     }
     const pageSelections = this.selectedTargets.filter((target) => target.page === pageNumber);
@@ -14152,6 +14299,7 @@ var NativePdfAnnotatorSession = class {
     }
   }
   invalidateAnnotationPageCache() {
+    this.publishedFrames = /* @__PURE__ */ new WeakMap();
     this.annotationPageCache = null;
     if (!this.annotationDocument) {
       this.strokePathCache.clear();
@@ -14191,6 +14339,79 @@ var NativePdfAnnotatorSession = class {
     }
     return (_c = this.annotationPageCache.get(pageNumber)) != null ? _c : { strokes: [], eraserPaths: [], textItems: [], shapes: [], imageItems: [] };
   }
+  drawSelectionPreview(surface) {
+    var _a2;
+    const targets = this.selectedTargets.filter((target) => target.page === surface.pageNumber);
+    if (!this.dragAnchor || this.currentLasso || targets.length === 0) {
+      this.selectionBackground = null;
+      return false;
+    }
+    const ratio = this.ownerWindow.devicePixelRatio || 1;
+    const key = [surface.pageNumber, surface.lastWidth, surface.lastHeight, ratio, ...targets.map((target) => target.kind + target.id)].join(":");
+    const bucket = this.getPageAnnotationBucket(surface.pageNumber);
+    if (((_a2 = this.selectionBackground) == null ? void 0 : _a2.key) !== key) {
+      const canvas = this.ownerDocument.createElement("canvas");
+      canvas.width = surface.overlayEl.width;
+      canvas.height = surface.overlayEl.height;
+      const context2 = canvas.getContext("2d");
+      if (!context2) {
+        return false;
+      }
+      context2.setTransform(ratio, 0, 0, ratio, 0, 0);
+      const selected = new Set(targets.map((target) => target.kind + target.id));
+      for (const image of bucket.imageItems) {
+        if (!selected.has("image" + image.id)) {
+          this.drawImageAnnotation(context2, surface, image);
+        }
+      }
+      for (const item of getAnnotationRenderables(bucket.strokes, bucket.textItems, bucket.shapes)) {
+        if (selected.has(item.kind + item.annotation.id)) {
+          continue;
+        }
+        if (item.kind === "stroke") {
+          this.drawStroke(context2, surface, item.annotation);
+        } else if (item.kind === "text") {
+          this.drawText(context2, surface, item.annotation);
+        } else {
+          this.drawShape(context2, surface, item.annotation);
+        }
+      }
+      this.selectionBackground = { key, canvas };
+    }
+    this.publishRenderedCanvas(this.selectionBackground.canvas, surface.overlayEl);
+    const context = surface.overlayEl.getContext("2d");
+    if (!context) {
+      return false;
+    }
+    context.save();
+    context.setTransform(ratio, 0, 0, ratio, 0, 0);
+    for (const target of targets) {
+      if (target.kind === "stroke") {
+        const item = bucket.strokes.find((item2) => item2.id === target.id);
+        if (item) {
+          this.drawStroke(context, surface, item);
+        }
+      } else if (target.kind === "text") {
+        const item = bucket.textItems.find((item2) => item2.id === target.id);
+        if (item) {
+          this.drawText(context, surface, item);
+        }
+      } else if (target.kind === "shape") {
+        const item = bucket.shapes.find((item2) => item2.id === target.id);
+        if (item) {
+          this.drawShape(context, surface, item);
+        }
+      } else {
+        const item = bucket.imageItems.find((item2) => item2.id === target.id);
+        if (item) {
+          this.drawImageAnnotation(context, surface, item);
+        }
+      }
+    }
+    this.drawSelection(context, surface, targets);
+    context.restore();
+    return true;
+  }
   drawPageAnnotations(pageNumber) {
     var _a2;
     if (this.isFingerPanRenderingPaused()) {
@@ -14214,11 +14435,14 @@ var NativePdfAnnotatorSession = class {
       this.scheduleSyncPages();
       return;
     }
+    if (this.drawSelectionPreview(surface)) {
+      return;
+    }
     const context = surface.overlayEl.getContext("2d");
     if (!context) {
       return;
     }
-    const ratio = window.devicePixelRatio || 1;
+    const ratio = this.ownerWindow.devicePixelRatio || 1;
     context.setTransform(ratio, 0, 0, ratio, 0, 0);
     context.clearRect(0, 0, surface.lastWidth, surface.lastHeight);
     const bucket = this.getPageAnnotationBucket(pageNumber);
@@ -14239,7 +14463,7 @@ var NativePdfAnnotatorSession = class {
       }
     }
     const inlinePreviewText = this.getInlineTextPreviewItem(pageNumber);
-    if (inlinePreviewText) {
+    if (inlinePreviewText && !this.inlineTextEditorEl) {
       this.drawText(context, surface, inlinePreviewText);
     }
     const pageSelections = this.selectedTargets.filter((target) => target.page === pageNumber);
@@ -14256,6 +14480,9 @@ var NativePdfAnnotatorSession = class {
     this.drawTransientPageAnnotations(pageNumber);
   }
   drawImageAnnotation(context, surface, imageItem) {
+    if (!isEmbeddedImageDataUrl(imageItem.dataUrl)) {
+      return;
+    }
     const x2 = imageItem.x * surface.lastWidth;
     const y2 = imageItem.y * surface.lastHeight;
     const width = Math.max(1, imageItem.widthScale * surface.lastWidth);
@@ -14313,7 +14540,7 @@ var NativePdfAnnotatorSession = class {
     if (!context || radius <= 0) {
       return;
     }
-    const ratio = window.devicePixelRatio || 1;
+    const ratio = this.ownerWindow.devicePixelRatio || 1;
     context.save();
     context.setTransform(ratio, 0, 0, ratio, 0, 0);
     context.globalCompositeOperation = "destination-out";
@@ -14328,7 +14555,7 @@ var NativePdfAnnotatorSession = class {
     if (!context || radius <= 0) {
       return;
     }
-    const ratio = window.devicePixelRatio || 1;
+    const ratio = this.ownerWindow.devicePixelRatio || 1;
     context.save();
     context.setTransform(ratio, 0, 0, ratio, 0, 0);
     context.globalCompositeOperation = "destination-out";
@@ -14347,7 +14574,7 @@ var NativePdfAnnotatorSession = class {
     if (!context) {
       return;
     }
-    const ratio = window.devicePixelRatio || 1;
+    const ratio = this.ownerWindow.devicePixelRatio || 1;
     context.setTransform(ratio, 0, 0, ratio, 0, 0);
     context.clearRect(0, 0, surface.lastWidth, surface.lastHeight);
   }
@@ -14362,7 +14589,7 @@ var NativePdfAnnotatorSession = class {
     if (!context) {
       return;
     }
-    const ratio = window.devicePixelRatio || 1;
+    const ratio = this.ownerWindow.devicePixelRatio || 1;
     context.setTransform(ratio, 0, 0, ratio, 0, 0);
     context.clearRect(0, 0, surface.lastWidth, surface.lastHeight);
     if (((_a2 = this.currentStroke) == null ? void 0 : _a2.page) === pageNumber) {
@@ -14383,9 +14610,9 @@ var NativePdfAnnotatorSession = class {
       case "accurate":
         return 0;
       case "balanced":
-        return 0.45;
+        return 0;
       case "smooth":
-        return 1;
+        return 0.25;
     }
   }
   drawStroke(context, surface, stroke, predictTail = false, livePreview = false, predictionStrength = 1) {
@@ -14430,9 +14657,12 @@ var NativePdfAnnotatorSession = class {
       predictTail,
       {
         renderMode: livePreview ? "live" : "committed",
+        inkSettings: stroke.inkSettings,
         predictionStrength,
         startTaper: stroke.cutStart ? 0 : void 0,
-        endTaper: stroke.cutEnd ? 0 : void 0
+        endTaper: stroke.cutEnd ? 0 : void 0,
+        startCap: true,
+        endCap: true
       }
     );
   }
@@ -14454,6 +14684,7 @@ var NativePdfAnnotatorSession = class {
       stroke.cutStart ? "cs" : "ns",
       stroke.cutEnd ? "ce" : "ne",
       stroke.points.length,
+      JSON.stringify(stroke.inkSettings),
       pointHash >>> 0
     ].join(":");
   }
@@ -14476,8 +14707,11 @@ var NativePdfAnnotatorSession = class {
       false,
       {
         renderMode: "committed",
+        inkSettings: stroke.inkSettings,
         startTaper: stroke.cutStart ? 0 : void 0,
-        endTaper: stroke.cutEnd ? 0 : void 0
+        endTaper: stroke.cutEnd ? 0 : void 0,
+        startCap: true,
+        endCap: true
       }
     );
     if (!outline) {
@@ -15515,6 +15749,7 @@ var NativePdfAnnotatorSession = class {
   }
   markDirtyAndRedraw(message) {
     this.invalidateAnnotationPageCache();
+    this.documentRevision += 1;
     this.isDirty = true;
     this.scheduleSave();
     this.drawAllAnnotations();
@@ -15522,9 +15757,9 @@ var NativePdfAnnotatorSession = class {
   }
   scheduleSave() {
     if (this.autosaveHandle !== null) {
-      window.clearTimeout(this.autosaveHandle);
+      this.ownerWindow.clearTimeout(this.autosaveHandle);
     }
-    this.autosaveHandle = window.setTimeout(() => {
+    this.autosaveHandle = this.ownerWindow.setTimeout(() => {
       void this.flushSave();
     }, this.plugin.getAutosaveDelayMs());
   }
@@ -15555,8 +15790,8 @@ var NativePdfAnnotatorSession = class {
     viewContentEl == null ? void 0 : viewContentEl.removeEventListener("pointerdown", this.handleViewPointerDown, { capture: true });
     viewContentEl == null ? void 0 : viewContentEl.removeEventListener("pointermove", this.handleViewPointerMove);
     viewContentEl == null ? void 0 : viewContentEl.removeEventListener("pointerleave", this.handleViewPointerLeave);
-    document.removeEventListener("pointerdown", this.handleDocumentPointerDown, true);
-    document.removeEventListener("touchstart", this.handleDocumentTouchStart, true);
+    this.ownerDocument.removeEventListener("pointerdown", this.handleDocumentPointerDown, true);
+    this.ownerDocument.removeEventListener("touchstart", this.handleDocumentTouchStart, true);
   }
   async diagnoseOverlayState() {
     var _a2, _b;
@@ -15580,14 +15815,14 @@ var NativePdfAnnotatorSession = class {
     const overlayRect = surface.overlayEl.getBoundingClientRect();
     const centerX = overlayRect.left + overlayRect.width / 2;
     const centerY = overlayRect.top + overlayRect.height / 2;
-    const stack = document.elementsFromPoint(centerX, centerY).slice(0, 8).map((element) => ({
+    const stack = this.ownerDocument.elementsFromPoint(centerX, centerY).slice(0, 8).map((element) => ({
       tag: element.tagName.toLowerCase(),
       className: isHtmlElement(element) ? element.className : "",
       id: element.id || ""
     }));
     const bucket = this.getPageAnnotationBucket(surface.pageNumber);
     const context = surface.overlayEl.getContext("2d");
-    const overlayStyle = window.getComputedStyle(surface.overlayEl);
+    const overlayStyle = this.ownerWindow.getComputedStyle(surface.overlayEl);
     let alphaPixels = 0;
     if (context && surface.overlayEl.width > 0 && surface.overlayEl.height > 0) {
       const sampleWidth = Math.min(surface.overlayEl.width, 240);
@@ -15652,11 +15887,11 @@ var NativePdfAnnotatorSession = class {
       this.statusEl.textContent = message;
     }
     if (this.statusResetHandle !== null) {
-      window.clearTimeout(this.statusResetHandle);
+      this.ownerWindow.clearTimeout(this.statusResetHandle);
       this.statusResetHandle = null;
     }
     if (durationMs > 0) {
-      this.statusResetHandle = window.setTimeout(() => {
+      this.statusResetHandle = this.ownerWindow.setTimeout(() => {
         var _a2;
         this.statusResetHandle = null;
         if (((_a2 = this.statusEl) == null ? void 0 : _a2.textContent) === message) {
@@ -15692,7 +15927,7 @@ var PDFAnnotatorPlugin = class extends import_obsidian6.Plugin {
     );
     await this.settingsController.load();
     setInkRenderSettings(this.settingsController.getInkRenderSettings());
-    this.store = new AnnotationStore(this.app);
+    this.store = new AnnotationStore(this.app, this.settingsController.getLegacyInkRenderSettings());
     this.annotatedEmbeds = new AnnotatedEmbedController(this.app, this.store, {
       shouldShowAnnotatedEmbedHeader: () => this.shouldShowAnnotatedEmbedHeader(),
       openPdfPage: (file, pageNumber, rect) => this.openPdfPage(file, pageNumber, rect),
@@ -15702,20 +15937,20 @@ var PDFAnnotatorPlugin = class extends import_obsidian6.Plugin {
     this.registerMarkdownCodeBlockProcessor("freedraw-pdf", (source, el, context) => {
       void this.annotatedEmbeds.renderMarkdownBlock(source, el, context.sourcePath);
     });
-    this.addRibbonIcon("pen-tool", "切换当前 PDF 的批注模式", async () => {
+    this.addRibbonIcon("pen-tool", "Toggle annotation mode on active PDF", async () => {
       const session = await this.ensureActivePdfSession();
       if (!session) {
-        new import_obsidian6.Notice("请先在 Obsidian 内置查看器中打开 PDF。");
+        new import_obsidian6.Notice("Open a PDF in Obsidian's built-in viewer first.");
         return;
       }
       session.toggleAnnotationMode();
     });
-    this.addRibbonIcon("file-plus-2", "新建可批注的空白 PDF", () => {
+    this.addRibbonIcon("file-plus-2", "Create blank annotatable PDF", () => {
       this.openBlankAnnotatablePdfModal();
     });
     this.addCommand({
       id: "toggle-active-pdf-annotation-mode",
-      name: "切换当前 PDF 的批注模式",
+      name: "Toggle annotation mode on active PDF",
       checkCallback: (checking) => {
         const canRun = !!this.getActivePdfLeaf();
         if (canRun && !checking) {
@@ -15726,7 +15961,7 @@ var PDFAnnotatorPlugin = class extends import_obsidian6.Plugin {
     });
     this.addCommand({
       id: "create-blank-annotatable-pdf",
-      name: "新建可批注的空白 PDF",
+      name: "Create blank annotatable PDF",
       callback: () => {
         this.openBlankAnnotatablePdfModal();
       }
@@ -15735,18 +15970,18 @@ var PDFAnnotatorPlugin = class extends import_obsidian6.Plugin {
       (command) => this.addCommand(command),
       () => this.getSessionForLeaf(this.getActivePdfLeaf()),
       [
-        { id: "copy-current-page-pdf-link", name: "复制当前 PDF 页面链接", run: (session) => session.copyCurrentPageLink() },
-        { id: "open-active-pdf-annotation-json", name: "打开当前 PDF 的批注数据 JSON", run: (session) => session.openAnnotationDataJson() },
-        { id: "export-current-page-snapshot", name: "将当前带批注页面导出为 PNG", run: (session) => session.exportCurrentPageSnapshot() },
-        { id: "export-annotated-mixed-pdf", name: "导出带批注的混合 PDF", run: (session) => session.exportAnnotatedMixedDocumentPdf() },
-        { id: "create-native-mixed-working-pdf", name: "高级：创建原生混合工作 PDF", run: (session) => session.materializeNativeMixedWorkingPdf() },
-        { id: "insert-native-notebook-page-after-current", name: "在当前 PDF 页面后添加临时模板页", run: (session) => session.openTemplatePageInsertModal("after") },
-        { id: "insert-native-notebook-page-before-current", name: "在当前 PDF 页面前添加临时模板页", run: (session) => session.openTemplatePageInsertModal("before") }
+        { id: "copy-current-page-pdf-link", name: "Copy current PDF page link", run: (session) => session.copyCurrentPageLink() },
+        { id: "open-active-pdf-annotation-json", name: "Open active PDF annotation data JSON", run: (session) => session.openAnnotationDataJson() },
+        { id: "export-current-page-snapshot", name: "Export current annotated page as PNG", run: (session) => session.exportCurrentPageSnapshot() },
+        { id: "export-annotated-mixed-pdf", name: "Export annotated mixed PDF", run: (session) => session.exportAnnotatedMixedDocumentPdf() },
+        { id: "create-native-mixed-working-pdf", name: "Advanced: create native mixed working PDF", run: (session) => session.materializeNativeMixedWorkingPdf() },
+        { id: "insert-native-notebook-page-after-current", name: "Add temporary template page after current PDF page", run: (session) => session.openTemplatePageInsertModal("after") },
+        { id: "insert-native-notebook-page-before-current", name: "Add temporary template page before current PDF page", run: (session) => session.openTemplatePageInsertModal("before") }
       ]
     );
     this.addCommand({
       id: "copy-current-page-annotated-embed",
-      name: "复制带批注 PDF 页面的嵌入代码",
+      name: "Copy annotated PDF page embed",
       checkCallback: (checking) => {
         const source = this.getPreferredPdfInsertionSource();
         const canRun = !!source;
@@ -15758,7 +15993,7 @@ var PDFAnnotatorPlugin = class extends import_obsidian6.Plugin {
     });
     this.addCommand({
       id: "insert-current-page-annotated-embed",
-      name: "插入带批注 PDF 页面的嵌入代码",
+      name: "Insert annotated PDF page embed",
       checkCallback: (checking) => {
         const markdownView = this.app.workspace.getActiveViewOfType(import_obsidian6.MarkdownView);
         const source = this.getPreferredPdfInsertionSource();
@@ -15771,7 +16006,7 @@ var PDFAnnotatorPlugin = class extends import_obsidian6.Plugin {
     });
     this.addCommand({
       id: "insert-selected-region-annotated-embed",
-      name: "插入带批注 PDF 所选区域的嵌入代码",
+      name: "Insert annotated PDF selected region embed",
       checkCallback: (checking) => {
         const markdownView = this.app.workspace.getActiveViewOfType(import_obsidian6.MarkdownView);
         const source = this.getPreferredPdfRegionInsertionSource();
@@ -15786,37 +16021,37 @@ var PDFAnnotatorPlugin = class extends import_obsidian6.Plugin {
       (command) => this.addCommand(command),
       () => this.getSessionForLeaf(this.getActivePdfLeaf()),
       [
-        { id: "pdf-previous-mixed-page", name: "PDF：转到上一页", isEnabled: (session) => session.canNavigatePage(-1), run: (session) => session.goToPreviousPage() },
-        { id: "pdf-next-mixed-page", name: "PDF：转到下一页", isEnabled: (session) => session.canNavigatePage(1), run: (session) => session.goToNextPage() },
-        { id: "pdf-undo-annotation-change", name: "PDF：撤销批注更改", run: (session) => session.undo() },
-        { id: "pdf-redo-annotation-change", name: "PDF：重做批注更改", run: (session) => session.redo() },
-        { id: "pdf-open-mixed-page-list", name: "PDF：打开混合页面列表", run: (session) => session.openMixedPageList() },
-        { id: "pdf-open-go-to-page", name: "PDF：转到页面...", run: (session) => session.openGoToPage() },
-        { id: "pdf-add-template-page-end", name: "PDF：在末尾快速添加模板页", run: (session) => session.addTemplatePageToEnd() },
-        { id: "pdf-add-template-page-before", name: "PDF：在当前页前快速添加模板页", run: (session) => session.addTemplatePageBeforeCurrent() },
-        { id: "pdf-add-template-page-after", name: "PDF：在当前页后快速添加模板页", run: (session) => session.addTemplatePageAfterCurrent() },
-        { id: "pdf-duplicate-current-added-page", name: "PDF：复制当前新增页面", isEnabled: (session) => session.hasCurrentAddedPage(), run: (session) => session.duplicateCurrentAddedPage() },
-        { id: "pdf-duplicate-current-added-page-structure", name: "PDF：仅复制当前新增页面的结构", isEnabled: (session) => session.hasCurrentAddedPage(), run: (session) => session.duplicateCurrentAddedPage(false) },
-        { id: "pdf-clear-current-added-page", name: "PDF：清空当前新增页面内容", isEnabled: (session) => session.hasCurrentAddedPage(), run: (session) => session.clearCurrentAddedPageContents() },
-        { id: "pdf-delete-current-added-page", name: "PDF：将当前页面移至“已移除”", run: (session) => session.deleteCurrentPage() },
-        { id: "select-all-page-annotations", name: "全选当前 PDF 页面的批注", run: (session) => session.selectAllCurrentPageAnnotations() },
-        { id: "duplicate-selected-annotations", name: "复制一份所选批注", run: (session) => session.duplicateSelectedTargets() },
-        { id: "delete-selected-annotations", name: "删除所选批注", run: (session) => session.deleteSelectedTargets() },
-        { id: "copy-selected-annotations", name: "复制所选批注", run: (session) => session.copySelectedTargets() },
-        { id: "cut-selected-annotations", name: "剪切所选批注", run: (session) => session.cutSelectedTargets() },
-        { id: "bring-selected-annotations-to-front", name: "将所选批注置于最前", run: (session) => session.reorderSelectedTargets("front") },
-        { id: "send-selected-annotations-to-back", name: "将所选批注置于最后", run: (session) => session.reorderSelectedTargets("back") },
-        { id: "paste-selected-annotations", name: "粘贴已复制的批注", isEnabled: () => this.hasClipboard(), run: (session) => session.pasteClipboard() },
-        { id: "paste-selected-annotations-in-place", name: "原位粘贴已复制的批注", isEnabled: () => this.hasClipboard(), run: (session) => session.pasteClipboard(true) },
-        { id: "export-selection-snapshot", name: "导出所选区域快照", run: (session) => session.exportSelectionSnapshot() },
-        { id: "copy-selection-region-reference", name: "复制所选区域引用", run: (session) => session.copySelectionRegionReference() },
-        { id: "copy-selection-annotated-embed", name: "复制所选区域的带批注嵌入代码", run: (session) => session.copySelectionAnnotatedEmbedBlock() },
-        { id: "diagnose-pdf-annotation-overlay", name: "诊断 PDF 批注覆盖层", run: (session) => session.diagnoseOverlayState() }
+        { id: "pdf-previous-mixed-page", name: "PDF: Go to previous page", isEnabled: (session) => session.canNavigatePage(-1), run: (session) => session.goToPreviousPage() },
+        { id: "pdf-next-mixed-page", name: "PDF: Go to next page", isEnabled: (session) => session.canNavigatePage(1), run: (session) => session.goToNextPage() },
+        { id: "pdf-undo-annotation-change", name: "PDF: Undo annotation change", run: (session) => session.undo() },
+        { id: "pdf-redo-annotation-change", name: "PDF: Redo annotation change", run: (session) => session.redo() },
+        { id: "pdf-open-mixed-page-list", name: "PDF: Open mixed page list", run: (session) => session.openMixedPageList() },
+        { id: "pdf-open-go-to-page", name: "PDF: Go to page...", run: (session) => session.openGoToPage() },
+        { id: "pdf-add-template-page-end", name: "PDF: Quick add template page to end", run: (session) => session.addTemplatePageToEnd() },
+        { id: "pdf-add-template-page-before", name: "PDF: Quick add template page before current page", run: (session) => session.addTemplatePageBeforeCurrent() },
+        { id: "pdf-add-template-page-after", name: "PDF: Quick add template page after current page", run: (session) => session.addTemplatePageAfterCurrent() },
+        { id: "pdf-duplicate-current-added-page", name: "PDF: Duplicate current added page", isEnabled: (session) => session.hasCurrentAddedPage(), run: (session) => session.duplicateCurrentAddedPage() },
+        { id: "pdf-duplicate-current-added-page-structure", name: "PDF: Duplicate current added page structure only", isEnabled: (session) => session.hasCurrentAddedPage(), run: (session) => session.duplicateCurrentAddedPage(false) },
+        { id: "pdf-clear-current-added-page", name: "PDF: Clear current added page contents", isEnabled: (session) => session.hasCurrentAddedPage(), run: (session) => session.clearCurrentAddedPageContents() },
+        { id: "pdf-delete-current-added-page", name: "PDF: Move current page to Removed", run: (session) => session.deleteCurrentPage() },
+        { id: "select-all-page-annotations", name: "Select all annotations on current PDF page", run: (session) => session.selectAllCurrentPageAnnotations() },
+        { id: "duplicate-selected-annotations", name: "Duplicate selected annotations", run: (session) => session.duplicateSelectedTargets() },
+        { id: "delete-selected-annotations", name: "Delete selected annotations", run: (session) => session.deleteSelectedTargets() },
+        { id: "copy-selected-annotations", name: "Copy selected annotations", run: (session) => session.copySelectedTargets() },
+        { id: "cut-selected-annotations", name: "Cut selected annotations", run: (session) => session.cutSelectedTargets() },
+        { id: "bring-selected-annotations-to-front", name: "Bring selected annotations to front", run: (session) => session.reorderSelectedTargets("front") },
+        { id: "send-selected-annotations-to-back", name: "Send selected annotations to back", run: (session) => session.reorderSelectedTargets("back") },
+        { id: "paste-selected-annotations", name: "Paste copied annotations", isEnabled: () => this.hasClipboard(), run: (session) => session.pasteClipboard() },
+        { id: "paste-selected-annotations-in-place", name: "Paste copied annotations in place", isEnabled: () => this.hasClipboard(), run: (session) => session.pasteClipboard(true) },
+        { id: "export-selection-snapshot", name: "Export selection snapshot", run: (session) => session.exportSelectionSnapshot() },
+        { id: "copy-selection-region-reference", name: "Copy selection region reference", run: (session) => session.copySelectionRegionReference() },
+        { id: "copy-selection-annotated-embed", name: "Copy selected region annotated embed", run: (session) => session.copySelectionAnnotatedEmbedBlock() },
+        { id: "diagnose-pdf-annotation-overlay", name: "Diagnose PDF annotation overlay", run: (session) => session.diagnoseOverlayState() }
       ]
     );
     this.addCommand({
       id: "open-selection-region-reference-from-clipboard",
-      name: "从剪贴板打开所选区域引用",
+      name: "Open selection region reference from clipboard",
       callback: () => {
         void this.openRegionReferenceFromClipboard();
       }
@@ -15834,7 +16069,7 @@ var PDFAnnotatorPlugin = class extends import_obsidian6.Plugin {
       if (!(abstractFile instanceof import_obsidian6.TFile) || abstractFile.extension.toLowerCase() !== "pdf") {
         return;
       }
-      void this.store.migrateForRename(abstractFile, oldPath);
+      void this.store.migrateForRename(abstractFile, oldPath).catch(() => new import_obsidian6.Notice("Could not move annotation data. The original sidecar is preserved."));
     }));
     this.registerEvent(this.app.vault.on("delete", (abstractFile) => {
       if (!(abstractFile instanceof import_obsidian6.TFile) || abstractFile.extension.toLowerCase() !== "pdf") {
@@ -15888,6 +16123,9 @@ var PDFAnnotatorPlugin = class extends import_obsidian6.Plugin {
       }
       const templatePage = createTemplateNotebookPage("Page 1", options.template, options.pageSize, options.paperColor);
       const renderDimensions = getNotebookPageRenderDimensions(templatePage.pageSize, BLANK_PDF_EXPORT_WIDTH_PX);
+      const paperDimensions = getNotebookPageSizeDimensions(templatePage.pageSize);
+      const widthPt = templatePage.pageSize === "letter" ? 612 : 595.276 * paperDimensions.width / 920;
+      const heightPt = templatePage.pageSize === "letter" ? 792 : widthPt * paperDimensions.height / paperDimensions.width;
       const pages = [];
       for (let index = 0; index < pageCount; index += 1) {
         const canvas = createEl("canvas");
@@ -15898,11 +16136,13 @@ var PDFAnnotatorPlugin = class extends import_obsidian6.Plugin {
           new import_obsidian6.Notice("Could not create blank PDF canvas.");
           return;
         }
-        context.fillStyle = options.paperColor || "#fffdf7";
+        context.fillStyle = "#ffffff";
         context.fillRect(0, 0, canvas.width, canvas.height);
         pages.push({
           widthPx: canvas.width,
           heightPx: canvas.height,
+          widthPt,
+          heightPt,
           jpegBytes: new Uint8Array(dataUrlToArrayBuffer(canvas.toDataURL("image/jpeg", 0.92)))
         });
       }

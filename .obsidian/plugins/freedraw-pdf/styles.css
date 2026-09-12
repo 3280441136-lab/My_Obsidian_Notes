@@ -32,6 +32,11 @@
 	position: absolute;
 }
 
+.pdf-native-annotator-ui .pdf-native-annotator-button:focus-visible {
+	outline: 2px solid var(--interactive-accent);
+	outline-offset: 2px;
+}
+
 .pdf-native-annotator-toolbar {
 	pointer-events: auto;
 }
@@ -1538,8 +1543,8 @@
 	-webkit-appearance: none;
 	white-space: pre-wrap;
 	overflow-wrap: break-word;
-	-webkit-text-fill-color: transparent;
-	caret-color: transparent;
+	-webkit-text-fill-color: var(--annotator-inline-text-color, var(--text-normal));
+	caret-color: var(--annotator-inline-text-color, var(--text-normal));
 	cursor: text;
 	-webkit-tap-highlight-color: transparent;
 }
@@ -1549,7 +1554,7 @@
 }
 
 .pdf-native-annotator-host .pdf-native-annotator-inline-text-caret-mirror {
-	display: block;
+	display: none;
 	position: absolute;
 	inset: 0;
 	z-index: 1;
@@ -1561,33 +1566,6 @@
 	white-space: pre-wrap;
 	overflow-wrap: break-word;
 	pointer-events: none;
-}
-
-.pdf-native-annotator-host .pdf-native-annotator-inline-text-caret {
-	display: inline-block;
-	width: 1px;
-	height: 1em;
-	margin-right: -1px;
-	background: var(--annotator-inline-text-color, var(--text-normal));
-	vertical-align: -0.12em;
-	transform: translateY(-2px);
-	animation: pdf-native-annotator-caret-blink 1s steps(1, end) infinite;
-}
-
-.pdf-native-annotator-host .pdf-native-annotator-inline-text-caret.is-hidden {
-	visibility: hidden;
-}
-
-@keyframes pdf-native-annotator-caret-blink {
-	0%,
-	48% {
-		opacity: 1;
-	}
-
-	49%,
-	100% {
-		opacity: 0;
-	}
 }
 
 .pdf-native-annotator-host .pdf-native-annotator-inline-text-handle {
@@ -1677,14 +1655,6 @@
 
 .pdf-native-annotator-inline-text-editor::placeholder {
 	color: var(--text-faint);
-}
-
-.pdf-native-annotator-synthetic-pages {
-	position: relative;
-	display: block;
-	width: 100%;
-	padding: 1px 0;
-	contain: layout style;
 }
 
 .pdf-native-annotator-synthetic-page {
