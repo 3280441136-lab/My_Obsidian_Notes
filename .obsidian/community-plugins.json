@@ -6,5 +6,6 @@
   "obsidian-markmind",
   "convert-katex-to-mathjax",
   "advanced-rename-and-delete-handler",
-  "freedraw-pdf"
+  "freedraw-pdf",
+  "pdf-selection-translator"
 ]

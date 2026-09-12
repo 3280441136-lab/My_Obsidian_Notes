@@ -1,0 +1,13 @@
+{
+  "uiLanguage": "zh-CN",
+  "baseUrl": "https://sub.micuapi.ai",
+  "model": "gpt-5.6-sol",
+  "apiKey": "sk-a19ce8e27e90b79e817b3222be185ec2ceaf3bd13f0fb0335da6868bcfd805a1",
+  "rememberKey": true,
+  "targetLanguage": "简体中文",
+  "triggerMode": "auto",
+  "delayMs": 450,
+  "includeContext": true,
+  "maxChars": 6000,
+  "timeoutSeconds": 45
+}
