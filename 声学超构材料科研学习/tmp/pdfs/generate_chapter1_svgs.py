@@ -54,8 +54,9 @@ devices = r'''
     <rect x="22" y="288" width="296" height="92" rx="5" fill="#e7f3ee" stroke="#83b8a4"/>
     <text x="42" y="321" class="h">低频弹性控制</text>
     <text x="42" y="352" class="t">ξₐ ≈ Fₐ / Kₘ</text>
-    <text x="42" y="408" class="t">Qₘ ≈ 1：低频平台平顺延伸到 f₀ 附近</text>
-    <text x="42" y="444" class="s">Q 太大：共振峰高；Q 太小：过渡区提前下坠</text>
+    <text x="42" y="408" class="t">Qₘ ≈ 1：低频平台平顺延伸</text>
+    <text x="42" y="436" class="t">到 f₀ 附近</text>
+    <text x="42" y="468" class="s">Q 太大则峰高；Q 太小则过早下坠</text>
   </g>
 
   <g transform="translate(430 120)">
@@ -71,7 +72,7 @@ devices = r'''
     <text x="42" y="321" class="h">中间力阻控制</text>
     <text x="42" y="352" class="t">vₐ ≈ Fₐ / Rₘ，E = Blv</text>
     <text x="42" y="408" class="t">Qₘ 越低：速度平台越宽</text>
-    <text x="42" y="444" class="s">代价：Rₘ 增大，速度与灵敏度一同下降</text>
+    <text x="42" y="444" class="s">代价：Rₘ 增大，速度与灵敏度下降</text>
   </g>
 
   <g transform="translate(805 120)">
@@ -86,8 +87,9 @@ devices = r'''
     <rect x="22" y="288" width="296" height="92" rx="5" fill="#eee7f4" stroke="#a78bbb"/>
     <text x="42" y="321" class="h">高频质量控制</text>
     <text x="42" y="352" class="t">aₐ ≈ Fₐ / Mₘ</text>
-    <text x="42" y="408" class="t">Qₘ ≈ 1：高频平台向下延伸到 f₀ 附近</text>
-    <text x="42" y="444" class="s">声功率近似与加速度振幅平方成正比</text>
+    <text x="42" y="408" class="t">Qₘ ≈ 1：高频平台向下延伸</text>
+    <text x="42" y="436" class="t">到 f₀ 附近</text>
+    <text x="42" y="468" class="s">声功率近似正比于加速度振幅平方</text>
   </g>
 '''
 write("电声器件与控制区.svg", devices, 1200, 650, "比较压强式电容传声器、压强式动圈传声器和动圈扬声器对应的位移、速度、加速度控制区。")
@@ -158,7 +160,7 @@ isolation = r'''
   </g>
   <defs><clipPath id="isoClip"><rect x="475" y="115" width="665" height="485"/></clipPath></defs>
 '''.replace("__CURVES__", "\n      ".join(iso_curves))
-write("隔振传递比与Q.svg", isolation, 1200, 680, "左侧为基础激励隔振模型，右侧为不同机械品质因数下的位移传递比双对数曲线，并标明根号二分界。")
+write("隔振传递比与Q.svg", isolation, 1200, 720, "左侧为基础激励隔振模型，右侧为不同机械品质因数下的位移传递比双对数曲线，并标明根号二分界。")
 
 
 pickup = r'''
@@ -216,7 +218,7 @@ def wave_points(kind, x0, y0, width, amp, cycles=2):
         else:
             phase = 2*math.pi*u
             yv = 0.5 + 0.48*math.sin(3*phase)
-        y = y0 - amp * (yv-0.5)
+        y = y0 - amp * yv if kind == "square" else y0 - amp * (yv-0.5)
         pts.append(f"{x:.1f},{y:.1f}")
     return " ".join(pts)
 
@@ -226,11 +228,11 @@ fourier = f'''
   <text x="55" y="76" class="s">周期力先分解为各次简谐力；线性振子再按自己的频率响应分别改变每个谐波</text>
   <line x1="55" y1="92" x2="1145" y2="92" stroke="#cbd5e1" stroke-width="2"/>
   <g>
-    <text x="60" y="130" class="h">输入：50% 占空比矩形周期力</text>
-    <line x1="110" y1="222" x2="1090" y2="222" class="axis"/>
-    <polyline points="{wave_points('square',110,190,980,115)}" fill="none" stroke="#176f9f" stroke-width="4"/>
-    <text x="65" y="175" class="t">Fₐ</text><text x="65" y="235" class="t">0</text>
-    <text x="870" y="250" class="s">只含直流分量与 1、3、5、7…次奇谐波</text>
+    <text x="60" y="128" class="h">输入：50% 占空比矩形周期力</text>
+    <line x1="110" y1="235" x2="1090" y2="235" class="axis"/>
+    <polyline points="{wave_points('square',110,235,980,85)}" fill="none" stroke="#176f9f" stroke-width="4"/>
+    <text x="65" y="165" class="t">Fₐ</text><text x="65" y="242" class="t">0</text>
+    <text x="820" y="263" class="s">只含直流分量与 1、3、5、7…次奇谐波</text>
   </g>
   <g>
     <rect x="55" y="280" width="535" height="270" rx="6" fill="#fff4e6" stroke="#e4b36b"/>
