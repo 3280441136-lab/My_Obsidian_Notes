@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="550" viewBox="0 0 1100 550">
+  <rect width="1100" height="550" fill="#f7f9fc"/>
+  <style>.t{font-family:"Microsoft YaHei","Noto Sans CJK SC",sans-serif;fill:#172033}.h{font-size:29px;font-weight:700}.s{font-size:21px}.n{font-size:18px}.w{stroke:#172033;stroke-width:4;fill:none}.a{stroke:#1769aa;stroke-width:4;fill:none}.o{stroke:#c75516;stroke-width:4;fill:none}.node{fill:#172033}</style>
+  <text x="550" y="42" text-anchor="middle" class="t h">例题 3：输入电感抽头 + 输出电容抽头</text>
+  <line x1="310" y1="90" x2="850" y2="90" class="w"/><line x1="140" y1="410" x2="850" y2="410" class="w"/>
+  <line x1="310" y1="90" x2="310" y2="125" class="w"/><path d="M310 125 c-34 0 -34 34 0 34 c34 0 34 34 0 34 c-34 0 -34 34 0 34 c34 0 34 34 0 34 c-34 0 -34 34 0 34 c34 0 34 34 0 34 c-34 0 -34 34 0 34" class="a"/><line x1="310" y1="363" x2="310" y2="410" class="w"/>
+  <circle cx="310" cy="244" r="6" class="node"/><line x1="310" y1="244" x2="205" y2="244" class="w"/>
+  <line x1="205" y1="244" x2="205" y2="270" class="w"/><polyline points="205,270 187,286 223,302 187,318 223,334 187,350 205,366" class="o"/><line x1="205" y1="366" x2="205" y2="410" class="w"/>
+  <line x1="700" y1="90" x2="700" y2="145" class="w"/><line x1="665" y1="145" x2="735" y2="145" class="a"/><line x1="665" y1="173" x2="735" y2="173" class="a"/><line x1="700" y1="173" x2="700" y2="250" class="w"/><circle cx="700" cy="250" r="6" class="node"/><line x1="700" y1="250" x2="850" y2="250" class="w"/><line x1="700" y1="250" x2="700" y2="315" class="w"/><line x1="665" y1="315" x2="735" y2="315" class="a"/><line x1="665" y1="343" x2="735" y2="343" class="a"/><line x1="700" y1="343" x2="700" y2="410" class="w"/>
+  <line x1="820" y1="250" x2="820" y2="280" class="w"/><polyline points="820,280 802,296 838,312 802,328 838,344 802,360 820,376" class="o"/><line x1="820" y1="376" x2="820" y2="410" class="w"/>
+  <text x="128" y="316" class="t n">Rₛ = 75 Ω</text><text x="338" y="190" class="t n">完整回路侧 N₂</text><text x="338" y="307" class="t n">输入抽头侧 N₁</text><text x="746" y="161" class="t n">C₁ = 5 pF</text><text x="746" y="338" class="t n">C₂ = 15 pF</text><text x="850" y="330" class="t n">Rᴸ = 300 Ω</text>
+  <rect x="145" y="455" width="810" height="62" rx="4" fill="#e8f1f8" stroke="#1769aa" stroke-width="2"/><text x="550" y="482" text-anchor="middle" class="t s">输出侧：pᴸ = 1/4，Rᴸ′ = 4.8 kΩ</text><text x="550" y="508" text-anchor="middle" class="t s">输入匹配：Rₛ/pₛ² = Rᴸ′ → N₁/N₂ = pₛ = 1/8</text>
+</svg>

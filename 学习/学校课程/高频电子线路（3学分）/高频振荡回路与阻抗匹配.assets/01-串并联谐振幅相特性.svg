@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="820" viewBox="0 0 1200 820">
+  <rect width="1200" height="820" fill="#f7f9fc"/>
+  <style>
+    .t{font-family:"Microsoft YaHei","Noto Sans CJK SC",sans-serif;fill:#172033}.h{font-size:30px;font-weight:700}.s{font-size:21px}.n{font-size:18px}.axis{stroke:#172033;stroke-width:2}.grid{stroke:#aeb9c8;stroke-width:1;stroke-dasharray:6 6}.p{fill:none;stroke:#1769aa;stroke-width:4}.p2{fill:none;stroke:#63a9dc;stroke-width:3}.q{fill:none;stroke:#c75516;stroke-width:4}.q2{fill:none;stroke:#e49a69;stroke-width:3}.dot{fill:#172033}
+  </style>
+  <text x="600" y="44" text-anchor="middle" class="t h">串联与并联谐振回路的幅频、相频特性</text>
+
+  <g transform="translate(70 95)">
+    <text x="245" y="0" text-anchor="middle" class="t s">并联：归一化阻抗幅值</text>
+    <line x1="35" y1="250" x2="480" y2="250" class="axis"/><line x1="35" y1="250" x2="35" y2="25" class="axis"/>
+    <line x1="255" y1="25" x2="255" y2="250" class="grid"/><line x1="35" y1="92" x2="480" y2="92" class="grid"/>
+    <path d="M45 238 C130 230 178 185 212 95 C226 57 239 34 255 30 C271 34 284 57 298 95 C332 185 380 230 470 238" class="p"/>
+    <path d="M45 220 C112 197 160 142 202 82 C223 52 240 32 255 30 C270 32 287 52 308 82 C350 142 398 197 470 220" class="p2"/>
+    <circle cx="255" cy="30" r="5" class="dot"/><text x="265" y="52" class="t n">峰值 1</text>
+    <text x="243" y="278" class="t n">ω₀</text><text x="455" y="278" class="t n">ω</text><text x="4" y="28" class="t n">|Z|/Rₑ</text>
+    <text x="342" y="64" class="t n" fill="#1769aa">Q 大：窄而尖</text><text x="342" y="101" class="t n" fill="#63a9dc">Q 小：宽而缓</text>
+  </g>
+
+  <g transform="translate(650 95)">
+    <text x="245" y="0" text-anchor="middle" class="t s">并联：阻抗相位</text>
+    <line x1="35" y1="137" x2="480" y2="137" class="axis"/><line x1="35" y1="250" x2="35" y2="25" class="axis"/>
+    <line x1="255" y1="25" x2="255" y2="250" class="grid"/><line x1="35" y1="38" x2="480" y2="38" class="grid"/><line x1="35" y1="237" x2="480" y2="237" class="grid"/>
+    <path d="M45 43 C160 45 213 67 240 112 C248 125 251 133 255 137 C259 141 262 149 270 162 C297 207 350 232 470 234" class="p"/>
+    <path d="M45 58 C125 65 185 90 225 119 C240 130 248 135 255 137 C262 139 270 144 285 155 C325 184 385 213 470 220" class="p2"/>
+    <text x="8" y="43" class="t n">+π/2</text><text x="12" y="243" class="t n">−π/2</text><text x="240" y="278" class="t n">ω₀</text><text x="455" y="164" class="t n">ω</text>
+    <text x="54" y="111" class="t n">感性</text><text x="405" y="181" class="t n">容性</text>
+  </g>
+
+  <g transform="translate(70 500)">
+    <text x="245" y="0" text-anchor="middle" class="t s">串联：归一化阻抗幅值</text>
+    <line x1="35" y1="250" x2="480" y2="250" class="axis"/><line x1="35" y1="250" x2="35" y2="25" class="axis"/>
+    <line x1="255" y1="25" x2="255" y2="250" class="grid"/><line x1="35" y1="216" x2="480" y2="216" class="grid"/>
+    <path d="M55 42 C145 75 192 145 225 198 C238 217 248 222 255 222 C262 222 272 217 285 198 C318 145 365 75 455 42" class="q"/>
+    <path d="M55 92 C132 112 185 165 222 205 C237 220 247 222 255 222 C263 222 273 220 288 205 C325 165 378 112 455 92" class="q2"/>
+    <circle cx="255" cy="222" r="5" class="dot"/><text x="265" y="214" class="t n">最小值 1</text>
+    <text x="243" y="278" class="t n">ω₀</text><text x="455" y="278" class="t n">ω</text><text x="4" y="28" class="t n">|Z|/R</text>
+  </g>
+
+  <g transform="translate(650 500)">
+    <text x="245" y="0" text-anchor="middle" class="t s">串联：阻抗相位</text>
+    <line x1="35" y1="137" x2="480" y2="137" class="axis"/><line x1="35" y1="250" x2="35" y2="25" class="axis"/>
+    <line x1="255" y1="25" x2="255" y2="250" class="grid"/><line x1="35" y1="38" x2="480" y2="38" class="grid"/><line x1="35" y1="237" x2="480" y2="237" class="grid"/>
+    <path d="M45 234 C160 232 213 207 240 162 C248 149 251 141 255 137 C259 133 262 125 270 112 C297 67 350 45 470 43" class="q"/>
+    <path d="M45 220 C125 213 185 184 225 155 C240 144 248 139 255 137 C262 135 270 130 285 119 C325 90 385 65 470 58" class="q2"/>
+    <text x="8" y="43" class="t n">+π/2</text><text x="12" y="243" class="t n">−π/2</text><text x="240" y="278" class="t n">ω₀</text><text x="455" y="164" class="t n">ω</text>
+    <text x="54" y="181" class="t n">容性</text><text x="405" y="111" class="t n">感性</text>
+  </g>
+</svg>
