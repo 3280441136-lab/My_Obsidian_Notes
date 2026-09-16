@@ -1,9 +1,9 @@
 {
   "userName": "",
   "permissionMode": "yolo",
-  "model": "sonnet",
+  "model": "gpt-5.6-sol",
   "thinkingBudget": "low",
-  "effortLevel": "high",
+  "effortLevel": "medium",
   "serviceTier": "default",
   "enableAutoTitleGeneration": true,
   "titleGenerationLocale": "",
@@ -11,7 +11,6 @@
   "excludedTags": [],
   "mediaFolder": "",
   "systemPrompt": "",
-  "persistentExternalContextPaths": [],
   "sharedEnvironmentVariables": "",
   "envSnippets": [],
   "customContextLimits": {},
@@ -25,7 +24,7 @@
   "locale": "zh-CN",
   "providerConfigs": {
     "claude": {
-      "enabled": true,
+      "enabled": false,
       "safeMode": "acceptEdits",
       "cliPath": "",
       "cliPathsByHost": {
@@ -33,7 +32,6 @@
       },
       "loadUserSettings": true,
       "enableChrome": false,
-      "enableBangBash": false,
       "customModels": "",
       "defaultModel": "sonnet",
       "lastModel": "sonnet",
@@ -255,7 +253,7 @@
       "reasoningSummary": "none",
       "environmentVariables": "",
       "environmentHash": "runtime-input:v1:ed54f4f5238abeec7f65a5da1e468c9a639e157a7d1c7753b53f54ba1196e8a0",
-      "catalogTimestamp": 1788594251620,
+      "catalogTimestamp": 1789448639892,
       "catalogFingerprint": "2:690f00c6a3dddae2ace601dee96858cf624410670a5b6d0f7345c298f3e818b8",
       "installationMethodsByHost": {
         "device-6f0a58629d0f9770f30fa08b0ac6bd8f89d65bfa092a9436d4fbc22b109fe1b4": "native-windows"
@@ -294,23 +292,22 @@
       "environmentHash": "",
       "environmentVariables": "",
       "modelAliases": {},
-      "planBasePermissionMode": "normal",
       "preferredReasoningByModel": {},
       "visibleModels": null
     }
   },
-  "settingsProvider": "claude",
+  "settingsProvider": "codex",
   "lastSelectedChatModel": {
     "providerId": "codex",
-    "model": "gpt-5.6-terra"
+    "model": "gpt-5.6-sol"
   },
   "savedProviderModel": {
     "claude": "sonnet",
-    "codex": "gpt-5.6-terra"
+    "codex": "gpt-5.6-sol"
   },
   "savedProviderEffort": {
     "claude": "high",
-    "codex": "xhigh"
+    "codex": "medium"
   },
   "savedProviderServiceTier": {
     "codex": "default"
@@ -324,6 +321,7 @@
   "lastCustomModel": "",
   "maxWarmAgentProcesses": 5,
   "enableAutoScroll": true,
+  "showMessageTimestamps": false,
   "deferMathRenderingDuringStreaming": true,
   "expandFileEditsByDefault": false,
   "chatViewPlacement": "right-sidebar",
