@@ -23,7 +23,7 @@
       <path d="M0,0 L9,5 L0,10 Z" fill="#2563eb"/>
     </marker>
     <clipPath id="plot-clip"><rect x="90" y="150" width="820" height="235"/></clipPath>
-    <path id="sinc" d="M100 315 Q167 335 233 315 Q300 282 367 315 Q415 350 467 190 Q500 90 533 190 Q585 350 633 315 Q700 282 767 315 Q833 335 900 315"/>
+    <path id="sinc" d="M100 315 Q167 335 233 315 Q300 282 367 315 Q415 350 467 240 Q500 190 533 240 Q585 350 633 315 Q700 282 767 315 Q833 335 900 315"/>
   </defs>
 
   <rect width="1000" height="1320" fill="#ffffff"/>
@@ -45,7 +45,7 @@
   </g>
   <circle cx="233" cy="315" r="6" class="zero"/>
   <circle cx="367" cy="315" r="6" class="zero"/>
-  <circle cx="500" cy="90" r="7" class="sample" transform="translate(0 100)"/>
+  <circle cx="500" cy="190" r="7" class="sample"/>
   <circle cx="633" cy="315" r="6" class="zero"/>
   <circle cx="767" cy="315" r="6" class="zero"/>
   <text x="520" y="220" class="math">g(0) = 1</text>
@@ -57,9 +57,9 @@
   <text x="75" y="525" class="h2">2  多个脉冲在时间上重叠，但在抽样点不互相干扰</text>
   <line x1="100" y1="700" x2="900" y2="700" class="axis"/>
   <g clip-path="url(#plot-clip)" transform="translate(0 385)">
-    <use href="#sinc" class="pulse-red" transform="translate(-133 0) scale(1 0.72) translate(0 87)"/>
+    <use href="#sinc" class="pulse-red" transform="translate(-133 0)"/>
     <use href="#sinc" class="pulse-blue"/>
-    <use href="#sinc" class="pulse-green" transform="translate(133 0) scale(1 0.82) translate(0 56)"/>
+    <use href="#sinc" class="pulse-green" transform="translate(133 0)"/>
   </g>
   <line x1="500" y1="555" x2="500" y2="745" class="guide"/>
   <circle cx="500" cy="575" r="8" class="sample"/>
