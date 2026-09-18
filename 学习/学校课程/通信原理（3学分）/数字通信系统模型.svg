@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+  <title id="title">数字通信系统模型</title>
+  <desc id="desc">信息源依次经过信源编码、加密、信道编码和调制后进入有噪信道；接收端依次完成解调、信道译码、解密和信源译码，最终交付信息用户。</desc>
+
+  <defs>
+    <style>
+      .title { font: 700 44px "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill: #245ea8; }
+      .section { font: 700 30px "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill: #263238; }
+      .label-cn { font: 700 25px "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill: #18212a; }
+      .label-en { font: 20px Arial, sans-serif; fill: #46515c; }
+      .small { font: 18px "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill: #45515d; }
+      .block { fill: #ffffff; stroke-width: 4; rx: 6; }
+      .group { fill: #f8fffc; fill-opacity: 0.55; stroke: #10b981; stroke-width: 4; stroke-dasharray: 14 10; rx: 12; }
+      .arrow { fill: none; stroke: #3046c5; stroke-width: 6; marker-end: url(#arrowhead); }
+      .channel-line { fill: none; stroke: #1578d4; stroke-width: 16; stroke-linecap: round; marker-end: url(#arrowhead-channel); }
+    </style>
+    <marker id="arrowhead" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#3046c5"/>
+    </marker>
+    <marker id="arrowhead-channel" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#1578d4"/>
+    </marker>
+  </defs>
+
+  <rect width="1600" height="1000" fill="#ffffff"/>
+  <text x="90" y="75" class="title">数字通信系统模型</text>
+  <text x="90" y="112" class="label-en">Digital communication model</text>
+
+  <rect x="135" y="210" width="500" height="650" class="group"/>
+  <rect x="965" y="210" width="500" height="650" class="group"/>
+  <text x="155" y="255" class="section">发送端</text>
+  <text x="155" y="285" class="label-en">Transmitter</text>
+  <text x="985" y="255" class="section">接收端</text>
+  <text x="985" y="285" class="label-en">Receiver</text>
+
+  <!-- Information source and user -->
+  <rect x="270" y="125" width="230" height="86" class="block" stroke="#e1c600"/>
+  <text x="385" y="160" text-anchor="middle" class="label-cn">信息源</text>
+  <text x="385" y="190" text-anchor="middle" class="label-en">Source of information</text>
+
+  <rect x="1100" y="125" width="230" height="86" class="block" stroke="#e1c600"/>
+  <text x="1215" y="160" text-anchor="middle" class="label-cn">信息用户</text>
+  <text x="1215" y="190" text-anchor="middle" class="label-en">User of information</text>
+
+  <!-- Transmitter blocks -->
+  <rect x="270" y="300" width="230" height="88" class="block" stroke="#e53935"/>
+  <text x="385" y="337" text-anchor="middle" class="label-cn">信源编码器</text>
+  <text x="385" y="367" text-anchor="middle" class="label-en">Source encoder</text>
+
+  <rect x="270" y="425" width="230" height="76" class="block" stroke="#e84ac8" stroke-dasharray="8 6"/>
+  <text x="385" y="457" text-anchor="middle" class="label-cn">加密器</text>
+  <text x="385" y="485" text-anchor="middle" class="label-en">Encryption</text>
+
+  <rect x="270" y="538" width="230" height="88" class="block" stroke="#ef7c2d"/>
+  <text x="385" y="575" text-anchor="middle" class="label-cn">信道编码器</text>
+  <text x="385" y="605" text-anchor="middle" class="label-en">Channel encoder</text>
+
+  <rect x="270" y="665" width="230" height="76" class="block" stroke="#13a85b"/>
+  <text x="385" y="697" text-anchor="middle" class="label-cn">调制器</text>
+  <text x="385" y="725" text-anchor="middle" class="label-en">Modulator</text>
+
+  <!-- Receiver blocks -->
+  <rect x="1100" y="665" width="230" height="76" class="block" stroke="#13a85b"/>
+  <text x="1215" y="697" text-anchor="middle" class="label-cn">解调器</text>
+  <text x="1215" y="725" text-anchor="middle" class="label-en">Demodulator</text>
+
+  <rect x="1100" y="538" width="230" height="88" class="block" stroke="#ef7c2d"/>
+  <text x="1215" y="575" text-anchor="middle" class="label-cn">信道译码器</text>
+  <text x="1215" y="605" text-anchor="middle" class="label-en">Channel decoder</text>
+
+  <rect x="1100" y="425" width="230" height="76" class="block" stroke="#e84ac8" stroke-dasharray="8 6"/>
+  <text x="1215" y="457" text-anchor="middle" class="label-cn">解密器</text>
+  <text x="1215" y="485" text-anchor="middle" class="label-en">Decryption</text>
+
+  <rect x="1100" y="300" width="230" height="88" class="block" stroke="#e53935"/>
+  <text x="1215" y="337" text-anchor="middle" class="label-cn">信源译码器</text>
+  <text x="1215" y="367" text-anchor="middle" class="label-en">Source decoder</text>
+
+  <!-- Processing arrows -->
+  <path d="M385 211 V295" class="arrow"/>
+  <path d="M385 388 V420" class="arrow"/>
+  <path d="M385 501 V533" class="arrow"/>
+  <path d="M385 626 V660" class="arrow"/>
+
+  <path d="M1215 665 V631" class="arrow"/>
+  <path d="M1215 538 V506" class="arrow"/>
+  <path d="M1215 425 V393" class="arrow"/>
+  <path d="M1215 300 V216" class="arrow"/>
+
+  <!-- Channel and noise -->
+  <rect x="685" y="765" width="230" height="92" class="block" stroke="#263238"/>
+  <text x="800" y="803" text-anchor="middle" class="label-cn">信道</text>
+  <text x="800" y="834" text-anchor="middle" class="label-en">Channel</text>
+  <path d="M385 741 V811 H675" class="channel-line"/>
+  <path d="M915 811 H1215 V750" class="channel-line"/>
+
+  <rect x="685" y="900" width="230" height="70" class="block" stroke="#60717e"/>
+  <text x="800" y="930" text-anchor="middle" class="label-cn">噪声</text>
+  <text x="800" y="957" text-anchor="middle" class="label-en">Noise</text>
+  <path d="M800 900 V865" class="arrow"/>
+
+  <!-- Functional notes -->
+  <text x="520" y="342" class="small">去除信源冗余</text>
+  <text x="520" y="365" class="small">提高传输效率</text>
+  <text x="520" y="460" class="small">保护消息机密性</text>
+  <text x="520" y="580" class="small">加入受控冗余</text>
+  <text x="520" y="603" class="small">增强抗差错能力</text>
+  <text x="520" y="700" class="small">生成适合信道传输的波形</text>
+
+  <text x="1080" y="885" text-anchor="middle" class="small">接收端按相反顺序恢复消息</text>
+</svg>
