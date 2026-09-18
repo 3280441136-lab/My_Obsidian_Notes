@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1320" viewBox="0 0 1000 1320" role="img" aria-labelledby="title desc">
+  <title id="title">奈奎斯特无码间串扰条件与码元速率上限</title>
+  <desc id="desc">图示单个抽样脉冲的过零点、多个码元脉冲在抽样时刻互不干扰，以及码元间隔、码元速率和基带带宽之间的关系。</desc>
+  <defs>
+    <style>
+      .h1 { font: 700 34px "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill: #17233c; }
+      .h2 { font: 700 25px "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill: #17233c; }
+      .text { font: 20px "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill: #24344d; }
+      .small { font: 17px "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill: #526078; }
+      .math { font: italic 21px Georgia, "Times New Roman", serif; fill: #17233c; }
+      .axis { stroke: #667085; stroke-width: 2; }
+      .guide { stroke: #a8b1c1; stroke-width: 1.5; stroke-dasharray: 7 7; }
+      .zero { fill: #ffffff; stroke: #2563eb; stroke-width: 3; }
+      .sample { fill: #2563eb; }
+      .pulse-blue { fill: none; stroke: #2563eb; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+      .pulse-red { fill: none; stroke: #dc4c64; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+      .pulse-green { fill: none; stroke: #15956f; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+      .panel { fill: #fbfcfe; stroke: #d7dde8; stroke-width: 2; rx: 10; }
+      .note { fill: #eef5ff; stroke: #9cc3f5; stroke-width: 2; rx: 8; }
+      .arrow { fill: none; stroke: #2563eb; stroke-width: 3; marker-end: url(#arrowhead); }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L9,5 L0,10 Z" fill="#2563eb"/>
+    </marker>
+    <clipPath id="plot-clip"><rect x="90" y="150" width="820" height="235"/></clipPath>
+    <path id="sinc" d="M100 315 Q167 335 233 315 Q300 282 367 315 Q415 350 467 190 Q500 90 533 190 Q585 350 633 315 Q700 282 767 315 Q833 335 900 315"/>
+  </defs>
+
+  <rect width="1000" height="1320" fill="#ffffff"/>
+  <text x="55" y="60" class="h1">为什么带宽为 B 时，无码间串扰码元速率最多是 2B？</text>
+  <text x="55" y="96" class="text">关键：接收端只在码元时刻抽样；其他脉冲必须在该时刻恰好为零。</text>
+
+  <!-- Panel 1 -->
+  <rect x="45" y="125" width="910" height="330" class="panel"/>
+  <text x="75" y="170" class="h2">1  单个理想脉冲在其他码元时刻过零</text>
+  <line x1="100" y1="315" x2="900" y2="315" class="axis"/>
+  <line x1="500" y1="190" x2="500" y2="350" class="guide"/>
+  <use href="#sinc" class="pulse-blue"/>
+  <g class="small" text-anchor="middle">
+    <text x="233" y="374">−2T<tspan baseline-shift="sub">B</tspan></text>
+    <text x="367" y="374">−T<tspan baseline-shift="sub">B</tspan></text>
+    <text x="500" y="374">0</text>
+    <text x="633" y="374">T<tspan baseline-shift="sub">B</tspan></text>
+    <text x="767" y="374">2T<tspan baseline-shift="sub">B</tspan></text>
+  </g>
+  <circle cx="233" cy="315" r="6" class="zero"/>
+  <circle cx="367" cy="315" r="6" class="zero"/>
+  <circle cx="500" cy="90" r="7" class="sample" transform="translate(0 100)"/>
+  <circle cx="633" cy="315" r="6" class="zero"/>
+  <circle cx="767" cy="315" r="6" class="zero"/>
+  <text x="520" y="220" class="math">g(0) = 1</text>
+  <text x="665" y="285" class="math">g(nT<tspan baseline-shift="sub">B</tspan>) = 0, n ≠ 0</text>
+  <text x="500" y="424" text-anchor="middle" class="small">空心点表示：虽然脉冲仍然延伸到这里，但抽样值为 0</text>
+
+  <!-- Panel 2 -->
+  <rect x="45" y="480" width="910" height="355" class="panel"/>
+  <text x="75" y="525" class="h2">2  多个脉冲在时间上重叠，但在抽样点不互相干扰</text>
+  <line x1="100" y1="700" x2="900" y2="700" class="axis"/>
+  <g clip-path="url(#plot-clip)" transform="translate(0 385)">
+    <use href="#sinc" class="pulse-red" transform="translate(-133 0) scale(1 0.72) translate(0 87)"/>
+    <use href="#sinc" class="pulse-blue"/>
+    <use href="#sinc" class="pulse-green" transform="translate(133 0) scale(1 0.82) translate(0 56)"/>
+  </g>
+  <line x1="500" y1="555" x2="500" y2="745" class="guide"/>
+  <circle cx="500" cy="575" r="8" class="sample"/>
+  <circle cx="500" cy="700" r="7" fill="#ffffff" stroke="#dc4c64" stroke-width="3"/>
+  <circle cx="500" cy="700" r="3" fill="#15956f"/>
+  <text x="120" y="780" class="small" fill="#dc4c64">前一码元脉冲：在当前抽样点为 0</text>
+  <text x="390" y="806" class="small" fill="#2563eb">当前码元脉冲：贡献 a<tspan baseline-shift="sub">0</tspan></text>
+  <text x="675" y="780" class="small" fill="#15956f">后一码元脉冲：在当前抽样点为 0</text>
+  <rect x="287" y="535" width="426" height="55" class="note"/>
+  <text x="500" y="570" text-anchor="middle" class="math">s(0) = a<tspan baseline-shift="sub">0</tspan>g(0) + a<tspan baseline-shift="sub">−1</tspan>g(T<tspan baseline-shift="sub">B</tspan>) + a<tspan baseline-shift="sub">1</tspan>g(−T<tspan baseline-shift="sub">B</tspan>) = a<tspan baseline-shift="sub">0</tspan></text>
+
+  <!-- Panel 3 -->
+  <rect x="45" y="860" width="910" height="315" class="panel"/>
+  <text x="75" y="905" class="h2">3  sinc 脉冲的时间间隔决定它所需的频域宽度</text>
+  <text x="95" y="954" class="text">时域：相邻零点间隔为 T<tspan baseline-shift="sub">B</tspan></text>
+  <line x1="110" y1="1045" x2="420" y2="1045" class="axis"/>
+  <path d="M125 1045 Q190 1080 250 945 Q310 1080 375 1045" class="pulse-blue"/>
+  <line x1="250" y1="935" x2="250" y2="1080" class="guide"/>
+  <line x1="375" y1="1008" x2="375" y2="1080" class="guide"/>
+  <path d="M250 1100 H375" class="arrow"/>
+  <path d="M375 1100 H250" class="arrow"/>
+  <text x="312" y="1132" text-anchor="middle" class="math">T<tspan baseline-shift="sub">B</tspan></text>
+
+  <text x="545" y="954" class="text">频域：矩形频谱从 −B 到 B</text>
+  <line x1="535" y1="1045" x2="900" y2="1045" class="axis"/>
+  <line x1="715" y1="1090" x2="715" y2="970" class="axis"/>
+  <path d="M590 1045 V990 H840 V1045" fill="#dbeafe" stroke="#2563eb" stroke-width="4"/>
+  <text x="590" y="1077" text-anchor="middle" class="math">−B</text>
+  <text x="715" y="1077" text-anchor="middle" class="math">0</text>
+  <text x="840" y="1077" text-anchor="middle" class="math">B</text>
+  <path d="M590 1120 H840" class="arrow"/>
+  <path d="M840 1120 H590" class="arrow"/>
+  <text x="715" y="1152" text-anchor="middle" class="math">总宽度 2B = 1/T<tspan baseline-shift="sub">B</tspan></text>
+
+  <!-- Conclusion -->
+  <rect x="145" y="1205" width="710" height="80" class="note"/>
+  <text x="500" y="1240" text-anchor="middle" class="math">R<tspan baseline-shift="sub">B</tspan> = 1/T<tspan baseline-shift="sub">B</tspan>，而 B = 1/(2T<tspan baseline-shift="sub">B</tspan>)</text>
+  <text x="500" y="1270" text-anchor="middle" class="h2">所以理想无码间串扰极限：R<tspan baseline-shift="sub">B</tspan> = 2B</text>
+</svg>
