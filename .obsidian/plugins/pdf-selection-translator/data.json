@@ -1,8 +1,8 @@
 {
   "uiLanguage": "zh-CN",
-  "baseUrl": "https://www.micuapi.ai",
-  "model": "deepseek-v4-flash-0731",
-  "apiKey": "sk-VSkycnek4XpeEdEJVWrqTv8pUfVtCtabX3LhNHIbMBLkMp7i",
+  "baseUrl": "https://api.xiaomimimo.com/v1",
+  "model": "mimo-v2.6-flash",
+  "apiKey": "sk-cqbclmq246peh1t6l7czcqm8optk84m6mc7geqeua78pdoko",
   "rememberKey": true,
   "targetLanguage": "简体中文",
   "triggerMode": "auto",
