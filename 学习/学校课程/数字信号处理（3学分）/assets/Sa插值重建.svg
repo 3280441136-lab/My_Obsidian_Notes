@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="670" viewBox="0 0 1200 670">
+  <defs>
+    <marker id="axis2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#344054"/></marker>
+    <style>
+      .title { font: 700 28px "Microsoft YaHei", sans-serif; fill: #111827; }
+      .head { font: 700 19px "Microsoft YaHei", sans-serif; fill: #1f2937; }
+      .label { font: 16px "Microsoft YaHei", sans-serif; fill: #344054; }
+      .small { font: 14px "Microsoft YaHei", sans-serif; fill: #475467; }
+      .axis { stroke: #344054; stroke-width: 2; marker-end: url(#axis2); }
+      .grid { stroke: #d0d5dd; stroke-width: 1; stroke-dasharray: 4 5; }
+    </style>
+  </defs>
+  <rect width="1200" height="670" fill="#ffffff"/>
+  <text x="55" y="48" class="title">加权并平移的 Sa 函数如何补出连续波形</text>
+  <text x="55" y="80" class="small">示意图只强调叠加关系：每个基函数在自己的采样点取 1，在其他采样点取 0。</text>
+
+  <rect x="50" y="105" width="1100" height="500" rx="8" fill="#f8fafc" stroke="#d0d5dd"/>
+  <line x1="100" y1="420" x2="1100" y2="420" class="axis"/>
+  <line x1="600" y1="555" x2="600" y2="145" class="axis"/>
+  <text x="1080" y="449" class="label">t</text>
+  <text x="615" y="159" class="label">幅度</text>
+
+  <g>
+    <line x1="240" y1="165" x2="240" y2="540" class="grid"/>
+    <line x1="420" y1="165" x2="420" y2="540" class="grid"/>
+    <line x1="600" y1="165" x2="600" y2="540" class="grid"/>
+    <line x1="780" y1="165" x2="780" y2="540" class="grid"/>
+    <line x1="960" y1="165" x2="960" y2="540" class="grid"/>
+    <text x="224" y="575" class="label">-2T</text>
+    <text x="408" y="575" class="label">-T</text>
+    <text x="594" y="575" class="label">0</text>
+    <text x="772" y="575" class="label">T</text>
+    <text x="947" y="575" class="label">2T</text>
+  </g>
+
+  <path d="M120 420 C160 415 190 432 240 420 C300 405 340 438 420 420 C485 395 535 250 600 210 C665 250 715 395 780 420 C860 438 900 405 960 420 C1010 432 1040 415 1080 420" fill="none" stroke="#2563eb" stroke-width="3" opacity="0.75"/>
+  <path d="M120 420 C185 430 225 402 240 420 C300 448 350 390 420 300 C490 365 535 438 600 420 C665 402 715 432 780 420 C850 410 905 426 960 420 C1015 416 1050 423 1080 420" fill="none" stroke="#e05252" stroke-width="3" opacity="0.75"/>
+  <path d="M120 420 C175 414 220 428 240 420 C300 405 350 438 420 420 C485 395 535 455 600 420 C665 380 720 275 780 250 C840 300 900 405 960 420 C1015 430 1050 414 1080 420" fill="none" stroke="#16a085" stroke-width="3" opacity="0.75"/>
+
+  <path d="M120 415 C180 455 220 390 285 402 C340 413 375 333 420 300 C475 260 520 232 600 210 C665 220 725 242 780 250 C835 260 885 340 930 385 C980 432 1030 400 1080 418" fill="none" stroke="#111827" stroke-width="5"/>
+
+  <g fill="#111827" stroke="#ffffff" stroke-width="2">
+    <circle cx="240" cy="420" r="7"/>
+    <circle cx="420" cy="300" r="7"/>
+    <circle cx="600" cy="210" r="7"/>
+    <circle cx="780" cy="250" r="7"/>
+    <circle cx="960" cy="420" r="7"/>
+  </g>
+  <text x="690" y="187" class="head">黑线：全部 Sa 基函数的加权和</text>
+  <line x1="690" y1="202" x2="745" y2="202" stroke="#111827" stroke-width="5"/>
+  <text x="85" y="635" class="small">彩色曲线：以不同采样时刻为中心的加权 Sa 函数；黑点：原采样值。</text>
+</svg>

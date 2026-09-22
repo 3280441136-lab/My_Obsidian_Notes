@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="610" viewBox="0 0 1200 610">
+  <defs>
+    <mask id="outside-left">
+      <rect x="0" y="0" width="400" height="610" fill="white"/>
+      <circle cx="200" cy="335" r="92" fill="black"/>
+    </mask>
+    <mask id="ring-mask">
+      <circle cx="1000" cy="335" r="128" fill="white"/>
+      <circle cx="1000" cy="335" r="67" fill="black"/>
+    </mask>
+    <style>
+      .title { font: 700 28px "Microsoft YaHei", sans-serif; fill: #111827; }
+      .head { font: 700 20px "Microsoft YaHei", sans-serif; fill: #1f2937; }
+      .label { font: 16px "Microsoft YaHei", sans-serif; fill: #344054; }
+      .small { font: 14px "Microsoft YaHei", sans-serif; fill: #475467; }
+      .axis { stroke: #667085; stroke-width: 1.6; }
+      .pole { stroke: #b42318; stroke-width: 4; }
+      .unit { fill: none; stroke: #667085; stroke-width: 2; stroke-dasharray: 6 6; }
+      .boundary { fill: none; stroke: #2563eb; stroke-width: 3; }
+    </style>
+  </defs>
+  <rect width="1200" height="610" fill="#ffffff"/>
+  <text x="55" y="48" class="title">极点给出边界，序列方向决定收敛域</text>
+
+  <rect x="35" y="82" width="350" height="465" rx="8" fill="#f8fafc" stroke="#d0d5dd"/>
+  <rect x="35" y="82" width="350" height="465" fill="#dff3eb" opacity="0.85" mask="url(#outside-left)"/>
+  <text x="105" y="122" class="head">右边序列</text>
+  <text x="80" y="151" class="small">ROC：最外层极点之外</text>
+  <line x1="65" y1="335" x2="350" y2="335" class="axis"/>
+  <line x1="200" y1="190" x2="200" y2="480" class="axis"/>
+  <circle cx="200" cy="335" r="62" class="unit"/>
+  <circle cx="200" cy="335" r="92" class="boundary"/>
+  <line x1="288" y1="327" x2="300" y2="339" class="pole"/><line x1="300" y1="327" x2="288" y2="339" class="pole"/>
+  <text x="245" y="205" class="label" fill="#13795b">收敛</text>
+  <text x="218" y="397" class="small">单位圆</text>
+
+  <rect x="425" y="82" width="350" height="465" rx="8" fill="#f8fafc" stroke="#d0d5dd"/>
+  <circle cx="600" cy="335" r="92" fill="#fde7e7"/>
+  <text x="505" y="122" class="head">左边序列</text>
+  <text x="483" y="151" class="small">ROC：最内层极点之内</text>
+  <line x1="460" y1="335" x2="740" y2="335" class="axis"/>
+  <line x1="600" y1="190" x2="600" y2="480" class="axis"/>
+  <circle cx="600" cy="335" r="62" class="unit"/>
+  <circle cx="600" cy="335" r="92" class="boundary"/>
+  <line x1="688" y1="327" x2="700" y2="339" class="pole"/><line x1="700" y1="327" x2="688" y2="339" class="pole"/>
+  <text x="565" y="340" class="label" fill="#b42318">收敛</text>
+  <text x="618" y="397" class="small">单位圆</text>
+
+  <rect x="815" y="82" width="350" height="465" rx="8" fill="#f8fafc" stroke="#d0d5dd"/>
+  <rect x="815" y="82" width="350" height="465" fill="#fff1cc" opacity="0.95" mask="url(#ring-mask)"/>
+  <text x="905" y="122" class="head">双边序列</text>
+  <text x="890" y="151" class="small">ROC：两圈极点之间</text>
+  <line x1="850" y1="335" x2="1135" y2="335" class="axis"/>
+  <line x1="1000" y1="190" x2="1000" y2="480" class="axis"/>
+  <circle cx="1000" cy="335" r="96" class="unit"/>
+  <circle cx="1000" cy="335" r="67" class="boundary"/>
+  <circle cx="1000" cy="335" r="128" class="boundary"/>
+  <line x1="1061" y1="327" x2="1073" y2="339" class="pole"/><line x1="1073" y1="327" x2="1061" y2="339" class="pole"/>
+  <line x1="1122" y1="327" x2="1134" y2="339" class="pole"/><line x1="1134" y1="327" x2="1122" y2="339" class="pole"/>
+  <text x="1035" y="235" class="label" fill="#9a6700">收敛圆环</text>
+  <text x="1018" y="435" class="small">单位圆</text>
+
+  <text x="55" y="584" class="small">虚线为单位圆。它落入阴影 ROC 时，DTFT 才存在；红色叉号表示极点，蓝色圆为 ROC 边界。</text>
+</svg>

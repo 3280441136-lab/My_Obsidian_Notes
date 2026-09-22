@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#344054"/></marker>
+    <style>
+      .title { font: 700 28px "Microsoft YaHei", sans-serif; fill: #111827; }
+      .head { font: 700 20px "Microsoft YaHei", sans-serif; fill: #1f2937; }
+      .label { font: 16px "Microsoft YaHei", sans-serif; fill: #344054; }
+      .small { font: 14px "Microsoft YaHei", sans-serif; fill: #475467; }
+      .axis { stroke: #344054; stroke-width: 2; marker-end: url(#arr); }
+      .spectrum { fill: #bfdbfe; stroke: #2563eb; stroke-width: 3; }
+      .copy { fill: #dbeafe; stroke: #4f7fc9; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <rect width="1200" height="720" fill="#ffffff"/>
+  <text x="55" y="48" class="title">采样后的频谱复制与理想低通恢复</text>
+
+  <rect x="50" y="78" width="1100" height="170" rx="8" fill="#f8fafc" stroke="#d0d5dd"/>
+  <text x="76" y="111" class="head">1. 原带限信号</text>
+  <line x1="100" y1="205" x2="1090" y2="205" class="axis"/>
+  <path d="M430 205 L600 132 L770 205 Z" class="spectrum"/>
+  <line x1="430" y1="210" x2="430" y2="200" stroke="#667085"/>
+  <line x1="770" y1="210" x2="770" y2="200" stroke="#667085"/>
+  <text x="397" y="232" class="label">-Omega_0</text>
+  <text x="742" y="232" class="label">+Omega_0</text>
+  <text x="1070" y="232" class="label">Omega</text>
+
+  <rect x="50" y="270" width="1100" height="190" rx="8" fill="#f8fafc" stroke="#d0d5dd"/>
+  <text x="76" y="303" class="head">2. 冲激采样后：副本间隔为 Omega_s，幅度缩小为 1/T</text>
+  <line x1="100" y1="413" x2="1090" y2="413" class="axis"/>
+  <path d="M125 413 L250 350 L375 413 Z" class="copy"/>
+  <path d="M475 413 L600 350 L725 413 Z" class="spectrum"/>
+  <path d="M825 413 L950 350 L1075 413 Z" class="copy"/>
+  <line x1="250" y1="418" x2="250" y2="408" stroke="#667085"/>
+  <line x1="600" y1="418" x2="600" y2="408" stroke="#667085"/>
+  <line x1="950" y1="418" x2="950" y2="408" stroke="#667085"/>
+  <text x="214" y="441" class="label">-Omega_s</text>
+  <text x="592" y="441" class="label">0</text>
+  <text x="920" y="441" class="label">+Omega_s</text>
+  <line x1="250" y1="330" x2="600" y2="330" stroke="#e05252" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="373" y="321" class="small">间隔 Omega_s</text>
+
+  <rect x="50" y="482" width="1100" height="190" rx="8" fill="#fffaf5" stroke="#d0d5dd"/>
+  <text x="76" y="515" class="head">3. 乘以恢复滤波器：只取中心副本，并用增益 T 恢复幅度</text>
+  <line x1="100" y1="625" x2="1090" y2="625" class="axis"/>
+  <path d="M475 625 L600 556 L725 625 Z" class="spectrum"/>
+  <path d="M375 625 L375 540 L825 540 L825 625" fill="none" stroke="#16a085" stroke-width="4"/>
+  <line x1="375" y1="630" x2="375" y2="620" stroke="#667085"/>
+  <line x1="825" y1="630" x2="825" y2="620" stroke="#667085"/>
+  <text x="325" y="653" class="label">-Omega_s/2</text>
+  <text x="785" y="653" class="label">+Omega_s/2</text>
+  <text x="835" y="548" class="label" fill="#13795b">G(jOmega) 高度 T</text>
+  <text x="1070" y="653" class="label">Omega</text>
+  <text x="55" y="704" class="small">频谱副本不重叠时，门函数完整保留中心副本并阻断相邻副本，输出即为原频谱。</text>
+</svg>
