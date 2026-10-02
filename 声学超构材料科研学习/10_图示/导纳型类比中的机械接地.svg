@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="560" viewBox="0 0 1100 560">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#222"/>
+    </marker>
+  </defs>
+  <rect x="1" y="1" width="1098" height="558" rx="18" fill="#fafafa" stroke="#d0d0d0"/>
+  <text x="550" y="42" text-anchor="middle" font-family="Microsoft YaHei, sans-serif" font-size="25" font-weight="bold" fill="#222">固定支撑单振子：机械系统与导纳型类比</text>
+
+  <text x="85" y="105" font-family="Microsoft YaHei, sans-serif" font-size="21" font-weight="bold" fill="#222">机械系统</text>
+  <line x1="100" y1="205" x2="100" y2="435" stroke="#444" stroke-width="8"/>
+  <g stroke="#666" stroke-width="3">
+    <line x1="80" y1="225" x2="100" y2="205"/><line x1="80" y1="255" x2="100" y2="235"/>
+    <line x1="80" y1="285" x2="100" y2="265"/><line x1="80" y1="315" x2="100" y2="295"/>
+    <line x1="80" y1="345" x2="100" y2="325"/><line x1="80" y1="375" x2="100" y2="355"/>
+    <line x1="80" y1="405" x2="100" y2="385"/>
+  </g>
+
+  <line x1="100" y1="275" x2="315" y2="275" stroke="#2764b7" stroke-width="5"/>
+  <path d="M100 275 l18 -14 l22 28 l22 -28 l22 28 l22 -28 l22 28 l22 -28 l22 28 l22 -28 l19 14" fill="none" stroke="#2764b7" stroke-width="5"/>
+  <text x="202" y="245" text-anchor="middle" font-family="Microsoft YaHei, sans-serif" font-size="19" fill="#2764b7">弹簧 k</text>
+
+  <line x1="100" y1="390" x2="175" y2="390" stroke="#b34a3c" stroke-width="5"/>
+  <rect x="175" y="370" width="85" height="40" fill="#fff" stroke="#b34a3c" stroke-width="4"/>
+  <line x1="260" y1="370" x2="260" y2="410" stroke="#b34a3c" stroke-width="5"/>
+  <line x1="260" y1="390" x2="315" y2="390" stroke="#b34a3c" stroke-width="5"/>
+  <text x="215" y="438" text-anchor="middle" font-family="Microsoft YaHei, sans-serif" font-size="19" fill="#b34a3c">阻尼器 r</text>
+
+  <rect x="315" y="215" width="135" height="215" rx="12" fill="#e9eef7" stroke="#333" stroke-width="5"/>
+  <text x="382" y="310" text-anchor="middle" font-family="Microsoft YaHei, sans-serif" font-size="27" font-weight="bold" fill="#222">质量 m</text>
+  <text x="382" y="350" text-anchor="middle" font-family="Microsoft YaHei, sans-serif" font-size="21" fill="#222">速度 v(t)</text>
+
+  <line x1="315" y1="170" x2="245" y2="170" stroke="#222" stroke-width="4" marker-end="url(#arrow)"/>
+  <text x="275" y="145" text-anchor="middle" font-family="Microsoft YaHei, sans-serif" font-size="22" fill="#222">F(t)</text>
+  <text x="195" y="500" text-anchor="middle" font-family="Microsoft YaHei, sans-serif" font-size="19" fill="#555">粗线：速度参考点 v = 0</text>
+
+  <line x1="540" y1="95" x2="540" y2="485" stroke="#ccc" stroke-width="2"/>
+
+  <text x="625" y="105" font-family="Microsoft YaHei, sans-serif" font-size="21" font-weight="bold" fill="#222">导纳型类比电路</text>
+
+  <circle cx="685" cy="190" r="7" fill="#222"/>
+  <circle cx="795" cy="190" r="7" fill="#222"/>
+  <circle cx="900" cy="190" r="7" fill="#222"/>
+  <circle cx="1010" cy="190" r="7" fill="#222"/>
+  <line x1="685" y1="190" x2="1010" y2="190" stroke="#222" stroke-width="4"/>
+  <text x="685" y="165" text-anchor="middle" font-family="Microsoft YaHei, sans-serif" font-size="21" fill="#222">A</text>
+  <text x="750" y="158" text-anchor="middle" font-family="Microsoft YaHei, sans-serif" font-size="18" fill="#222">V_A = v(t)</text>
+
+  <circle cx="685" cy="435" r="7" fill="#222"/>
+  <circle cx="795" cy="435" r="7" fill="#222"/>
+  <circle cx="900" cy="435" r="7" fill="#222"/>
+  <circle cx="1010" cy="435" r="7" fill="#222"/>
+  <line x1="685" y1="435" x2="1010" y2="435" stroke="#222" stroke-width="4"/>
+  <g stroke="#222" stroke-width="4">
+    <line x1="665" y1="455" x2="705" y2="455"/>
+    <line x1="674" y1="467" x2="696" y2="467"/>
+    <line x1="681" y1="479" x2="689" y2="479"/>
+    <line x1="775" y1="455" x2="815" y2="455"/>
+    <line x1="784" y1="467" x2="806" y2="467"/>
+    <line x1="791" y1="479" x2="799" y2="479"/>
+    <line x1="880" y1="455" x2="920" y2="455"/>
+    <line x1="889" y1="467" x2="911" y2="467"/>
+    <line x1="896" y1="479" x2="904" y2="479"/>
+    <line x1="990" y1="455" x2="1030" y2="455"/>
+    <line x1="999" y1="467" x2="1021" y2="467"/>
+    <line x1="1006" y1="479" x2="1014" y2="479"/>
+  </g>
+  <text x="685" y="515" text-anchor="middle" font-family="Microsoft YaHei, sans-serif" font-size="18" fill="#222">v = 0</text>
+  <text x="795" y="515" text-anchor="middle" font-family="Microsoft YaHei, sans-serif" font-size="18" fill="#222">参考节点</text>
+
+  <line x1="685" y1="435" x2="685" y2="210" stroke="#222" stroke-width="4"/>
+  <line x1="685" y1="210" x2="685" y2="190" stroke="#222" stroke-width="4"/>
+  <circle cx="685" cy="325" r="34" fill="#fff" stroke="#222" stroke-width="4"/>
+  <line x1="685" y1="350" x2="685" y2="300" stroke="#222" stroke-width="4" marker-end="url(#arrow)"/>
+  <text x="638" y="328" text-anchor="middle" font-family="Microsoft YaHei, sans-serif" font-size="18" fill="#222">I=F(t)</text>
+
+  <line x1="795" y1="190" x2="795" y2="435" stroke="#222" stroke-width="4"/>
+  <line x1="775" y1="255" x2="815" y2="255" stroke="#222" stroke-width="5"/>
+  <line x1="775" y1="295" x2="815" y2="295" stroke="#222" stroke-width="5"/>
+  <line x1="795" y1="255" x2="795" y2="295" stroke="#222" stroke-width="4"/>
+  <text x="842" y="280" font-family="Microsoft YaHei, sans-serif" font-size="19" fill="#2764b7">L = 1/k</text>
+
+  <line x1="900" y1="190" x2="900" y2="435" stroke="#222" stroke-width="4"/>
+  <rect x="880" y="265" width="40" height="65" rx="4" fill="#fff" stroke="#222" stroke-width="4"/>
+  <line x1="870" y1="275" x2="930" y2="275" stroke="#222" stroke-width="4"/>
+  <line x1="870" y1="320" x2="930" y2="320" stroke="#222" stroke-width="4"/>
+  <text x="945" y="300" font-family="Microsoft YaHei, sans-serif" font-size="19" fill="#b34a3c">R_e = 1/r</text>
+
+  <line x1="1010" y1="190" x2="1010" y2="435" stroke="#222" stroke-width="4"/>
+  <line x1="985" y1="265" x2="1035" y2="265" stroke="#222" stroke-width="5"/>
+  <line x1="985" y1="315" x2="1035" y2="315" stroke="#222" stroke-width="5"/>
+  <text x="1045" y="295" font-family="Microsoft YaHei, sans-serif" font-size="19" fill="#222">C = m</text>
+
+  <text x="830" y="545" text-anchor="middle" font-family="Microsoft YaHei, sans-serif" font-size="18" fill="#555">基尔霍夫电流定律 = 质量块上的力平衡</text>
+</svg>
