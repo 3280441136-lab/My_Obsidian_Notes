@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 850" role="img" aria-labelledby="title desc">
+  <title id="title">亥姆霍兹共振器的阻抗型电路类比</title>
+  <desc id="desc">主管中的侧支亥姆霍兹共振器可类比为跨接在传输线上的声阻、声质量和声容串联支路。</desc>
+  <style>
+    .title { font: 600 30px 'Microsoft YaHei', sans-serif; fill: #172033; }
+    .subtitle { font: 18px 'Microsoft YaHei', sans-serif; fill: #475569; }
+    .label { font: 600 19px 'Microsoft YaHei', sans-serif; fill: #172033; }
+    .text { font: 17px 'Microsoft YaHei', sans-serif; fill: #334155; }
+    .small { font: 15px 'Microsoft YaHei', sans-serif; fill: #475569; }
+    .math { font: 18px 'Cambria Math', 'Times New Roman', serif; fill: #0f172a; }
+    .physical { fill: #e0f2fe; stroke: #0284c7; stroke-width: 2.5; }
+    .air { fill: #f8fafc; stroke: #334155; stroke-width: 2.5; }
+    .wire { fill: none; stroke: #334155; stroke-width: 3; }
+    .wireThin { fill: none; stroke: #64748b; stroke-width: 2; }
+    .part { fill: #fff; stroke: #172033; stroke-width: 3; }
+    .accent { fill: none; stroke: #dc2626; stroke-width: 3; }
+    .arrow { fill: none; stroke: #64748b; stroke-width: 2.5; marker-end: url(#arrow); }
+    .dash { fill: none; stroke: #94a3b8; stroke-width: 2; stroke-dasharray: 8 7; }
+  </style>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#64748b"/>
+    </marker>
+    <marker id="arrowRed" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#dc2626"/>
+    </marker>
+  </defs>
+
+  <text x="600" y="48" text-anchor="middle" class="title">亥姆霍兹共振器的阻抗型电路类比</text>
+  <text x="600" y="80" text-anchor="middle" class="subtitle">主管传递声波，侧支的颈部与空腔构成并联谐振支路</text>
+
+  <!-- physical structure -->
+  <text x="80" y="132" class="label">物理结构：空气域</text>
+  <rect x="105" y="225" width="920" height="82" rx="40" class="physical"/>
+  <rect x="105" y="248" width="920" height="36" rx="18" class="air"/>
+  <rect x="522" y="145" width="42" height="100" class="air"/>
+  <rect x="425" y="88" width="236" height="88" rx="18" class="air"/>
+  <text x="543" y="126" text-anchor="middle" class="text">共振腔</text>
+  <text x="543" y="151" text-anchor="middle" class="small">声容 C_a</text>
+  <text x="585" y="198" class="small">颈部：声质量 M_a</text>
+  <path d="M543 245 L543 225" class="accent" marker-end="url(#arrowRed)"/>
+  <text x="132" y="265" class="text">主管：特性声阻抗 Z_d</text>
+  <path d="M80 266 L115 266" class="arrow"/>
+  <text x="82" y="247" class="small">p_in</text>
+  <path d="M1015 266 L1055 266" class="arrow"/>
+  <text x="1030" y="247" class="small">p_out</text>
+  <text x="600" y="342" text-anchor="middle" class="small">细颈不是结构杆，而是颈部空气的往复运动；空腔不是容器壁，而是可压缩空气体积。</text>
+
+  <!-- mapping -->
+  <rect x="80" y="375" width="1040" height="64" rx="12" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="600" y="414" text-anchor="middle" class="math">p ↔ 电压 V    |    U ↔ 电流 I    |    Z_a = p/U ↔ 电阻抗 Z_e</text>
+
+  <!-- equivalent circuit -->
+  <text x="80" y="485" class="label">阻抗型等效电路</text>
+
+  <!-- source -->
+  <circle cx="135" cy="585" r="34" class="part"/>
+  <path d="M116 585 C123 565 132 605 139 585 C146 565 154 605 161 585" class="accent"/>
+  <text x="135" y="646" text-anchor="middle" class="small">声压源 p_in</text>
+
+  <!-- main line and impedances -->
+  <path d="M169 585 L275 585" class="wire"/>
+  <rect x="275" y="555" width="185" height="60" rx="10" class="part"/>
+  <text x="367" y="581" text-anchor="middle" class="text">主管左段</text>
+  <text x="367" y="606" text-anchor="middle" class="small">特性声阻抗 Z_d / 2</text>
+  <path d="M460 585 L565 585" class="wire"/>
+  <circle cx="565" cy="585" r="5" fill="#172033"/>
+
+  <!-- shunt branch -->
+  <path d="M565 585 L565 675" class="wire"/>
+  <rect x="535" y="675" width="60" height="32" class="part"/>
+  <text x="565" y="697" text-anchor="middle" class="small">R_a</text>
+  <text x="615" y="697" class="small">声阻：粘滞损耗</text>
+
+  <path d="M565 707 L565 725" class="wire"/>
+  <path d="M565 725 C552 710 552 740 565 725 C578 710 578 740 565 725 C552 710 552 740 565 725" class="part"/>
+  <text x="615" y="733" class="small">M_a：颈部空气的声质量</text>
+
+  <!-- capacitor symbol -->
+  <path d="M565 748 L565 760" class="wire"/>
+  <path d="M535 760 L595 760" class="wire"/>
+  <path d="M535 772 L595 772" class="wire"/>
+  <text x="615" y="778" class="small">C_a：空腔空气的声容</text>
+
+  <!-- output line -->
+  <path d="M565 585 L675 585" class="wire"/>
+  <rect x="675" y="555" width="185" height="60" rx="10" class="part"/>
+  <text x="767" y="581" text-anchor="middle" class="text">主管右段</text>
+  <text x="767" y="606" text-anchor="middle" class="small">特性声阻抗 Z_d / 2</text>
+  <path d="M860 585 L985 585" class="wire"/>
+  <path d="M985 585 L1015 585" class="wire"/>
+  <text x="1030" y="572" class="small">p_out</text>
+  <path d="M135 619 L135 730 L535 730" class="wireThin"/>
+  <path d="M595 772 L930 772 L930 585 L985 585" class="wireThin"/>
+
+  <!-- shunt impedance label -->
+  <path d="M565 535 L625 535" class="dash"/>
+  <text x="635" y="541" class="small">旁支总声阻抗 Z_r</text>
+  <text x="635" y="562" class="small">共振时感抗与容抗抵消，Z_r 接近 R_a</text>
+
+  <text x="600" y="830" text-anchor="middle" class="small">电学符号是类比表示：L 表示声质量 M_a，C 表示声容 C_a，R 表示声阻 R_a。</text>
+</svg>
+
