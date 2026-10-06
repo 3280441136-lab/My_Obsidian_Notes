@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+  <title id="title">平面声波的波阵面与纵波质点运动</title>
+  <desc id="desc">上部表示沿 x 方向传播的平行波阵面，下部表示介质质点沿 x 方向往复振动并形成交替的压缩区与稀疏区。</desc>
+  <rect width="1200" height="720" fill="#ffffff"/>
+  <style>
+    .title { font: 700 28px 'Microsoft YaHei', sans-serif; fill: #172033; }
+    .label { font: 500 21px 'Microsoft YaHei', sans-serif; fill: #243047; }
+    .small { font: 500 18px 'Microsoft YaHei', sans-serif; fill: #41526b; }
+    .axis { stroke: #5e6b7e; stroke-width: 2; fill: none; }
+    .guide { stroke: #7d8ca3; stroke-width: 2; stroke-dasharray: 8 8; fill: none; }
+    .particle { fill: #e58a23; stroke: #172033; stroke-width: 2; }
+    .motion { stroke: #d64a3b; stroke-width: 3; fill: none; }
+  </style>
+  <defs>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#176f9f"/>
+    </marker>
+  </defs>
+  <defs>
+    <marker id="arrow-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#d64a3b"/>
+    </marker>
+  </defs>
+  <text x="60" y="55" class="title">平面声波：波阵面、传播方向与纵波质点运动</text>
+  <line x1="60" y1="76" x2="1140" y2="76" stroke="#cbd5e1" stroke-width="2"/>
+
+  <text x="60" y="116" class="label">三维平面波的侧视图：波阵面是垂直于传播方向的平行平面</text>
+  <rect x="120" y="145" width="960" height="135" fill="#f5f8fb" stroke="#cbd5e1" stroke-width="2"/>
+  <line x1="240" y1="145" x2="240" y2="280" class="guide"/>
+  <text x="248" y="172" class="small">波阵面</text>
+  <line x1="480" y1="145" x2="480" y2="280" class="guide"/>
+  <text x="488" y="172" class="small">波阵面</text>
+  <line x1="720" y1="145" x2="720" y2="280" class="guide"/>
+  <text x="728" y="172" class="small">波阵面</text>
+  <line x1="960" y1="145" x2="960" y2="280" class="guide"/>
+  <text x="968" y="172" class="small">波阵面</text>
+  <path d="M 165 235 L 1015 235" stroke="#176f9f" stroke-width="6" fill="none" marker-end="url(#arrow-blue)"/>
+  <text x="515" y="220" class="label">传播方向 x</text>
+  <text x="60" y="330" class="small">同一波阵面上的质点具有相同相位；相邻同相位波阵面的间距是一个波长。</text>
+
+  <text x="60" y="380" class="label">介质横截面：每个质点只沿 x 方向往复振动</text>
+  <line x1="120" y1="535" x2="1080" y2="535" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="5 5"/>
+  <rect x="202" y="438" width="76" height="145" fill="#f7dfc3" opacity="0.52"/>
+  <line x1="240" y1="438" x2="240" y2="583" class="guide"/>
+  <text x="204" y="430" class="small">压缩区</text>
+  <rect x="682" y="438" width="76" height="145" fill="#f7dfc3" opacity="0.52"/>
+  <line x1="720" y1="438" x2="720" y2="583" class="guide"/>
+  <text x="684" y="430" class="small">压缩区</text>
+  <text x="444" y="430" class="small">稀疏区</text>
+  <text x="924" y="430" class="small">稀疏区</text>
+  <circle cx="140.00" cy="535" r="7" class="particle"/>
+  <path d="M 108.00 578 L 154.00 578" class="motion" marker-end="url(#arrow-red)"/>
+  <circle cx="163.02" cy="535" r="7" class="particle"/>
+  <circle cx="184.18" cy="535" r="7" class="particle"/>
+  <circle cx="203.76" cy="535" r="7" class="particle"/>
+  <circle cx="222.18" cy="535" r="7" class="particle"/>
+  <circle cx="240.00" cy="535" r="7" class="particle"/>
+  <path d="M 252.00 578 L 226.00 578" class="motion" marker-end="url(#arrow-red)"/>
+  <circle cx="257.82" cy="535" r="7" class="particle"/>
+  <circle cx="276.24" cy="535" r="7" class="particle"/>
+  <circle cx="295.82" cy="535" r="7" class="particle"/>
+  <circle cx="316.98" cy="535" r="7" class="particle"/>
+  <circle cx="340.00" cy="535" r="7" class="particle"/>
+  <path d="M 372.00 578 L 326.00 578" class="motion" marker-end="url(#arrow-red)"/>
+  <circle cx="364.98" cy="535" r="7" class="particle"/>
+  <circle cx="391.82" cy="535" r="7" class="particle"/>
+  <circle cx="420.24" cy="535" r="7" class="particle"/>
+  <circle cx="449.82" cy="535" r="7" class="particle"/>
+  <circle cx="480.00" cy="535" r="7" class="particle"/>
+  <path d="M 492.00 578 L 466.00 578" class="motion" marker-end="url(#arrow-red)"/>
+  <circle cx="510.18" cy="535" r="7" class="particle"/>
+  <circle cx="539.76" cy="535" r="7" class="particle"/>
+  <circle cx="568.18" cy="535" r="7" class="particle"/>
+  <circle cx="595.02" cy="535" r="7" class="particle"/>
+  <circle cx="620.00" cy="535" r="7" class="particle"/>
+  <path d="M 588.00 578 L 634.00 578" class="motion" marker-end="url(#arrow-red)"/>
+  <circle cx="643.02" cy="535" r="7" class="particle"/>
+  <circle cx="664.18" cy="535" r="7" class="particle"/>
+  <circle cx="683.76" cy="535" r="7" class="particle"/>
+  <circle cx="702.18" cy="535" r="7" class="particle"/>
+  <circle cx="720.00" cy="535" r="7" class="particle"/>
+  <path d="M 732.00 578 L 706.00 578" class="motion" marker-end="url(#arrow-red)"/>
+  <circle cx="737.82" cy="535" r="7" class="particle"/>
+  <circle cx="756.24" cy="535" r="7" class="particle"/>
+  <circle cx="775.82" cy="535" r="7" class="particle"/>
+  <circle cx="796.98" cy="535" r="7" class="particle"/>
+  <circle cx="820.00" cy="535" r="7" class="particle"/>
+  <path d="M 852.00 578 L 806.00 578" class="motion" marker-end="url(#arrow-red)"/>
+  <circle cx="844.98" cy="535" r="7" class="particle"/>
+  <circle cx="871.82" cy="535" r="7" class="particle"/>
+  <circle cx="900.24" cy="535" r="7" class="particle"/>
+  <circle cx="929.82" cy="535" r="7" class="particle"/>
+  <circle cx="960.00" cy="535" r="7" class="particle"/>
+  <path d="M 972.00 578 L 946.00 578" class="motion" marker-end="url(#arrow-red)"/>
+  <circle cx="990.18" cy="535" r="7" class="particle"/>
+  <circle cx="1019.76" cy="535" r="7" class="particle"/>
+  <circle cx="1048.18" cy="535" r="7" class="particle"/>
+  <circle cx="1075.02" cy="535" r="7" class="particle"/>
+  <circle cx="1100.00" cy="535" r="7" class="particle"/>
+  <path d="M 1068.00 578 L 1114.00 578" class="motion" marker-end="url(#arrow-red)"/>
+  <text x="540" y="620" class="label">质点振动方向 x</text>
+  <text x="60" y="670" class="small">传播的是质点间距的疏密状态：质点在原位置附近振动，压缩区与稀疏区整体向右移动。</text>
+</svg>

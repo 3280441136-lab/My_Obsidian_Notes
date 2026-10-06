@@ -36,7 +36,6 @@
       "titleModelEnvironmentType": "",
       "environmentVariables": "",
       "environmentHash": "runtime-input:v1:ec40ae9c2478f37752ed3be97ad7b77a1bb757508a4f3a253da4ef947cc584f5",
-      "responseStyle": "Default",
       "modelAliases": {},
       "visibleModels": [
         "haiku",
@@ -44,7 +43,10 @@
         "opus",
         "fable"
       ],
-      "selectedModels": []
+      "selectedModels": [],
+      "outputStyle": null,
+      "promptSuggestions": false,
+      "discoveredOutputStyles": []
     },
     "codex": {
       "enabled": true,
@@ -268,7 +270,8 @@
           ],
           "isDefault": false
         }
-      ]
+      ],
+      "responseVerbosity": "default"
     },
     "opencode": {
       "cliPath": "",
@@ -326,7 +329,6 @@
     "codex": "yolo"
   },
   "pendingProviderSessionInvalidations": {},
-  "maxWarmAgentProcesses": 5,
   "enableAutoScroll": true,
   "showMessageTimestamps": false,
   "deferMathRenderingDuringStreaming": true,
