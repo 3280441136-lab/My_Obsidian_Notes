@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" role="img" aria-labelledby="title desc">
+  <title id="title">入射场、散射场与总场的分解</title>
+  <desc id="desc">左侧为入射平面波，中间为刚性椭球体，右侧及周围为散射波。入射场与散射场线性叠加形成总场。</desc>
+  <defs>
+    <marker id="arrowBlue" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 Z" fill="#1769aa"/>
+    </marker>
+    <marker id="arrowOrange" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 Z" fill="#d56a00"/>
+    </marker>
+    <style>
+      .title { font: 700 34px "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill: #1f2937; }
+      .subtitle { font: 400 19px "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill: #4b5563; }
+      .label { font: 600 22px "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill: #1f2937; }
+      .small { font: 400 17px "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill: #4b5563; }
+      .blue { fill: #1769aa; }
+      .orange { fill: #d56a00; }
+      .purple { fill: #7c3aed; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1200" height="700" fill="#ffffff"/>
+  <text x="60" y="58" class="title">同一个声场，为什么拆成三种？</text>
+  <text x="60" y="94" class="subtitle">把已知的入射波单独拿出来，椭球体的作用才会清楚地显现出来</text>
+
+  <!-- Main scene -->
+  <rect x="55" y="135" width="1090" height="385" rx="24" fill="#eef7ff" stroke="#b7d7f2" stroke-width="2"/>
+
+  <!-- Incident plane-wave fronts -->
+  <g stroke="#1769aa" stroke-width="6" stroke-linecap="round" opacity="0.9">
+    <path d="M145 195 L145 445"/>
+    <path d="M225 195 L225 445"/>
+    <path d="M305 195 L305 445"/>
+    <path d="M385 195 L385 445"/>
+  </g>
+  <g stroke="#1769aa" stroke-width="4" marker-end="url(#arrowBlue)">
+    <path d="M160 170 L260 170"/>
+    <path d="M240 470 L340 470"/>
+    <path d="M320 170 L420 170"/>
+  </g>
+  <text x="82" y="162" class="label blue">入射平面波</text>
+  <text x="82" y="187" class="small">波面彼此平行，方向已知</text>
+
+  <!-- Ellipsoid -->
+  <ellipse cx="585" cy="325" rx="175" ry="92" fill="#374151" stroke="#111827" stroke-width="4"/>
+  <ellipse cx="585" cy="325" rx="175" ry="92" fill="none" stroke="#9ca3af" stroke-width="2" stroke-dasharray="9 7"/>
+  <text x="585" y="314" text-anchor="middle" class="label" fill="#ffffff">刚性椭球体</text>
+  <text x="585" y="347" text-anchor="middle" class="small" fill="#e5e7eb">它不产生新的入射波，而是迫使声场改变</text>
+
+  <!-- Scattered curved fronts -->
+  <g fill="none" stroke="#d56a00" stroke-width="5" stroke-linecap="round" opacity="0.92">
+    <path d="M765 195 C845 215 885 255 905 325 C885 395 845 435 765 455"/>
+    <path d="M815 165 C925 195 985 255 1010 325 C985 395 925 455 815 485"/>
+    <path d="M865 135 C1000 175 1070 245 1095 325 C1070 405 1000 475 865 515"/>
+    <path d="M765 195 C705 175 655 165 585 165 C515 165 465 175 405 195"/>
+    <path d="M765 455 C705 475 655 485 585 485 C515 485 465 475 405 455"/>
+  </g>
+  <g stroke="#d56a00" stroke-width="4" marker-end="url(#arrowOrange)">
+    <path d="M805 225 L865 190"/>
+    <path d="M805 425 L865 460"/>
+    <path d="M785 325 L900 325"/>
+  </g>
+  <text x="920" y="128" class="label orange">散射波</text>
+  <text x="920" y="153" class="small">方向和幅值由椭球体决定</text>
+
+  <!-- Direction labels -->
+  <text x="86" y="495" class="small">传播方向</text>
+  <line x1="190" y1="487" x2="355" y2="487" stroke="#1769aa" stroke-width="4" marker-end="url(#arrowBlue)"/>
+
+  <!-- Field decomposition -->
+  <g transform="translate(70,555)">
+    <rect x="0" y="0" width="275" height="100" rx="16" fill="#dbeafe" stroke="#75aee3" stroke-width="2"/>
+    <text x="24" y="34" class="label blue">已知：入射场</text>
+    <text x="24" y="66" class="small">可直接写成平面波</text>
+
+    <path d="M292 50 L332 50" stroke="#6b7280" stroke-width="4" marker-end="url(#arrowBlue)"/>
+
+    <rect x="350" y="0" width="275" height="100" rx="16" fill="#ffedd5" stroke="#e9a45a" stroke-width="2"/>
+    <text x="374" y="34" class="label orange">未知：散射场</text>
+    <text x="374" y="66" class="small">需要求解的核心对象</text>
+
+    <path d="M642 50 L682 50" stroke="#6b7280" stroke-width="4" marker-end="url(#arrowBlue)"/>
+
+    <rect x="700" y="0" width="330" height="100" rx="16" fill="#ede9fe" stroke="#a78bfa" stroke-width="2"/>
+    <text x="724" y="34" class="label purple">观察到：总场</text>
+    <text x="724" y="66" class="small">入射场与散射场线性叠加</text>
+  </g>
+</svg>
