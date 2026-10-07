@@ -3,3 +3,9 @@
 
 # Keep large reference files local to this vault.
 *.pdf
+
+# Keep COMSOL simulation project contents local-only.
+# Track only the directory placeholder so the folder exists in Git.
+/Acoustics/04_COMSOL_Projects/*
+!/Acoustics/04_COMSOL_Projects/.gitkeep
+
