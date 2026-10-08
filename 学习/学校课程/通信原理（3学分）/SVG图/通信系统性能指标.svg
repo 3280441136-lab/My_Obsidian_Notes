@@ -35,10 +35,10 @@
   <text x="900" y="452" text-anchor="middle" class="h">数字系统：用判决错误概率衡量</text>
   <text x="900" y="495" text-anchor="middle" class="m">P_e=错误码元数/传输码元总数</text>
   <text x="900" y="530" text-anchor="middle" class="m">P_b=错误比特数/传输比特总数</text>
-  <text x="900" y="565" text-anchor="middle" class="t">二进制时通常有 \(P_e=P_b\)</text>
+  <text x="900" y="565" text-anchor="middle" class="t">二进制时通常有 Pe = Pb</text>
 
   <rect x="75" y="615" width="550" height="70" fill="#eef5ff" stroke="#7aa2cc" stroke-width="2" rx="8"/>
-  <text x="350" y="658" text-anchor="middle" class="t">模拟系统主要看带宽 \(B\)：占用资源越少越有效</text>
+  <text x="350" y="658" text-anchor="middle" class="t">模拟系统主要看带宽 B：占用资源越少越有效</text>
   <rect x="625" y="615" width="550" height="70" fill="#fff3ef" stroke="#d98b83" stroke-width="2" rx="8"/>
-  <text x="900" y="658" text-anchor="middle" class="t">模拟系统主要看输出 \(\mathrm{SNR}_{\mathrm o}\)：越大越可靠</text>
+  <text x="900" y="658" text-anchor="middle" class="t">模拟系统主要看输出 SNR_o：越大越可靠</text>
 </svg>
