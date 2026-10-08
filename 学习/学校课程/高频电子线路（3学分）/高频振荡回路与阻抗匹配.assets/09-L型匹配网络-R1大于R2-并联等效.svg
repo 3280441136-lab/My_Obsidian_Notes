@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650">
+  <rect width="1200" height="650" fill="#f7f9fc"/>
+  <style>.t{font-family:"Microsoft YaHei","Noto Sans CJK SC",sans-serif;fill:#172033}.h{font-size:30px;font-weight:700}.s{font-size:22px}.n{font-size:18px}.eq{font-family:"Cambria Math","Times New Roman",serif;font-size:21px;fill:#172033}.w{stroke:#172033;stroke-width:4;fill:none}.a{stroke:#1769aa;stroke-width:4;fill:none}.r{stroke:#c75516;stroke-width:4;fill:none}.g{stroke:#2f7d4a;stroke-width:4;fill:none}.node{fill:#172033}.box{fill:#ffffff;stroke:#b9c5d6;stroke-width:2}.open{stroke:#2f7d4a;stroke-width:5;fill:none}</style>
+  <text x="600" y="42" text-anchor="middle" class="t h">L 型匹配网络（R₁ > R₂）：串并变换后的等效电路</text>
+  <text x="600" y="78" text-anchor="middle" class="t s">把 L + R₂ 变成 R₂ₚ ∥ Lₚ，再用 C 与 Lₚ 谐振</text>
+
+  <g transform="translate(45 112)">
+    <rect x="0" y="0" width="575" height="420" rx="18" class="box"/>
+    <text x="288" y="38" text-anchor="middle" class="t s">串并变换后：四个元件并联</text>
+    <line x1="45" y1="95" x2="530" y2="95" class="w"/>
+    <line x1="45" y1="355" x2="530" y2="355" class="w"/>
+
+    <line x1="105" y1="95" x2="105" y2="135" class="w"/>
+    <path d="M105 135 l-18 12 l36 20 l-36 20 l36 20 l-36 20 l18 12" class="r"/>
+    <line x1="105" y1="219" x2="105" y2="355" class="w"/>
+    <text x="105" y="390" text-anchor="middle" class="t n">R₁</text>
+
+    <line x1="225" y1="95" x2="225" y2="155" class="w"/>
+    <line x1="190" y1="155" x2="260" y2="155" class="a"/>
+    <line x1="190" y1="180" x2="260" y2="180" class="a"/>
+    <line x1="225" y1="180" x2="225" y2="355" class="w"/>
+    <text x="225" y="390" text-anchor="middle" class="t n">C</text>
+
+    <line x1="345" y1="95" x2="345" y2="130" class="w"/>
+    <path d="M345 130 c-30 0 -30 30 0 30 c30 0 30 30 0 30 c-30 0 -30 30 0 30 c30 0 30 30 0 30 c-30 0 -30 30 0 30" class="a"/>
+    <line x1="345" y1="250" x2="345" y2="355" class="w"/>
+    <text x="345" y="390" text-anchor="middle" class="t n">Lₚ</text>
+
+    <line x1="470" y1="95" x2="470" y2="135" class="w"/>
+    <path d="M470 135 l-18 12 l36 20 l-36 20 l36 20 l-36 20 l18 12" class="r"/>
+    <line x1="470" y1="219" x2="470" y2="355" class="w"/>
+    <text x="470" y="390" text-anchor="middle" class="t n">R₂ₚ</text>
+
+    <text x="288" y="416" text-anchor="middle" class="t eq">R₂ₚ = (1 + Q²)R₂</text>
+  </g>
+
+  <path d="M650 322 H745" class="a"/><path d="M725 304 L745 322 L725 340" class="a"/>
+  <text x="698" y="286" text-anchor="middle" class="t s">谐振</text>
+
+  <g transform="translate(780 112)">
+    <rect x="0" y="0" width="375" height="420" rx="18" class="box"/>
+    <text x="188" y="38" text-anchor="middle" class="t s">并联 LC 谐振后</text>
+    <line x1="50" y1="95" x2="325" y2="95" class="w"/>
+    <line x1="50" y1="355" x2="325" y2="355" class="w"/>
+
+    <line x1="188" y1="95" x2="188" y2="135" class="w"/>
+    <path d="M188 135 l-18 12 l36 20 l-36 20 l36 20 l-36 20 l18 12" class="r"/>
+    <line x1="188" y1="219" x2="188" y2="355" class="w"/>
+    <text x="235" y="198" class="t n">R₂ₚ</text>
+
+    <path d="M82 150 C42 190 42 255 82 295" class="open"/>
+    <path d="M292 150 C332 190 332 255 292 295" class="open"/>
+    <line x1="75" y1="150" x2="75" y2="95" class="w"/>
+    <line x1="75" y1="295" x2="75" y2="355" class="w"/>
+    <line x1="300" y1="150" x2="300" y2="95" class="w"/>
+    <line x1="300" y1="295" x2="300" y2="355" class="w"/>
+    <text x="75" y="330" text-anchor="middle" class="t n">C</text>
+    <text x="305" y="330" text-anchor="middle" class="t n">Lₚ</text>
+
+    <text x="188" y="395" text-anchor="middle" class="t eq">Z_in(ω₀) = R₂ₚ = R₁</text>
+    <text x="188" y="416" text-anchor="middle" class="t n">理想并联 LC：阻抗极大，相当于开路</text>
+  </g>
+
+  <rect x="115" y="565" width="970" height="54" rx="12" fill="#fff4df" stroke="#e1a34a"/>
+  <text x="600" y="599" text-anchor="middle" class="t eq">1/(ω₀C) = X₂ₚ，Q = ω₀CR₁ = ω₀L/R₂</text>
+</svg>
