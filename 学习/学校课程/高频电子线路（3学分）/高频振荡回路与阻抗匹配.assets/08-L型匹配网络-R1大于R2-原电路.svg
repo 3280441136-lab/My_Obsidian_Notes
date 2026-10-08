@@ -15,12 +15,12 @@
     <path d="M96 235 L105 244 L114 235" class="a"/>
     <line x1="105" y1="115" x2="105" y2="177" class="w"/>
     <line x1="105" y1="263" x2="105" y2="325" class="w"/>
-    <text x="105" y="292" text-anchor="middle" class="t n">i_s</text>
+    <text x="105" y="292" text-anchor="middle" class="t eq">i_s</text>
 
     <line x1="235" y1="115" x2="235" y2="150" class="w"/>
     <path d="M235 150 l-18 12 l36 20 l-36 20 l36 20 l-36 20 l18 12" class="r"/>
     <line x1="235" y1="234" x2="235" y2="325" class="w"/>
-    <text x="270" y="205" class="t n">R₁：前级等效电阻</text>
+    <text x="235" y="282" text-anchor="middle" class="t n">R₁：前级等效电阻</text>
 
     <line x1="405" y1="115" x2="405" y2="177" class="w"/>
     <line x1="370" y1="177" x2="440" y2="177" class="a"/>
@@ -55,3 +55,4 @@
   <rect x="205" y="525" width="790" height="48" rx="12" fill="#fff4df" stroke="#e1a34a"/>
   <text x="600" y="557" text-anchor="middle" class="t eq">Q = ω₀L/R₂ = ω₀CR₁，  R₁ = (1 + Q²)R₂</text>
 </svg>
+

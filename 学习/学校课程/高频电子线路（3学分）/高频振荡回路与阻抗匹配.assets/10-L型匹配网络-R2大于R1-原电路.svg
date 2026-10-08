@@ -15,7 +15,7 @@
     <path d="M91 235 L100 244 L109 235" class="a"/>
     <line x1="100" y1="115" x2="100" y2="177" class="w"/>
     <line x1="100" y1="263" x2="100" y2="325" class="w"/>
-    <text x="100" y="292" text-anchor="middle" class="t n">i_s</text>
+    <text x="100" y="292" text-anchor="middle" class="t eq">i_s</text>
 
     <line x1="205" y1="115" x2="205" y2="150" class="w"/>
     <path d="M205 150 l-18 12 l36 20 l-36 20 l36 20 l-36 20 l18 12" class="r"/>
@@ -41,7 +41,7 @@
     <line x1="140" y1="155" x2="210" y2="155" class="a"/>
     <line x1="140" y1="180" x2="210" y2="180" class="a"/>
     <line x1="175" y1="180" x2="175" y2="325" class="w"/>
-    <text x="175" y="365" text-anchor="middle" class="t n">C</text>
+    <text x="175" y="245" text-anchor="middle" class="t n">C</text>
 
     <line x1="355" y1="115" x2="355" y2="150" class="w"/>
     <path d="M355 150 l-18 12 l36 20 l-36 20 l36 20 l-36 20 l18 12" class="r"/>
@@ -54,3 +54,4 @@
   <rect x="195" y="525" width="810" height="48" rx="12" fill="#fff4df" stroke="#e1a34a"/>
   <text x="600" y="557" text-anchor="middle" class="t eq">Q = ω₀CR₂ = ω₀L/R₁，  R₁ = R₂/(1 + Q²)</text>
 </svg>
+

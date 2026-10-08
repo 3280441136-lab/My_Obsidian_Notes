@@ -20,9 +20,9 @@
     <line x1="355" y1="210" x2="530" y2="210" class="w"/>
     <text x="343" y="282" text-anchor="middle" class="t n">Cₛ</text>
 
-    <text x="288" y="355" text-anchor="middle" class="t eq">R₂ₛ = R₂/(1 + Q²)</text>
-    <text x="288" y="392" text-anchor="middle" class="t eq">|X_Cₛ| = QR₂ₛ</text>
-    <text x="288" y="416" text-anchor="middle" class="t n">这里的 Cₛ 是等效串联电容，不是原物理电容 C</text>
+    <text x="288" y="342" text-anchor="middle" class="t eq">R₂ₛ = R₂/(1 + Q²)</text>
+    <text x="288" y="375" text-anchor="middle" class="t eq">|X_Cₛ| = QR₂ₛ</text>
+    <text x="288" y="410" text-anchor="middle" class="t n">Cₛ 是等效串联电容，不是原物理 C</text>
   </g>
 
   <path d="M650 322 H745" class="a"/><path d="M725 304 L745 322 L725 340" class="a"/>
@@ -50,3 +50,4 @@
   <rect x="115" y="565" width="970" height="54" rx="12" fill="#fff4df" stroke="#e1a34a"/>
   <text x="600" y="599" text-anchor="middle" class="t eq">Q = ω₀CR₂ = ω₀L/R₁，Q = √(R₂/R₁ − 1)</text>
 </svg>
+

@@ -54,13 +54,14 @@
     <line x1="75" y1="295" x2="75" y2="355" class="w"/>
     <line x1="300" y1="150" x2="300" y2="95" class="w"/>
     <line x1="300" y1="295" x2="300" y2="355" class="w"/>
-    <text x="75" y="330" text-anchor="middle" class="t n">C</text>
-    <text x="305" y="330" text-anchor="middle" class="t n">Lₚ</text>
+    <text x="48" y="225" text-anchor="middle" class="t n">C</text>
+    <text x="326" y="225" text-anchor="middle" class="t n">Lₚ</text>
 
-    <text x="188" y="395" text-anchor="middle" class="t eq">Z_in(ω₀) = R₂ₚ = R₁</text>
-    <text x="188" y="416" text-anchor="middle" class="t n">理想并联 LC：阻抗极大，相当于开路</text>
+    <text x="188" y="375" text-anchor="middle" class="t eq">Z_in(ω₀) = R₂ₚ = R₁</text>
+    <text x="188" y="410" text-anchor="middle" class="t n">理想并联 LC：阻抗极大，相当于开路</text>
   </g>
 
   <rect x="115" y="565" width="970" height="54" rx="12" fill="#fff4df" stroke="#e1a34a"/>
   <text x="600" y="599" text-anchor="middle" class="t eq">1/(ω₀C) = X₂ₚ，Q = ω₀CR₁ = ω₀L/R₂</text>
 </svg>
+
