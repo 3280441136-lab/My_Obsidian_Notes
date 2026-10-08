@@ -18,28 +18,28 @@
 
   <rect class="box" x="75" y="155" width="300" height="165"/>
   <text class="head" x="225" y="200" text-anchor="middle">不使用历史</text>
-  <text class="formula" x="225" y="250" text-anchor="middle">\(H(X_1)\)</text>
-  <text class="text" x="225" y="292" text-anchor="middle">基本信源熵</text>
+  <text class="formula" x="225" y="250" text-anchor="middle">单符号熵</text>
+  <text class="text" x="225" y="292" text-anchor="middle">不使用历史</text>
 
   <path d="M375 235 H475" fill="none" stroke="#2563eb" stroke-width="4" marker-end="url(#arrow)"/>
 
   <rect class="box" x="480" y="155" width="300" height="165"/>
   <text class="head" x="630" y="200" text-anchor="middle">平均使用历史</text>
-  <text class="formula" x="630" y="250" text-anchor="middle">\(\overline H_N\)</text>
-  <text class="text" x="630" y="292" text-anchor="middle">长度 \(N\) 的平均符号熵</text>
+  <text class="formula" x="630" y="250" text-anchor="middle">平均符号熵</text>
+  <text class="text" x="630" y="292" text-anchor="middle">整段消息按位置平均</text>
 
   <path d="M780 235 H880" fill="none" stroke="#2563eb" stroke-width="4" marker-end="url(#arrow)"/>
 
   <rect class="box" x="885" y="155" width="255" height="165"/>
   <text class="head" x="1012" y="200" text-anchor="middle">使用完整历史</text>
-  <text class="formula" x="1012" y="250" text-anchor="middle">\(H(X_N\mid X^{N-1})\)</text>
-  <text class="text" x="1012" y="292" text-anchor="middle">下一符号条件熵</text>
+  <text class="formula" x="1012" y="250" text-anchor="middle">条件熵</text>
+  <text class="text" x="1012" y="292" text-anchor="middle">已知完整历史</text>
 
   <rect x="125" y="405" width="950" height="95" rx="16" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
-  <text class="formula" x="600" y="450" text-anchor="middle">\(H(X_N\mid X^{N-1})\leq \overline H_N\leq H(X_1)\)</text>
-  <text class="text" x="600" y="483" text-anchor="middle">平稳有记忆信源的一般大小关系</text>
+  <text class="formula" x="600" y="450" text-anchor="middle">条件熵不大于平均符号熵，平均符号熵不大于基本信源熵</text>
+  <text class="text" x="600" y="483" text-anchor="middle">平稳有记忆信源的一般关系</text>
 
   <rect x="125" y="555" width="950" height="80" rx="14" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
-  <text class="text" x="600" y="588" text-anchor="middle">相关性 → 历史具有预测力 → 条件熵下降 → 存在统计冗余和压缩空间</text>
+  <text class="text" x="600" y="588" text-anchor="middle">相关性使历史具有预测力，条件熵随之下降，并形成统计冗余和压缩空间</text>
   <text class="text" x="600" y="618" text-anchor="middle">无记忆时三种熵相等</text>
 </svg>

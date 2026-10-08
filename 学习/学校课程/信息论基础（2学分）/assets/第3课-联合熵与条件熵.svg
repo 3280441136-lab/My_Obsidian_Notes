@@ -23,27 +23,27 @@
   <rect class="cell" x="70" y="185" width="100" height="55"/>
   <rect class="cell" x="170" y="185" width="100" height="55"/>
   <rect class="cell" x="270" y="185" width="100" height="55"/>
-  <text class="text" x="120" y="165" text-anchor="middle">\(p_{11}\)</text>
-  <text class="text" x="220" y="165" text-anchor="middle">\(p_{12}\)</text>
-  <text class="text" x="320" y="165" text-anchor="middle">\(p_{13}\)</text>
-  <text class="text" x="120" y="220" text-anchor="middle">\(p_{21}\)</text>
-  <text class="text" x="220" y="220" text-anchor="middle">\(p_{22}\)</text>
-  <text class="text" x="320" y="220" text-anchor="middle">\(p_{23}\)</text>
-  <text class="head" x="220" y="285" text-anchor="middle">联合概率表 \(p(x_i,y_j)\)</text>
+  <text class="text" x="120" y="165" text-anchor="middle">项11</text>
+  <text class="text" x="220" y="165" text-anchor="middle">项12</text>
+  <text class="text" x="320" y="165" text-anchor="middle">项13</text>
+  <text class="text" x="120" y="220" text-anchor="middle">项21</text>
+  <text class="text" x="220" y="220" text-anchor="middle">项22</text>
+  <text class="text" x="320" y="220" text-anchor="middle">项23</text>
+  <text class="head" x="220" y="285" text-anchor="middle">联合概率表</text>
 
   <path d="M410 180 C500 180 510 125 590 125" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
   <path d="M410 180 C500 180 510 355 590 355" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
 
   <rect class="box" x="595" y="85" width="530" height="130"/>
-  <text class="head" x="625" y="125">先确定 \(X\)，再确定 \(Y\)</text>
-  <text class="formula" x="625" y="170">\(H(X,Y)=H(X)+H(Y\mid X)\)</text>
+  <text class="head" x="625" y="125">先确定 X，再确定 Y</text>
+  <text class="formula" x="625" y="170">联合熵由 X 的熵与 Y 的条件熵组成</text>
 
   <rect class="box" x="595" y="315" width="530" height="130"/>
-  <text class="head" x="625" y="355">先确定 \(Y\)，再确定 \(X\)</text>
-  <text class="formula" x="625" y="400">\(H(X,Y)=H(Y)+H(X\mid Y)\)</text>
+  <text class="head" x="625" y="355">先确定 Y，再确定 X</text>
+  <text class="formula" x="625" y="400">联合熵由 Y 的熵与 X 的条件熵组成</text>
 
   <rect x="70" y="495" width="1055" height="125" rx="16" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
   <text class="head" x="100" y="535">条件熵的两层平均</text>
   <text class="text" x="100" y="575">已知谁，就按谁分组：先计算每组内部的熵，再按各组出现的概率求平均。</text>
-  <text class="formula" x="100" y="610">\(H(Y\mid X)=\sum_iP(x_i)H(Y\mid x_i)=-\sum_i\sum_jP(x_i,y_j)\log_2P(y_j\mid x_i)\)</text>
+  <text class="formula" x="100" y="610">先算每种已知条件下 Y 的熵，再按该条件出现的概率求平均</text>
 </svg>

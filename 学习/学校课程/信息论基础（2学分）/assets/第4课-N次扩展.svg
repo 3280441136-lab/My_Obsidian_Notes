@@ -21,22 +21,22 @@
   <rect class="box" x="275" y="135" width="155" height="125"/>
   <rect class="box" x="465" y="135" width="155" height="125"/>
   <rect class="box" x="655" y="135" width="155" height="125"/>
-  <text class="formula" x="162" y="190" text-anchor="middle">\(X_1\)</text>
-  <text class="formula" x="352" y="190" text-anchor="middle">\(X_2\)</text>
-  <text class="formula" x="542" y="190" text-anchor="middle">\(X_3\)</text>
-  <text class="formula" x="732" y="190" text-anchor="middle">\(X_N\)</text>
-  <text class="text" x="162" y="230" text-anchor="middle">\(H(X)\)</text>
-  <text class="text" x="352" y="230" text-anchor="middle">\(H(X)\)</text>
-  <text class="text" x="542" y="230" text-anchor="middle">\(H(X)\)</text>
-  <text class="text" x="732" y="230" text-anchor="middle">\(H(X)\)</text>
+  <text class="formula" x="162" y="190" text-anchor="middle">第 1 次输出</text>
+  <text class="formula" x="352" y="190" text-anchor="middle">第 2 次输出</text>
+  <text class="formula" x="542" y="190" text-anchor="middle">第 3 次输出</text>
+  <text class="formula" x="732" y="190" text-anchor="middle">第 N 次输出</text>
+  <text class="text" x="162" y="230" text-anchor="middle">单符号熵</text>
+  <text class="text" x="352" y="230" text-anchor="middle">单符号熵</text>
+  <text class="text" x="542" y="230" text-anchor="middle">单符号熵</text>
+  <text class="text" x="732" y="230" text-anchor="middle">单符号熵</text>
 
   <text class="head" x="615" y="315" text-anchor="middle">独立同分布时，概率相乘，自信息相加</text>
   <path d="M450 335 C450 390 470 420 520 435" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
 
   <rect class="result" x="235" y="425" width="730" height="135"/>
-  <text class="formula" x="600" y="485" text-anchor="middle">\(H(X^N)=H(X_1,\ldots,X_N)=NH(X)\)</text>
-  <text class="text" x="600" y="530" text-anchor="middle">\(X^N=(X_1,\ldots,X_N)\) 是一个长度为 \(N\) 的大符号</text>
+  <text class="formula" x="600" y="485" text-anchor="middle">N 次扩展的联合熵是 N 倍单符号熵</text>
+  <text class="text" x="600" y="530" text-anchor="middle">把连续 N 次输出组合成一个长度为 N 的大符号</text>
 
   <rect x="125" y="605" width="950" height="55" rx="12" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
-  <text class="text" x="600" y="640" text-anchor="middle">有记忆时一般只有 \(H(X^N)\leq NH(X)\)；等号依赖独立性</text>
+  <text class="text" x="600" y="640" text-anchor="middle">有记忆时历史会降低总不确定性；只有相互独立时才能直接相加</text>
 </svg>

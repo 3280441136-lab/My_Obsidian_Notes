@@ -19,22 +19,22 @@
 
   <rect x="55" y="165" width="235" height="155" class="box"/>
   <text x="172" y="205" text-anchor="middle" class="h">1. 符号概率</text>
-  <text x="172" y="248" text-anchor="middle" class="m">p(x_k)</text>
+  <text x="172" y="248" text-anchor="middle" class="m">p(x<tspan baseline-shift="sub" font-size="0.72em">k</tspan>)</text>
   <text x="172" y="284" text-anchor="middle" class="t">消息有多难猜</text>
 
   <rect x="365" y="165" width="235" height="155" class="focus"/>
   <text x="482" y="205" text-anchor="middle" class="h">2. 单符号信息量</text>
-  <text x="482" y="248" text-anchor="middle" class="m">I(x_k)=-log_2 p(x_k)</text>
+  <text x="482" y="248" text-anchor="middle" class="m">I(x<tspan baseline-shift="sub" font-size="0.72em">k</tspan>)=-log<tspan baseline-shift="sub" font-size="0.72em">2</tspan> p(x<tspan baseline-shift="sub" font-size="0.72em">k</tspan>)</text>
   <text x="482" y="284" text-anchor="middle" class="t">意外程度，单位 bit</text>
 
   <rect x="675" y="165" width="235" height="155" class="box"/>
   <text x="792" y="205" text-anchor="middle" class="h">3. 一条消息</text>
-  <text x="792" y="248" text-anchor="middle" class="m">I_total=Σn_i I(x_i)</text>
+  <text x="792" y="248" text-anchor="middle" class="m">I<tspan baseline-shift="sub" font-size="0.72em">total</tspan>=Σn<tspan baseline-shift="sub" font-size="0.72em">i</tspan> I(x<tspan baseline-shift="sub" font-size="0.72em">i</tspan>)</text>
   <text x="792" y="284" text-anchor="middle" class="t">按实际出现次数累加</text>
 
   <rect x="985" y="165" width="215" height="155" class="box"/>
   <text x="1092" y="205" text-anchor="middle" class="h">4. 平均信息速率</text>
-  <text x="1092" y="248" text-anchor="middle" class="m">R_b=R_s H(X)</text>
+  <text x="1092" y="248" text-anchor="middle" class="m">R<tspan baseline-shift="sub" font-size="0.72em">b</tspan>=R<tspan baseline-shift="sub" font-size="0.72em">s</tspan> H(X)</text>
   <text x="1092" y="284" text-anchor="middle" class="t">每秒携带多少 bit</text>
 
   <path d="M290 242H360M600 242H670M910 242H980" class="arrow"/>
@@ -42,12 +42,12 @@
   <path d="M482 320V425H792V320" class="arrow"/>
   <rect x="485" y="425" width="610" height="145" class="focus"/>
   <text x="790" y="470" text-anchor="middle" class="h">信源平均不确定性：熵</text>
-  <text x="790" y="515" text-anchor="middle" class="m">H(X)=-Σp(x_i)log_2 p(x_i)</text>
+  <text x="790" y="515" text-anchor="middle" class="m">H(X)=-Σp(x<tspan baseline-shift="sub" font-size="0.72em">i</tspan>)log<tspan baseline-shift="sub" font-size="0.72em">2</tspan> p(x<tspan baseline-shift="sub" font-size="0.72em">i</tspan>)</text>
   <text x="790" y="550" text-anchor="middle" class="t">熵是概率加权平均，不是一条消息中各信息量的简单相加</text>
 
   <rect x="75" y="445" width="335" height="135" class="note"/>
   <text x="242" y="485" text-anchor="middle" class="h">等概率时不确定性最大</text>
-  <text x="242" y="525" text-anchor="middle" class="m">H_max=log_2 M</text>
+  <text x="242" y="525" text-anchor="middle" class="m">H<tspan baseline-shift="sub" font-size="0.72em">max</tspan>=log<tspan baseline-shift="sub" font-size="0.72em">2</tspan> M</text>
   <text x="242" y="558" text-anchor="middle" class="t">概率越不均匀，可预测部分越多</text>
 
   <rect x="75" y="620" width="1125" height="55" fill="#f2f6fa" stroke="#a8b7c5" stroke-width="2" rx="8"/>

@@ -27,8 +27,8 @@
 
   <rect class="soft" x="475" y="90" width="645" height="125"/>
   <text class="head" x="505" y="125">① 时间结构</text>
-  <text class="text" x="505" y="158">一次输出：随机变量 \(X\)</text>
-  <text class="text" x="505" y="188">离散时刻序列：\(\{X_n\}\)　连续时间波形：\(\{X(t)\}\)</text>
+  <text class="text" x="505" y="158">一次输出：随机变量</text>
+  <text class="text" x="505" y="188">离散时刻：随机序列　　连续时间：随机过程</text>
 
   <rect class="soft" x="475" y="255" width="645" height="125"/>
   <text class="head" x="505" y="290">② 取值形式</text>
