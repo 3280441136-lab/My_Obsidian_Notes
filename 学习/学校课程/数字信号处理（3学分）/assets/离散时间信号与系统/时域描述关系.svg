@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="520" viewBox="0 0 1120 520">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#334155"/></marker>
+    <style>
+      .title{font:700 28px "Microsoft YaHei",sans-serif;fill:#0f172a}.label{font:600 20px "Microsoft YaHei",sans-serif;fill:#0f172a}.small{font:16px "Microsoft YaHei",sans-serif;fill:#334155}.box{fill:#eff6ff;stroke:#2563eb;stroke-width:2;rx:18}.box2{fill:#ecfdf5;stroke:#059669;stroke-width:2;rx:18}.line{stroke:#334155;stroke-width:2.5;fill:none;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1120" height="520" fill="#fff"/><text x="40" y="48" class="title">离散时间信号与系统的两条等价描述</text>
+  <rect x="55" y="105" width="190" height="86" class="box"/><text x="150" y="139" text-anchor="middle" class="label">连续信号</text><text x="150" y="169" text-anchor="middle" class="small">x_c(t)</text>
+  <path d="M245 148 H315" class="line"/><text x="280" y="128" text-anchor="middle" class="small">采样</text>
+  <rect x="315" y="105" width="205" height="86" class="box"/><text x="417.5" y="139" text-anchor="middle" class="label">离散序列</text><text x="417.5" y="169" text-anchor="middle" class="small">x[n] = x_c(nT_s)</text>
+  <path d="M520 148 H615" class="line"/><text x="568" y="128" text-anchor="middle" class="small">输入</text>
+  <rect x="615" y="105" width="205" height="86" class="box2"/><text x="717.5" y="139" text-anchor="middle" class="label">LTI 系统</text><text x="717.5" y="169" text-anchor="middle" class="small">线性 + 时不变</text>
+  <path d="M820 148 H915" class="line"/><rect x="915" y="105" width="155" height="86" class="box"/><text x="992.5" y="139" text-anchor="middle" class="label">输出</text><text x="992.5" y="169" text-anchor="middle" class="small">y[n]</text>
+  <path d="M717.5 191 V275 H325" class="line"/><path d="M717.5 191 V275 H865" class="line"/>
+  <rect x="105" y="275" width="430" height="145" class="box"/><text x="320" y="315" text-anchor="middle" class="label">整体响应：冲激响应 + 卷积</text><text x="320" y="352" text-anchor="middle" class="small">把输入拆成移位冲激，再叠加各响应</text><text x="320" y="389" text-anchor="middle" class="small">适合理解系统整体行为与模块组合</text>
+  <rect x="625" y="275" width="430" height="145" class="box2"/><text x="840" y="315" text-anchor="middle" class="label">逐点递推：差分方程</text><text x="840" y="352" text-anchor="middle" class="small">用当前输入、过去输入和过去输出计算</text><text x="840" y="389" text-anchor="middle" class="small">适合实现、仿真和观察系统记忆</text>
+  <text x="560" y="475" text-anchor="middle" class="small">同一个 LTI 系统：描述角度不同，物理对象相同</text>
+</svg>
