@@ -36,14 +36,50 @@
 
   <rect class="box" x="595" y="85" width="530" height="130"/>
   <text class="head" x="625" y="125">先确定 X，再确定 Y</text>
-  <text class="formula" x="625" y="170">联合熵由 X 的熵与 Y 的条件熵组成</text>
+  <foreignObject x="625" y="145" width="470" height="70">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="font-family:'Cambria Math','Times New Roman',serif;font-size:22px;color:#991b1b;white-space:nowrap;">
+      <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+          <mi>H</mi><mo>(</mo><mi>X</mi><mo>,</mo><mi>Y</mi><mo>)</mo>
+          <mo>=</mo>
+          <mi>H</mi><mo>(</mo><mi>X</mi><mo>)</mo>
+          <mo>+</mo>
+          <mi>H</mi><mo>(</mo><mi>Y</mi><mo mathvariant="normal">|</mo><mi>X</mi><mo>)</mo>
+        </mrow>
+      </math>
+    </div>
+  </foreignObject>
 
   <rect class="box" x="595" y="315" width="530" height="130"/>
   <text class="head" x="625" y="355">先确定 Y，再确定 X</text>
-  <text class="formula" x="625" y="400">联合熵由 Y 的熵与 X 的条件熵组成</text>
+  <foreignObject x="625" y="375" width="470" height="70">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="font-family:'Cambria Math','Times New Roman',serif;font-size:22px;color:#991b1b;white-space:nowrap;">
+      <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+          <mi>H</mi><mo>(</mo><mi>X</mi><mo>,</mo><mi>Y</mi><mo>)</mo>
+          <mo>=</mo>
+          <mi>H</mi><mo>(</mo><mi>Y</mi><mo>)</mo>
+          <mo>+</mo>
+          <mi>H</mi><mo>(</mo><mi>X</mi><mo mathvariant="normal">|</mo><mi>Y</mi><mo>)</mo>
+        </mrow>
+      </math>
+    </div>
+  </foreignObject>
 
   <rect x="70" y="495" width="1055" height="125" rx="16" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
   <text class="head" x="100" y="535">条件熵的两层平均</text>
   <text class="text" x="100" y="575">已知谁，就按谁分组：先计算每组内部的熵，再按各组出现的概率求平均。</text>
-  <text class="formula" x="100" y="610">先算每种已知条件下 Y 的熵，再按该条件出现的概率求平均</text>
+  <foreignObject x="100" y="585" width="980" height="70">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="font-family:'Cambria Math','Times New Roman',serif;font-size:21px;color:#991b1b;white-space:nowrap;">
+      <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+          <mi>H</mi><mo>(</mo><mi>Y</mi><mo mathvariant="normal">|</mo><mi>X</mi><mo>)</mo>
+          <mo>=</mo>
+          <munder><mo>∑</mo><mi>i</mi></munder>
+          <mi>P</mi><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>)</mo>
+          <mi>H</mi><mo>(</mo><mi>Y</mi><mo mathvariant="normal">|</mo><msub><mi>x</mi><mi>i</mi></msub><mo>)</mo>
+        </mrow>
+      </math>
+    </div>
+  </foreignObject>
 </svg>
