@@ -21,7 +21,7 @@
 
   <rect x="55" y="165" width="185" height="125" class="box"/>
   <text x="147" y="213" text-anchor="middle" class="h">信息源</text>
-  <text x="147" y="246" text-anchor="middle" class="t">Source of information</text>
+  <text x="147" y="246" text-anchor="middle" class="s">Source of information</text>
   <text x="147" y="275" text-anchor="middle" class="s">产生待传递的消息</text>
 
   <rect x="315" y="150" width="205" height="155" class="core"/>
@@ -43,7 +43,7 @@
 
   <rect x="965" y="440" width="185" height="115" class="box"/>
   <text x="1057" y="485" text-anchor="middle" class="h">信息用户</text>
-  <text x="1057" y="518" text-anchor="middle" class="t">User of information</text>
+  <text x="1057" y="518" text-anchor="middle" class="s">User of information</text>
 
   <rect x="620" y="455" width="185" height="90" class="noise"/>
   <text x="712" y="495" text-anchor="middle" class="h">噪声</text>
@@ -55,12 +55,6 @@
   <path d="M997 305V435" class="arrow"/>
   <path d="M712 455V305" class="noise-arrow"/>
 
-  <path d="M240 227V380H355" stroke="#6c7f91" stroke-width="2" stroke-dasharray="7 6" fill="none"/>
-  <path d="M835 380H970V435" stroke="#6c7f91" stroke-width="2" stroke-dasharray="7 6" fill="none"/>
-  <text x="282" y="365" class="s">消息 message</text>
-  <text x="860" y="365" class="s">恢复的消息 message</text>
-  <text x="345" y="337" class="s">信息 information</text>
-  <text x="795" y="337" class="s">信息 information</text>
-  <text x="555" y="337" class="s">在信道中传播的是信号 signal</text>
-  <path d="M548 320H842" stroke="#6c7f91" stroke-width="2" marker-end="url(#a)"/>
+  <rect x="205" y="335" width="780" height="55" fill="#f2f6fa" stroke="#9fb2c2" stroke-width="2" rx="8"/>
+  <text x="595" y="369" text-anchor="middle" class="s">消息和信息被转换为信号 signal，在信道中传播，再由接收设备恢复</text>
 </svg>
