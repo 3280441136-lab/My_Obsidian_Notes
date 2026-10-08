@@ -39,13 +39,16 @@
   <g transform="translate(925 125)">
     <rect x="0" y="0" width="225" height="265" rx="18" class="box"/>
     <text x="112" y="38" text-anchor="middle" class="t s">谐振时</text>
-    <text x="112" y="92" text-anchor="middle" class="t eq">Q_L = ω₀W/P</text>
+    <text x="112" y="92" text-anchor="middle" class="t eq">Q<tspan baseline-shift="sub" font-size="0.72em">L</tspan> = ω<tspan baseline-shift="sub" font-size="0.72em">0</tspan>W/P</text>
     <text x="112" y="137" text-anchor="middle" class="t n">W：交换的储能</text>
     <text x="112" y="171" text-anchor="middle" class="t n">P：消耗的有功功率</text>
-    <text x="112" y="222" text-anchor="middle" class="t eq">Q₁ = Q₂ = Q_L</text>
+    <text x="112" y="222" text-anchor="middle" class="t eq">Q₁ = Q₂ = Q<tspan baseline-shift="sub" font-size="0.72em">L</tspan></text>
   </g>
 
   <rect x="155" y="440" width="890" height="65" rx="14" fill="#fff4df" stroke="#e1a34a"/>
   <text x="600" y="470" text-anchor="middle" class="t n">局部 Q 只需要局部的 R、X；相等则来自无损、同一频率、谐振与匹配四个条件。</text>
   <text x="600" y="500" text-anchor="middle" class="t n">任意拆开复杂电路，其局部 Q 未必等于整体 Q。</text>
 </svg>
+
+
+

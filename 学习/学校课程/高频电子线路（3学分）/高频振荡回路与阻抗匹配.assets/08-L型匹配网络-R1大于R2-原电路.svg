@@ -15,7 +15,7 @@
     <path d="M96 235 L105 244 L114 235" class="a"/>
     <line x1="105" y1="115" x2="105" y2="177" class="w"/>
     <line x1="105" y1="263" x2="105" y2="325" class="w"/>
-    <text x="105" y="292" text-anchor="middle" class="t eq">i_s</text>
+    <text x="105" y="292" text-anchor="middle" class="t eq">i<tspan baseline-shift="sub" font-size="0.72em">s</tspan></text>
 
     <line x1="235" y1="115" x2="235" y2="150" class="w"/>
     <path d="M235 150 l-18 12 l36 20 l-36 20 l36 20 l-36 20 l18 12" class="r"/>
@@ -29,7 +29,7 @@
     <text x="455" y="196" class="t n">C</text>
 
     <rect x="52" y="345" width="375" height="40" rx="10" fill="#eef5ff" stroke="#8cb7e8"/>
-    <text x="240" y="372" text-anchor="middle" class="t n">匹配目标：从右向左看，Z_in(ω₀) = R₁</text>
+    <text x="240" y="372" text-anchor="middle" class="t n">匹配目标：从右向左看，Z<tspan baseline-shift="sub" font-size="0.72em">in</tspan>(ω<tspan baseline-shift="sub" font-size="0.72em">0</tspan>) = R₁</text>
   </g>
 
   <path d="M590 300 H665" class="a"/><path d="M645 282 L665 300 L645 318" class="a"/>
@@ -55,4 +55,6 @@
   <rect x="205" y="525" width="790" height="48" rx="12" fill="#fff4df" stroke="#e1a34a"/>
   <text x="600" y="557" text-anchor="middle" class="t eq">Q = ω₀L/R₂ = ω₀CR₁，  R₁ = (1 + Q²)R₂</text>
 </svg>
+
+
 

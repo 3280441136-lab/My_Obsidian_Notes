@@ -2,7 +2,7 @@
   <rect width="1200" height="650" fill="#f7f9fc"/>
   <style>.t{font-family:"Microsoft YaHei","Noto Sans CJK SC",sans-serif;fill:#172033}.h{font-size:30px;font-weight:700}.s{font-size:22px}.n{font-size:18px}.eq{font-family:"Cambria Math","Times New Roman",serif;font-size:21px;fill:#172033}.w{stroke:#172033;stroke-width:4;fill:none}.a{stroke:#1769aa;stroke-width:4;fill:none}.r{stroke:#c75516;stroke-width:4;fill:none}.g{stroke:#2f7d4a;stroke-width:4;fill:none}.node{fill:#172033}.box{fill:#ffffff;stroke:#b9c5d6;stroke-width:2}</style>
   <text x="600" y="42" text-anchor="middle" class="t h">L 型匹配网络（R₂ > R₁）：并串变换后的等效电路</text>
-  <text x="600" y="78" text-anchor="middle" class="t s">把 R₂ ∥ C 变成 R₂ₛ + Cₛ，再用 L 抵消等效容抗</text>
+  <text x="600" y="78" text-anchor="middle" class="t s">把 R₂ ∥ C 变成 R<tspan baseline-shift="sub" font-size="0.72em">2s</tspan> + C<tspan baseline-shift="sub" font-size="0.72em">s</tspan>，再用 L 抵消等效容抗</text>
 
   <g transform="translate(45 112)">
     <rect x="0" y="0" width="575" height="420" rx="18" class="box"/>
@@ -12,17 +12,17 @@
     <line x1="45" y1="210" x2="115" y2="210" class="w"/>
     <path d="M115 210 l12 -18 l20 36 l20 -36 l20 36 l20 -36 l12 18" class="r"/>
     <line x1="199" y1="210" x2="530" y2="210" class="w"/>
-    <text x="155" y="172" text-anchor="middle" class="t n">R₂ₛ</text>
+    <text x="155" y="172" text-anchor="middle" class="t n">R<tspan baseline-shift="sub" font-size="0.72em">2s</tspan></text>
 
     <line x1="275" y1="210" x2="330" y2="210" class="w"/>
     <line x1="330" y1="175" x2="330" y2="245" class="a"/>
     <line x1="355" y1="175" x2="355" y2="245" class="a"/>
     <line x1="355" y1="210" x2="530" y2="210" class="w"/>
-    <text x="343" y="282" text-anchor="middle" class="t n">Cₛ</text>
+    <text x="343" y="282" text-anchor="middle" class="t n">C<tspan baseline-shift="sub" font-size="0.72em">s</tspan></text>
 
-    <text x="288" y="342" text-anchor="middle" class="t eq">R₂ₛ = R₂/(1 + Q²)</text>
-    <text x="288" y="375" text-anchor="middle" class="t eq">|X_Cₛ| = QR₂ₛ</text>
-    <text x="288" y="410" text-anchor="middle" class="t n">Cₛ 是等效串联电容，不是原物理 C</text>
+    <text x="288" y="342" text-anchor="middle" class="t eq">R<tspan baseline-shift="sub" font-size="0.72em">2s</tspan> = R₂/(1 + Q<tspan baseline-shift="super" font-size="0.72em">2</tspan>)</text>
+    <text x="288" y="375" text-anchor="middle" class="t eq">|X<tspan baseline-shift="sub" font-size="0.72em">Cs</tspan>| = QR<tspan baseline-shift="sub" font-size="0.72em">2s</tspan></text>
+    <text x="288" y="410" text-anchor="middle" class="t n">C<tspan baseline-shift="sub" font-size="0.72em">s</tspan> 是等效串联电容，不是原物理 C</text>
   </g>
 
   <path d="M650 322 H745" class="a"/><path d="M725 304 L745 322 L725 340" class="a"/>
@@ -36,18 +36,21 @@
     <line x1="35" y1="210" x2="82" y2="210" class="w"/>
     <path d="M82 210 l12 -18 l20 36 l20 -36 l20 36 l20 -36 l12 18" class="r"/>
     <line x1="166" y1="210" x2="340" y2="210" class="w"/>
-    <text x="124" y="172" text-anchor="middle" class="t n">R₂ₛ</text>
+    <text x="124" y="172" text-anchor="middle" class="t n">R<tspan baseline-shift="sub" font-size="0.72em">2s</tspan></text>
 
     <path d="M190 210 c0 -28 42 -28 42 0 c0 28 42 28 42 0 c0 -28 42 -28 42 0 c0 28 42 28 42 0" class="a"/>
     <line x1="190" y1="210" x2="190" y2="210" class="w"/>
     <text x="232" y="164" text-anchor="middle" class="t n">L</text>
 
-    <text x="188" y="292" text-anchor="middle" class="t eq">ω₀L = |X_Cₛ| = QR₂ₛ</text>
-    <text x="188" y="338" text-anchor="middle" class="t eq">Z_in(ω₀) = R₂ₛ = R₁</text>
+    <text x="188" y="292" text-anchor="middle" class="t eq">ω<tspan baseline-shift="sub" font-size="0.72em">0</tspan>L = |X<tspan baseline-shift="sub" font-size="0.72em">Cs</tspan>| = QR<tspan baseline-shift="sub" font-size="0.72em">2s</tspan></text>
+    <text x="188" y="338" text-anchor="middle" class="t eq">Z<tspan baseline-shift="sub" font-size="0.72em">in</tspan>(ω<tspan baseline-shift="sub" font-size="0.72em">0</tspan>) = R<tspan baseline-shift="sub" font-size="0.72em">2s</tspan> = R₁</text>
     <text x="188" y="385" text-anchor="middle" class="t n">L 与等效串联电容谐振抵消</text>
   </g>
 
   <rect x="115" y="565" width="970" height="54" rx="12" fill="#fff4df" stroke="#e1a34a"/>
   <text x="600" y="599" text-anchor="middle" class="t eq">Q = ω₀CR₂ = ω₀L/R₁，Q = √(R₂/R₁ − 1)</text>
 </svg>
+
+
+
 
