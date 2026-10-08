@@ -23,12 +23,24 @@
   <rect class="cell" x="70" y="185" width="100" height="55"/>
   <rect class="cell" x="170" y="185" width="100" height="55"/>
   <rect class="cell" x="270" y="185" width="100" height="55"/>
-  <text class="text" x="120" y="165" text-anchor="middle">项11</text>
-  <text class="text" x="220" y="165" text-anchor="middle">项12</text>
-  <text class="text" x="320" y="165" text-anchor="middle">项13</text>
-  <text class="text" x="120" y="220" text-anchor="middle">项21</text>
-  <text class="text" x="220" y="220" text-anchor="middle">项22</text>
-  <text class="text" x="320" y="220" text-anchor="middle">项23</text>
+  <foreignObject x="70" y="130" width="100" height="55">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="display:flex;width:100%;height:100%;align-items:center;justify-content:center;font-family:'Cambria Math','Times New Roman',serif;font-size:20px;color:#1f2937;"><math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>p</mi><mn>11</mn></msub></math></div>
+  </foreignObject>
+  <foreignObject x="170" y="130" width="100" height="55">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="display:flex;width:100%;height:100%;align-items:center;justify-content:center;font-family:'Cambria Math','Times New Roman',serif;font-size:20px;color:#1f2937;"><math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>p</mi><mn>12</mn></msub></math></div>
+  </foreignObject>
+  <foreignObject x="270" y="130" width="100" height="55">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="display:flex;width:100%;height:100%;align-items:center;justify-content:center;font-family:'Cambria Math','Times New Roman',serif;font-size:20px;color:#1f2937;"><math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>p</mi><mn>13</mn></msub></math></div>
+  </foreignObject>
+  <foreignObject x="70" y="185" width="100" height="55">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="display:flex;width:100%;height:100%;align-items:center;justify-content:center;font-family:'Cambria Math','Times New Roman',serif;font-size:20px;color:#1f2937;"><math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>p</mi><mn>21</mn></msub></math></div>
+  </foreignObject>
+  <foreignObject x="170" y="185" width="100" height="55">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="display:flex;width:100%;height:100%;align-items:center;justify-content:center;font-family:'Cambria Math','Times New Roman',serif;font-size:20px;color:#1f2937;"><math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>p</mi><mn>22</mn></msub></math></div>
+  </foreignObject>
+  <foreignObject x="270" y="185" width="100" height="55">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="display:flex;width:100%;height:100%;align-items:center;justify-content:center;font-family:'Cambria Math','Times New Roman',serif;font-size:20px;color:#1f2937;"><math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>p</mi><mn>23</mn></msub></math></div>
+  </foreignObject>
   <text class="head" x="220" y="285" text-anchor="middle">联合概率表</text>
 
   <path d="M410 180 C500 180 510 125 590 125" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
@@ -66,11 +78,11 @@
     </div>
   </foreignObject>
 
-  <rect x="70" y="495" width="1055" height="125" rx="16" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+  <rect x="70" y="485" width="1055" height="175" rx="16" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
   <text class="head" x="100" y="535">条件熵的两层平均</text>
-  <text class="text" x="100" y="575">已知谁，就按谁分组：先计算每组内部的熵，再按各组出现的概率求平均。</text>
-  <foreignObject x="100" y="585" width="980" height="70">
-    <div xmlns="http://www.w3.org/1999/xhtml" style="font-family:'Cambria Math','Times New Roman',serif;font-size:21px;color:#991b1b;white-space:nowrap;">
+  <text class="text" x="100" y="568">已知谁，就按谁分组：先计算每组内部的熵，再按各组出现的概率求平均。</text>
+  <foreignObject x="155" y="585" width="870" height="65">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="display:flex;width:100%;height:100%;align-items:center;justify-content:center;font-family:'Cambria Math','Times New Roman',serif;font-size:19px;color:#991b1b;white-space:nowrap;">
       <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
         <mrow>
           <mi>H</mi><mo>(</mo><mi>Y</mi><mo mathvariant="normal">|</mo><mi>X</mi><mo>)</mo>

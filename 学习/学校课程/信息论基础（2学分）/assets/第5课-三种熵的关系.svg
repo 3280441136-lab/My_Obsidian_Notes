@@ -18,26 +18,53 @@
 
   <rect class="box" x="75" y="155" width="300" height="165"/>
   <text class="head" x="225" y="200" text-anchor="middle">不使用历史</text>
-  <text class="formula" x="225" y="250" text-anchor="middle">单符号熵</text>
+  <foreignObject x="105" y="220" width="240" height="55">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="display:flex;width:100%;height:100%;align-items:center;justify-content:center;font-family:'Cambria Math','Times New Roman',serif;font-size:27px;color:#991b1b;"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>H</mi><mo>(</mo><msub><mi>X</mi><mn>1</mn></msub><mo>)</mo></mrow></math></div>
+  </foreignObject>
   <text class="text" x="225" y="292" text-anchor="middle">不使用历史</text>
 
   <path d="M375 235 H475" fill="none" stroke="#2563eb" stroke-width="4" marker-end="url(#arrow)"/>
 
   <rect class="box" x="480" y="155" width="300" height="165"/>
   <text class="head" x="630" y="200" text-anchor="middle">平均使用历史</text>
-  <text class="formula" x="630" y="250" text-anchor="middle">平均符号熵</text>
+  <foreignObject x="510" y="220" width="240" height="55">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="display:flex;width:100%;height:100%;align-items:center;justify-content:center;font-family:'Cambria Math','Times New Roman',serif;font-size:27px;color:#991b1b;"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mover><mi>H</mi><mo accent="true">¯</mo></mover><mi>N</mi></msub></mrow></math></div>
+  </foreignObject>
   <text class="text" x="630" y="292" text-anchor="middle">整段消息按位置平均</text>
 
   <path d="M780 235 H880" fill="none" stroke="#2563eb" stroke-width="4" marker-end="url(#arrow)"/>
 
   <rect class="box" x="885" y="155" width="255" height="165"/>
   <text class="head" x="1012" y="200" text-anchor="middle">使用完整历史</text>
-  <text class="formula" x="1012" y="250" text-anchor="middle">条件熵</text>
+  <foreignObject x="900" y="215" width="225" height="65">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="display:flex;width:100%;height:100%;align-items:center;justify-content:center;font-family:'Cambria Math','Times New Roman',serif;font-size:18px;color:#991b1b;white-space:nowrap;">
+      <math xmlns="http://www.w3.org/1998/Math/MathML">
+        <mrow>
+          <mi>H</mi><mo>(</mo><msub><mi>X</mi><mi>N</mi></msub>
+          <mo mathvariant="normal">|</mo>
+          <msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><mo>…</mo><mo>,</mo><msub><mi>X</mi><mrow><mi>N</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>)</mo>
+        </mrow>
+      </math>
+    </div>
+  </foreignObject>
   <text class="text" x="1012" y="292" text-anchor="middle">已知完整历史</text>
 
   <rect x="125" y="405" width="950" height="95" rx="16" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
-  <text class="formula" x="600" y="450" text-anchor="middle">条件熵不大于平均符号熵，平均符号熵不大于基本信源熵</text>
-  <text class="text" x="600" y="483" text-anchor="middle">平稳有记忆信源的一般关系</text>
+  <foreignObject x="150" y="412" width="900" height="58">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="display:flex;width:100%;height:100%;align-items:center;justify-content:center;font-family:'Cambria Math','Times New Roman',serif;font-size:18px;color:#991b1b;white-space:nowrap;">
+      <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+          <mi>H</mi><mo>(</mo><msub><mi>X</mi><mi>N</mi></msub><mo mathvariant="normal">|</mo><msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><mo>…</mo><mo>,</mo><msub><mi>X</mi><mrow><mi>N</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>)</mo>
+          <mo>≤</mo>
+          <mfrac><mn>1</mn><mi>N</mi></mfrac>
+          <mi>H</mi><mo>(</mo><msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><mo>…</mo><mo>,</mo><msub><mi>X</mi><mi>N</mi></msub><mo>)</mo>
+          <mo>≤</mo>
+          <mi>H</mi><mo>(</mo><msub><mi>X</mi><mn>1</mn></msub><mo>)</mo>
+        </mrow>
+      </math>
+    </div>
+  </foreignObject>
+  <text class="text" x="600" y="487" text-anchor="middle">平稳有记忆信源的一般关系</text>
 
   <rect x="125" y="555" width="950" height="80" rx="14" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
   <text class="text" x="600" y="588" text-anchor="middle">相关性使历史具有预测力，条件熵随之下降，并形成统计冗余和压缩空间</text>

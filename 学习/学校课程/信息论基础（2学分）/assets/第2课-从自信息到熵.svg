@@ -20,7 +20,18 @@
   <rect class="box" x="75" y="130" width="320" height="190"/>
   <text class="head" x="235" y="172" text-anchor="middle">一个具体结果</text>
   <text class="text" x="105" y="215">先看它发生的概率</text>
-  <text class="formula" x="105" y="260">自信息表示意外程度</text>
+  <foreignObject x="95" y="225" width="280" height="65">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="display:flex;width:100%;height:100%;align-items:center;justify-content:center;font-family:'Cambria Math','Times New Roman',serif;font-size:23px;color:#991b1b;">
+      <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+          <mi>I</mi><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>)</mo>
+          <mo>=</mo><mo>−</mo>
+          <msub><mrow><mi>log</mi></mrow><mn>2</mn></msub>
+          <mi>P</mi><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>)</mo>
+        </mrow>
+      </math>
+    </div>
+  </foreignObject>
   <text class="text" x="105" y="300">概率越小，自信息越大</text>
 
   <path d="M395 225 H505" fill="none" stroke="#2563eb" stroke-width="4" marker-end="url(#arrow)"/>
@@ -28,14 +39,43 @@
   <rect class="box" x="510" y="115" width="350" height="235"/>
   <text class="head" x="685" y="158" text-anchor="middle">对所有结果求加权平均</text>
   <text class="text" x="545" y="205">权重不是相同次数，而是出现概率</text>
-  <text class="formula" x="545" y="255">每项把概率与自信息相乘</text>
-  <text class="formula" x="545" y="305">求和：得到信息熵</text>
+  <foreignObject x="535" y="215" width="305" height="58">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="display:flex;width:100%;height:100%;align-items:center;justify-content:center;font-family:'Cambria Math','Times New Roman',serif;font-size:21px;color:#991b1b;white-space:nowrap;">
+      <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+          <mi>H</mi><mo>(</mo><mi>X</mi><mo>)</mo><mo>=</mo>
+          <munder><mo>∑</mo><mi>i</mi></munder>
+          <mi>P</mi><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>)</mo>
+          <mi>I</mi><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>)</mo>
+        </mrow>
+      </math>
+    </div>
+  </foreignObject>
+  <foreignObject x="535" y="275" width="305" height="58">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="display:flex;width:100%;height:100%;align-items:center;justify-content:center;font-family:'Cambria Math','Times New Roman',serif;font-size:20px;color:#991b1b;white-space:nowrap;">
+      <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow>
+          <mi>H</mi><mo>(</mo><mi>X</mi><mo>)</mo><mo>=</mo><mo>−</mo>
+          <munder><mo>∑</mo><mi>i</mi></munder>
+          <mi>P</mi><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>)</mo>
+          <msub><mrow><mi>log</mi></mrow><mn>2</mn></msub>
+          <mi>P</mi><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>)</mo>
+        </mrow>
+      </math>
+    </div>
+  </foreignObject>
 
   <path d="M860 225 H970" fill="none" stroke="#2563eb" stroke-width="4" marker-end="url(#arrow)"/>
 
   <rect class="result" x="975" y="130" width="165" height="190"/>
   <text class="head" x="1057" y="185" text-anchor="middle">信息熵</text>
-  <text class="formula" x="1057" y="235" text-anchor="middle">信息熵</text>
+  <foreignObject x="995" y="205" width="125" height="55">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="display:flex;width:100%;height:100%;align-items:center;justify-content:center;font-family:'Cambria Math','Times New Roman',serif;font-size:28px;color:#991b1b;">
+      <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow><mi>H</mi><mo>(</mo><mi>X</mi><mo>)</mo></mrow>
+      </math>
+    </div>
+  </foreignObject>
   <text class="text" x="1057" y="278" text-anchor="middle">输出前：</text>
   <text class="text" x="1057" y="305" text-anchor="middle">平均不确定性</text>
 
