@@ -61,3 +61,49 @@
 - 第 4 课：通信系统的有效性、可靠性、码元速率、信息速率、频带利用率和错误概率。
 
 新增笔记后，必须同步更新本节和 `README.md` 的进度清单。
+
+## SVG 数学排版硬性约束
+
+SVG 不是 Markdown，也不是 LaTeX/MathJax 环境。SVG 中的 `<text>` 只会显示字面字符，因此禁止把 `R_B`、`x_k`、`log_2`、`x^2` 或 `$$...$$` 直接写进 SVG 文本。这样写会产生普通下划线、尖号或反斜杠，而不会形成真正的上下标。
+
+### 上下标写法
+
+- 下标必须使用 `<tspan baseline-shift="sub" font-size="0.72em">...</tspan>`。
+- 上标必须使用 `<tspan baseline-shift="super" font-size="0.72em">...</tspan>`。
+- 一个公式中有多个上下标时，每个上下标分别使用独立的 `tspan`，不要用 `_` 或 `^` 连接。
+- 公式中需要继续书写正常基线内容时，使用新的 `tspan`，避免继承偏移。
+- 复杂公式优先拆成多个 `<text>` 或多个 `<tspan x="..." dy="...">`，保证窄屏下不重叠、不溢出。
+
+正确示例：
+
+```xml
+<text>R<tspan baseline-shift="sub" font-size="0.72em">B</tspan>=1/T<tspan baseline-shift="sub" font-size="0.72em">B</tspan></text>
+```
+
+```xml
+<text>I(x<tspan baseline-shift="sub" font-size="0.72em">k</tspan>)=-log<tspan baseline-shift="sub" font-size="0.72em">2</tspan> p(x<tspan baseline-shift="sub" font-size="0.72em">k</tspan>)</text>
+```
+
+禁止示例：
+
+```xml
+<text>R_B=1/T_B</text>
+<text>I(x_k)=-log_2 p(x_k)</text>
+<text>x^2+y^2</text>
+```
+
+### SVG 公式符号和可读性
+
+- 公式中的变量、常数和函数名应使用清晰的文本结构；不要把 LaTeX 命令留在 SVG 中。
+- 希腊字母、求和号等若必须出现在 SVG 图中，应使用可渲染的 SVG 文本或路径，并通过 `<title>`、`<desc>` 给出完整解释；不要把整段 LaTeX 当作 SVG 文本。
+- 每张 SVG 必须有 `<title>` 和 `<desc>`，说明图示对象、关键关系和阅读顺序。
+- 图中所有文字必须在实际渲染后检查，重点关注脚标高度、基线、中文与英文混排、箭头遮挡、文字溢出和边界裁切。
+- 公式标注应直接靠近对应模块或曲线，不把关键公式挤在图外，也不通过缩小字号掩盖布局问题。
+
+### 交付前检查
+
+1. 对每个 SVG 执行 XML 解析检查。
+2. 检查 SVG 文本中不存在裸露的 `_`、`^`、`\`、`$` 数学语法。
+3. 用本地浏览器渲染 SVG，并逐张检查上下标和布局。
+4. 新增或修改 SVG 后，检查引用它的 Markdown 嵌入路径是否仍然有效。
+5. 只有在渲染检查通过后，才把 SVG 纳入笔记。
