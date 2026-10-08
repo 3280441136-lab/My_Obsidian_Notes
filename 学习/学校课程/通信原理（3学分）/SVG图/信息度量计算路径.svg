@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1250" height="720" viewBox="0 0 1250 720" role="img" aria-labelledby="title desc">
+  <title id="title">信息度量计算路径</title>
+  <desc id="desc">从符号概率出发，依次计算单个符号信息量、一条消息的总信息量、信源熵和平均信息速率。</desc>
+  <defs>
+    <style>
+      .title { font: 700 36px "Microsoft YaHei", sans-serif; fill: #17324d; }
+      .h { font: 700 24px "Microsoft YaHei", sans-serif; fill: #17324d; }
+      .t { font: 19px "Microsoft YaHei", sans-serif; fill: #334e68; }
+      .m { font: italic 25px Georgia, serif; fill: #123b66; }
+      .box { fill: #f7fbff; stroke: #3478c6; stroke-width: 3; rx: 10; }
+      .focus { fill: #e8f2ff; stroke: #1864ab; stroke-width: 4; rx: 10; }
+      .arrow { fill: none; stroke: #1864ab; stroke-width: 5; marker-end: url(#a); }
+      .note { fill: #fff6df; stroke: #c78a20; stroke-width: 2; rx: 8; }
+    </style>
+    <marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L9 5L0 10Z" fill="#1864ab"/></marker>
+  </defs>
+  <rect width="1250" height="720" fill="#ffffff"/>
+  <text x="60" y="62" class="title">信息度量：从“事件概率”走到“每秒多少信息”</text>
+
+  <rect x="55" y="165" width="235" height="155" class="box"/>
+  <text x="172" y="205" text-anchor="middle" class="h">1. 符号概率</text>
+  <text x="172" y="248" text-anchor="middle" class="m">p(x_k)</text>
+  <text x="172" y="284" text-anchor="middle" class="t">消息有多难猜</text>
+
+  <rect x="365" y="165" width="235" height="155" class="focus"/>
+  <text x="482" y="205" text-anchor="middle" class="h">2. 单符号信息量</text>
+  <text x="482" y="248" text-anchor="middle" class="m">I(x_k)=-log_2 p(x_k)</text>
+  <text x="482" y="284" text-anchor="middle" class="t">意外程度，单位 bit</text>
+
+  <rect x="675" y="165" width="235" height="155" class="box"/>
+  <text x="792" y="205" text-anchor="middle" class="h">3. 一条消息</text>
+  <text x="792" y="248" text-anchor="middle" class="m">I_total=Σn_i I(x_i)</text>
+  <text x="792" y="284" text-anchor="middle" class="t">按实际出现次数累加</text>
+
+  <rect x="985" y="165" width="215" height="155" class="box"/>
+  <text x="1092" y="205" text-anchor="middle" class="h">4. 平均信息速率</text>
+  <text x="1092" y="248" text-anchor="middle" class="m">R_b=R_s H(X)</text>
+  <text x="1092" y="284" text-anchor="middle" class="t">每秒携带多少 bit</text>
+
+  <path d="M290 242H360M600 242H670M910 242H980" class="arrow"/>
+
+  <path d="M482 320V425H792V320" class="arrow"/>
+  <rect x="485" y="425" width="610" height="145" class="focus"/>
+  <text x="790" y="470" text-anchor="middle" class="h">信源平均不确定性：熵</text>
+  <text x="790" y="515" text-anchor="middle" class="m">H(X)=-Σp(x_i)log_2 p(x_i)</text>
+  <text x="790" y="550" text-anchor="middle" class="t">熵是概率加权平均，不是一条消息中各信息量的简单相加</text>
+
+  <rect x="75" y="445" width="335" height="135" class="note"/>
+  <text x="242" y="485" text-anchor="middle" class="h">等概率时不确定性最大</text>
+  <text x="242" y="525" text-anchor="middle" class="m">H_max=log_2 M</text>
+  <text x="242" y="558" text-anchor="middle" class="t">概率越不均匀，可预测部分越多</text>
+
+  <rect x="75" y="620" width="1125" height="55" fill="#f2f6fa" stroke="#a8b7c5" stroke-width="2" rx="8"/>
+  <text x="637" y="655" text-anchor="middle" class="t">判题顺序：先问“一条消息”还是“信源平均”，再决定用总信息量还是熵</text>
+</svg>

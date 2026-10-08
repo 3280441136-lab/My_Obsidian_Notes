@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1250" height="760" viewBox="0 0 1250 760" role="img" aria-labelledby="title desc">
+  <title id="title">通信系统性能指标</title>
+  <desc id="desc">通信系统性能分为有效性和可靠性。模拟系统关注带宽和输出信噪比，数字系统关注传输速率、频带利用率和错误概率。</desc>
+  <defs>
+    <style>
+      .title { font: 700 36px "Microsoft YaHei", sans-serif; fill: #17324d; }
+      .h { font: 700 25px "Microsoft YaHei", sans-serif; fill: #17324d; }
+      .t { font: 19px "Microsoft YaHei", sans-serif; fill: #334e68; }
+      .m { font: italic 24px Georgia, serif; fill: #123b66; }
+      .box { fill: #f7fbff; stroke: #3478c6; stroke-width: 3; rx: 10; }
+      .green { fill: #e9f7ef; stroke: #2f855a; stroke-width: 3; rx: 10; }
+      .red { fill: #fff0ee; stroke: #c2413b; stroke-width: 3; rx: 10; }
+      .arrow { fill: none; stroke: #5d7184; stroke-width: 4; marker-end: url(#a); }
+    </style>
+    <marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L9 5L0 10Z" fill="#5d7184"/></marker>
+  </defs>
+  <rect width="1250" height="760" fill="#ffffff"/>
+  <text x="60" y="62" class="title">通信系统的两组核心问题：传得快不快，恢复得准不准</text>
+  <rect x="465" y="105" width="320" height="72" fill="#1864ab" rx="10"/>
+  <text x="625" y="151" text-anchor="middle" class="h" fill="#ffffff">通信系统性能</text>
+  <path d="M625 177V230M350 230H900M350 230V280M900 230V280" class="arrow"/>
+
+  <rect x="175" y="280" width="350" height="78" class="green"/>
+  <text x="350" y="329" text-anchor="middle" class="h">有效性 Effectiveness</text>
+  <rect x="725" y="280" width="350" height="78" class="red"/>
+  <text x="900" y="329" text-anchor="middle" class="h">可靠性 Reliability</text>
+
+  <rect x="75" y="410" width="550" height="175" class="box"/>
+  <text x="350" y="452" text-anchor="middle" class="h">数字系统：用离散码元数量衡量</text>
+  <text x="350" y="495" text-anchor="middle" class="m">R_B=1/T_B</text>
+  <text x="350" y="530" text-anchor="middle" class="m">R_b=R_B log_2 M</text>
+  <text x="350" y="565" text-anchor="middle" class="m">η_b=R_b/B</text>
+
+  <rect x="625" y="410" width="550" height="175" class="box"/>
+  <text x="900" y="452" text-anchor="middle" class="h">数字系统：用判决错误概率衡量</text>
+  <text x="900" y="495" text-anchor="middle" class="m">P_e=错误码元数/传输码元总数</text>
+  <text x="900" y="530" text-anchor="middle" class="m">P_b=错误比特数/传输比特总数</text>
+  <text x="900" y="565" text-anchor="middle" class="t">二进制时通常有 \(P_e=P_b\)</text>
+
+  <rect x="75" y="615" width="550" height="70" fill="#eef5ff" stroke="#7aa2cc" stroke-width="2" rx="8"/>
+  <text x="350" y="658" text-anchor="middle" class="t">模拟系统主要看带宽 \(B\)：占用资源越少越有效</text>
+  <rect x="625" y="615" width="550" height="70" fill="#fff3ef" stroke="#d98b83" stroke-width="2" rx="8"/>
+  <text x="900" y="658" text-anchor="middle" class="t">模拟系统主要看输出 \(\mathrm{SNR}_{\mathrm o}\)：越大越可靠</text>
+</svg>
