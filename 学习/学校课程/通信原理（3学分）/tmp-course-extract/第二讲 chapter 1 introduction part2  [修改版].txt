@@ -1,0 +1,408 @@
+\n===== PAGE 1 =====\nPrinciple of Communications  Chapter 1 Introduction part 2
+Principles of Communications
+Chapter 1 Introduction
+1/38
+1.1 Communication system model
+1.2 The classification of communication systems
+1.3 Information and its measurement
+1.4 The main performance index
+ \n\n===== PAGE 2 =====\nPrinciple of Communications  Chapter 1 Introduction part 2
+Suppose a discrete memoryless source X (离散无记忆信源)
+12{ , ,... }             Nx x x=X
+Probabilities 
+( ) ,      1, 2,...,   kkP X x p k N= = =
+They satisfies the condition:
+=1
+1
+N
+k
+k
+p =
+1.3 Information and its measurement
+2/38\n\n===== PAGE 3 =====\nPrinciple of Communications  Chapter 1 Introduction part 2
+The idea of information is closely related to that of 
+uncertainty (不确定性) or surprise.
+◆ No surprise, no information.
+◆ More surprise, more information.
+◆ The process of getting information can be viewed 
+      as the process of resolution of uncertainty.
+                         
+How much information is produced 
+by such a source?
+3/38\n\n===== PAGE 4 =====\nPrinciple of Communications  Chapter 1 Introduction part 2
+1
+( ) 0 1kkI x for p==
+If we  are absolutely certain of the outcome of an 
+event, there is no information gained. 
+2.
+( ) 0     0 1kkI x for p  
+No negative information.
+3. 
+( ) ( )k i k iI x I x for p p
+The less probable an event is, the more information 
+we gain when it occurs.
+4.
+k l k lI x x I x I x( ) ( ) ( )     =+
+Properties of Amount of Information/ 
+Information content（信息量）:   I
+4/38
+, if they are independent.\n\n===== PAGE 5 =====\nPrinciple of Communications  Chapter 1 Introduction part 2
+1
+( ) 0 1kkI x for p==
+如果我们完全确定某一事件的结果，那么从中获
+取的信息量为零。
+2.
+( ) 0     0 1kkI x for p  
+信息量不会为负.
+3. 
+( ) ( )k i k iI x I x for p p
+一个事件发生的概率越小，当它真的发生时，带给
+我们的信息量就越大。
+4.
+k l k lI x x I x I x( ) ( ) ( )     =+
+Properties of Amount of Information/ 
+Information content（信息量）:   I
+5/38
+,若两个事件相互独立。\n\n===== PAGE 6 =====\nPrinciple of Communications  Chapter 1 Introduction part 2
+( ) 0 1kkI x       for      p==
+( ) 0 1kkI x       for  0 p  
+( ) ( )k i k iI x I x for p p
+k l k lI x x I x I x      if they are independent( ) ( ) ( )=+
+Which function satisfies these conditions ？
+6/38
+\n\n===== PAGE 7 =====\nPrinciple of Communications  Chapter 1 Introduction part 2
+We define the amount of information gained after observing the 
+event X=xk , which occurs with probability  pk  , as the logarithmic 
+function:
+1( ) log                  ka
+k
+Ix p
+= 
+
+Definition of the Amount of Information (信息量)
+7/38\n\n===== PAGE 8 =====\nPrinciple of Communications  Chapter 1 Introduction part 2
+The base of the logarithm is arbitrary. 
+Typically,base =2, then unit is called bit.
+22
+1( ) log log        for 1,...kk
+k
+I x P k N p
+= =− =
+
+a
+1( ) log  k
+k
+Ix p
+= 
+
+The unit (单位) of Amount of Information 
+8/38
+Example：there is a binary discrete source, if p(0)=p (1)=1/2, then  
+(0) (1) bitII == ？\n\n===== PAGE 9 =====\nPrinciple of Communications  Chapter 1 Introduction part 2
+The base of the logarithm is arbitrary. 
+Typically,base =2, then unit is called bit.
+a
+1( ) log  k
+k
+Ix p
+= 
+
+The unit (单位) of Amount of Information 
+9/38
+Example  1：there is a binary discrete source, if p(0)=p (1)=1/2, then  
+2
+1(0) (1) log 1   bit1/ 2II = = =\n\n===== PAGE 10 =====\nPrinciple of Communications  Chapter 1 Introduction part 2
+10/38
+M=4    I=？？
+M=8    I=？？
+\n\n===== PAGE 11 =====\nPrinciple of Communications  Chapter 1 Introduction part 2
+The base of the logarithm is arbitrary. 
+Typically,base =2, then unit is called bit.
+22
+1( ) log log        for 1,...kk
+k
+I x P k N p
+= =− =
+
+a
+1( ) log  k
+k
+Ix p
+= 
+
+i 2 i
+1
+log ( )
+N
+i
+I n p x
+=
+=− 
+N — 事件个数，
+ni — 某事件出现的次数
+p(xi) — 事件出现的概率
+Total information: 总的信息量
+11/38\n\n===== PAGE 12 =====\nPrinciple of Communications  Chapter 1 Introduction part 2
+i 2 i
+1
+log ( )
+N
+i
+I n p x
+=
+=− 
+N — 事件个数，
+ni — 某事件出现的次数
+p(xi) — 事件出现的概率
+Total information总的信息量
+12/38
+Example 2 :A source has three symbols A, B, C with probabilities:
+𝑃 𝐴 = 1/2, 𝑃 𝐵 = 1/4, 𝑃 𝐶 = 1/4
+A 10-symbol message: A A B C A B A C A A.
+Find the total information of this message.\n\n===== PAGE 13 =====\nPrinciple of Communications  Chapter 1 Introduction part 2
+Total information总的信息量
+13/38
+Example 2 :A source has three symbols A, B, C with probabilities:
+𝑃 𝐴 = 1/2, 𝑃 𝐵 = 1/4, 𝑃 𝐶 = 1/4
+A 10-symbol message: A A B C A B A C A A.
+Find the total information of this message.
+I(A)=−log1/2​=1 bit；𝐼 𝐵 = −log2
+1
+4 = 2 bit；𝐼 𝐶 = 2 bit
+N — 事件个数，
+ni — 某事件出现的次数
+p(xi) — 事件出现的概率
+ Itotal​=6×1+2×2+2×2=6+4+4=14 bit\n\n===== PAGE 14 =====\nPrinciple of Communications  Chapter 1 Introduction part 2
+14/38
+I  =   ？平均信息量
+ Entropy\n\n===== PAGE 15 =====\nPrinciple of Communications  Chapter 1 Introduction part 2
+The mean of  I(xk)  over the source  X  is given by
+ 
+1
+2
+1
+( ) ( )
+()
+1log
+k
+N
+kk
+k
+N
+k
+k k
+H x E I x
+p I x
+p p
+=
+=
+=
+=
+= 
+
+
+
+It is a measure of the 
+average information 
+content per source symbol. 
+玻尔兹曼：系统的宏观物理性质，可
+以认为是所有可能微观状态的等概率
+统计平均值。
+Entropy of source  —（熵）平均信息量
+15/38
+A system's macroscopic properties are the 
+equal-probability average over all its 
+possible microscopic states.\n\n===== PAGE 16 =====\nPrinciple of Communications  Chapter 1 Introduction part 2
+16/38
+Example 3: A discrete source has four possible symbols x1,x2,x3,x4 with 
+probabilities: p(x1)=1/4, p(x2)=1/8, p(x3)=1/8, p(x4)=1/2
+Find the entropy of this source (in bits per symbol).\n\n===== PAGE 17 =====\nPrinciple of Communications  Chapter 1 Introduction part 2
+◆Solution:   
+17/38
+4
+2
+1
+1( ) ( )log ()
+    
+i
+i i
+H x P x Px=
+=
+Example 3: A discrete source has four possible symbols x1,x2,x3,x4
+with probabilities: p(x1)=1/4, p(x2)=1/8, p(x3)=1/8, p(x4)=1/2
+Find the entropy of this source (in bits per symbol).\n\n===== PAGE 18 =====\nPrinciple of Communications  Chapter 1 Introduction part 2
+18/38
+4
+2
+1
+2 2 2
+1( ) ( )log ()
+1 1 1 1 1 1         = log +2 log + log4 1/ 4 8 1/ 8 2 1/ 2
+1 1 1         = 2+2 34 8 2
+         =1.75 (bit/state)
+i
+i i
+H x P x Px=
+=
+
+   +
+
+Example 3: A discrete source has four possible symbols x1,x2,x3,x4
+with probabilities: p(x1)=1/4, p(x2)=1/8, p(x3)=1/8, p(x4)=1/2
+Find the entropy of this source (in bits per symbol).
+◆Solution:   \n\n===== PAGE 19 =====\nPrinciple of Communications  Chapter 1 Introduction part 2
+4
+22
+1
+( ) ( )log ( ) i
+i
+H x P x P x
+=
+=−
+19/38
+Example 4: A discrete source has four possible symbols x1,x2,x3,x4
+with equal probabilities.Find the entropy of this source (in bits per 
+symbol).
+◆Solution:   \n\n===== PAGE 20 =====\nPrinciple of Communications  Chapter 1 Introduction part 2
+4
+22
+1
+( ) ( )log ( ) i
+i
+H x P x P x
+=
+=−
+20/38
+(bit/symbol)
+= 2
+结论： 等概时
+22
+1( ) log log1/H x M M==
+Example 4: A discrete source has four possible symbols x1,x2,x3,x4
+with equal probabilities.Find the entropy of this source (in bits per 
+symbol).
+◆Solution:   \n\n===== PAGE 21 =====\nPrinciple of Communications  Chapter 1 Introduction part 2
+Principles of Communications
+Chapter 1 Introduction
+21/38
+1.1 Communication system model
+1.2 The classification of communication systems
+1.3 Information and its measurement
+1.4 The main performance index
+ \n\n===== PAGE 22 =====\nPrinciple of Communications  Chapter 1 Introduction part 2
+◆ The basic performance index：有效性和可靠性
+⚫ Efficiency：指传输一定信息量时所占用的信道资源（频带
+宽度和时间间隔），或者说是传输的“速度”问题。
+⚫ Reliability：指接收信息的准确程度，也就是传输的“质量”
+问题。
+◆ Analog communication system：
+⚫ Efficiency ： Effective transmission bandwidth
+⚫ Reliability ：the output SNR of the demodulator
+Efficiency & Reliability
+1.4 The main performance index
+22/38\n\n===== PAGE 23 =====\nPrinciple of Communications  Chapter 1 Introduction part 2
+23/38
+Source of
+information Transmitter Channel Receiver User of
+information
+Noise
+modulation demodulation
+1.4 The main performance index\n\n===== PAGE 24 =====\nPrinciple of Communications  Chapter 1 Introduction part 2
+◆Digital communication systems
+⚫ Efficiency ：transmission rate or band utilization 
+• Symbol  rate RB：the number of symbols transmitted in unit 
+time (s), T is symbols duration and unit is Baud，i.e. B.
+• Information rate Rb：the average information content 
+transmitted in unit time, the unit is b/s.
+)B(1
+TRB =
+24/38
+\n\n===== PAGE 25 =====\nPrinciple of Communications  Chapter 1 Introduction part 2
+Example 1
+In a digital communication system, the symbol duration is T=0.2ms. 
+The system adopts octal transmission (each symbol carries 3 bits of 
+information).
+①Calculate the symbol rate  RB (Baud).
+②Calculate the information bit rate Rb (bit/s).
+25/38\n\n===== PAGE 26 =====\nPrinciple of Communications  Chapter 1 Introduction part 2
+• The relationship between Rb and RB
+         or 
+For binary digital signals：
+    M = 2, 
+For example，when M = 8，if  RB is 1200 B, then
+)b/s(log 2 MRR Bb =
+)B(log2 M
+RR b
+B =
+bBRR=
+Independent equal 
+probability  (独立等概)
+26/38
+Rb is 3600 b/s.
+Non-equal probability  (非等概)
+( )   (b/s)bBR R H x=
+\n\n===== PAGE 27 =====\nPrinciple of Communications  Chapter 1 Introduction part 2
+出门测 (2024期末)：
+Suppose that an information source is composed of 4 
+different symbols, with the probabilities of 1/4, 1/8, 1/8 
+and 1/2. If the source sends out 2400 independent 
+symbols per second, try to find the average information 
+rate of the information source.
+27/38\n\n===== PAGE 28 =====\nPrinciple of Communications  Chapter 1 Introduction part 2
+• Band utilization : the transmission rate in unit bandwidth(1Hz), 
+i.e.
+⚫ Reliability ：Pe or Pb
+➢ Symbol error rate   
+➢ Bit error rate
+For binary system
+)B/Hz(B
+RB=
+Hz)b/(s= B
+Rb
+b
+eb PP =
+or
+28/38\n\n===== PAGE 29 =====\nPrinciple of Communications  Chapter 1 Introduction part 2
+Example for Pe
+29/38
+\n\n===== PAGE 30 =====\nPrinciple of Communications  Chapter 1 Introduction part 2
+Channel 
+encoder
+Channel 
+decoder
+Source 
+encoder
+Source  
+decoder
+Modulator Demodulator
+channel
+Source of 
+information
+User of 
+information
+Encryption Decryption
+Digital communication model
+30/38
+Transmitter Receiver
+信源编码器
+信道编码器
+调制器
+Noise\n\n===== PAGE 31 =====\nPrinciple of Communications  Chapter 1 Introduction part 2
+Table1.4.1 Performance index comparison 
+31/38\n\n===== PAGE 32 =====\nPrinciple of Communications  Chapter 1 Introduction part 2
+Table1.4.1 Performance index comparison 
+32/38\n\n===== PAGE 33 =====\nPrinciple of Communications  Chapter 1 Introduction part 2
+复习《信号与系统》: 能量信号与功率信号，常用信号的傅里叶变换。
+自学中文教材（樊昌信版本） 第二章 确知信号
+Schoolwork
+33/38
+\n\n===== PAGE 34 =====\nPrinciple of Communications  Chapter 1 Introduction part 2
+Mind map
+34/38\n\n===== PAGE 35 =====\nPrinciple of Communications  Chapter 1 Introduction part 2
+Vocabulary
+35/38\n\n===== PAGE 36 =====\nTasks for week 2
+1 Schoolwork（必）
+2 Mind map & Summary and discussion（必）
+3 Mini design（必）
+                   
+36
