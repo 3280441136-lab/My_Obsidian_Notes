@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" width="1200" height="700" role="img" aria-labelledby="title desc">
+  <title id="title">从自信息到信息熵</title>
+  <desc id="desc">具体结果产生自信息，再按照结果概率加权平均得到信息熵。</desc>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 Z" fill="#2563eb"/>
+    </marker>
+    <style>
+      .title{font:700 30px "Microsoft YaHei",sans-serif;fill:#172554}
+      .head{font:700 21px "Microsoft YaHei",sans-serif;fill:#1d4ed8}
+      .text{font:18px "Microsoft YaHei",sans-serif;fill:#1f2937}
+      .formula{font:22px "Cambria Math","Times New Roman",serif;fill:#991b1b}
+      .box{fill:#eff6ff;stroke:#2563eb;stroke-width:3;rx:18}
+      .result{fill:#ecfdf5;stroke:#059669;stroke-width:3;rx:18}
+    </style>
+  </defs>
+  <rect width="1200" height="700" fill="#ffffff"/>
+  <text class="title" x="600" y="55" text-anchor="middle">具体结果的意外程度，如何变成信源的平均不确定性</text>
+
+  <rect class="box" x="75" y="130" width="320" height="190"/>
+  <text class="head" x="235" y="172" text-anchor="middle">具体结果 \(x_i\)</text>
+  <text class="text" x="105" y="215">概率：\(P(x_i)\)</text>
+  <text class="formula" x="105" y="260">\(I(x_i)=-\log_2P(x_i)\)</text>
+  <text class="text" x="105" y="300">结果越意外，自信息越大</text>
+
+  <path d="M395 225 H505" fill="none" stroke="#2563eb" stroke-width="4" marker-end="url(#arrow)"/>
+
+  <rect class="box" x="510" y="115" width="350" height="235"/>
+  <text class="head" x="685" y="158" text-anchor="middle">对所有结果求加权平均</text>
+  <text class="text" x="545" y="205">权重不是相同次数，而是出现概率</text>
+  <text class="formula" x="545" y="255">\(H(X)=\sum_iP(x_i)I(x_i)\)</text>
+  <text class="formula" x="545" y="305">\(=-\sum_iP(x_i)\log_2P(x_i)\)</text>
+
+  <path d="M860 225 H970" fill="none" stroke="#2563eb" stroke-width="4" marker-end="url(#arrow)"/>
+
+  <rect class="result" x="975" y="130" width="165" height="190"/>
+  <text class="head" x="1057" y="185" text-anchor="middle">信息熵</text>
+  <text class="formula" x="1057" y="235" text-anchor="middle">\(H(X)\)</text>
+  <text class="text" x="1057" y="278" text-anchor="middle">输出前：</text>
+  <text class="text" x="1057" y="305" text-anchor="middle">平均不确定性</text>
+
+  <rect x="135" y="435" width="930" height="165" rx="16" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
+  <text class="head" x="165" y="480">不要混淆两个层次</text>
+  <text class="text" x="165" y="525">\(I(x_i)\)：一个结果发生以后，这次具体获得了多少信息</text>
+  <text class="text" x="165" y="562">\(H(X)\)：结果揭晓以前，根据概率分布计算出的长期平均信息量</text>
+</svg>

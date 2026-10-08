@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" width="1200" height="700" role="img" aria-labelledby="title desc">
+  <title id="title">平稳有记忆信源中三种熵的关系</title>
+  <desc id="desc">利用历史越多，剩余不确定性越低；平均符号熵位于两种极端之间。</desc>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 Z" fill="#2563eb"/>
+    </marker>
+    <style>
+      .title{font:700 30px "Microsoft YaHei",sans-serif;fill:#172554}
+      .head{font:700 21px "Microsoft YaHei",sans-serif;fill:#1d4ed8}
+      .text{font:18px "Microsoft YaHei",sans-serif;fill:#1f2937}
+      .formula{font:23px "Cambria Math","Times New Roman",serif;fill:#991b1b}
+      .box{fill:#eff6ff;stroke:#2563eb;stroke-width:3;rx:18}
+    </style>
+  </defs>
+  <rect width="1200" height="700" fill="#ffffff"/>
+  <text class="title" x="600" y="55" text-anchor="middle">利用的历史越多，预测下一符号所需的新增信息越少</text>
+
+  <rect class="box" x="75" y="155" width="300" height="165"/>
+  <text class="head" x="225" y="200" text-anchor="middle">不使用历史</text>
+  <text class="formula" x="225" y="250" text-anchor="middle">\(H(X_1)\)</text>
+  <text class="text" x="225" y="292" text-anchor="middle">基本信源熵</text>
+
+  <path d="M375 235 H475" fill="none" stroke="#2563eb" stroke-width="4" marker-end="url(#arrow)"/>
+
+  <rect class="box" x="480" y="155" width="300" height="165"/>
+  <text class="head" x="630" y="200" text-anchor="middle">平均使用历史</text>
+  <text class="formula" x="630" y="250" text-anchor="middle">\(\overline H_N\)</text>
+  <text class="text" x="630" y="292" text-anchor="middle">长度 \(N\) 的平均符号熵</text>
+
+  <path d="M780 235 H880" fill="none" stroke="#2563eb" stroke-width="4" marker-end="url(#arrow)"/>
+
+  <rect class="box" x="885" y="155" width="255" height="165"/>
+  <text class="head" x="1012" y="200" text-anchor="middle">使用完整历史</text>
+  <text class="formula" x="1012" y="250" text-anchor="middle">\(H(X_N\mid X^{N-1})\)</text>
+  <text class="text" x="1012" y="292" text-anchor="middle">下一符号条件熵</text>
+
+  <rect x="125" y="405" width="950" height="95" rx="16" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+  <text class="formula" x="600" y="450" text-anchor="middle">\(H(X_N\mid X^{N-1})\leq \overline H_N\leq H(X_1)\)</text>
+  <text class="text" x="600" y="483" text-anchor="middle">平稳有记忆信源的一般大小关系</text>
+
+  <rect x="125" y="555" width="950" height="80" rx="14" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
+  <text class="text" x="600" y="588" text-anchor="middle">相关性 → 历史具有预测力 → 条件熵下降 → 存在统计冗余和压缩空间</text>
+  <text class="text" x="600" y="618" text-anchor="middle">无记忆时三种熵相等</text>
+</svg>

@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" width="1200" height="700" role="img" aria-labelledby="title desc">
+  <title id="title">信源建模的三个独立维度</title>
+  <desc id="desc">从现实信源出发，分别按时间结构、取值形式和输出关系建模。</desc>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 Z" fill="#2563eb"/>
+    </marker>
+    <style>
+      .title{font:700 30px "Microsoft YaHei",sans-serif;fill:#172554}
+      .head{font:700 22px "Microsoft YaHei",sans-serif;fill:#1d4ed8}
+      .text{font:18px "Microsoft YaHei",sans-serif;fill:#1f2937}
+      .small{font:16px "Microsoft YaHei",sans-serif;fill:#475569}
+      .box{fill:#eff6ff;stroke:#2563eb;stroke-width:3;rx:18}
+      .soft{fill:#f8fafc;stroke:#64748b;stroke-width:2;rx:14}
+    </style>
+  </defs>
+  <rect width="1200" height="700" fill="#ffffff"/>
+  <text class="title" x="600" y="55" text-anchor="middle">信源不是一张分类树，而是三个建模维度</text>
+
+  <rect class="box" x="70" y="125" width="250" height="105"/>
+  <text class="head" x="195" y="165" text-anchor="middle">现实信源</text>
+  <text class="small" x="195" y="200" text-anchor="middle">字符、温度、语音、状态……</text>
+
+  <path d="M320 178 C390 178 405 130 475 130" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
+  <path d="M320 178 C390 178 405 295 475 295" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
+  <path d="M320 178 C390 178 405 465 475 465" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow)"/>
+
+  <rect class="soft" x="475" y="90" width="645" height="125"/>
+  <text class="head" x="505" y="125">① 时间结构</text>
+  <text class="text" x="505" y="158">一次输出：随机变量 \(X\)</text>
+  <text class="text" x="505" y="188">离散时刻序列：\(\{X_n\}\)　连续时间波形：\(\{X(t)\}\)</text>
+
+  <rect class="soft" x="475" y="255" width="645" height="125"/>
+  <text class="head" x="505" y="290">② 取值形式</text>
+  <text class="text" x="505" y="323">离散取值：概率分布　　连续取值：概率密度</text>
+  <text class="text" x="505" y="353">采样改变时间形式；量化改变取值形式</text>
+
+  <rect class="soft" x="475" y="420" width="645" height="155"/>
+  <text class="head" x="505" y="455">③ 输出之间的关系</text>
+  <text class="text" x="505" y="488">平稳性：统计规则是否随时间平移而改变</text>
+  <text class="text" x="505" y="518">记忆性：历史能否帮助预测当前输出</text>
+  <text class="text" x="505" y="548">马尔可夫性：预测当前输出需要记住多长历史</text>
+
+  <rect x="70" y="615" width="1050" height="50" rx="12" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text class="small" x="595" y="647" text-anchor="middle">三个维度可以同时成立，例如：离散取值、平稳、具有有限记忆的信源</text>
+</svg>
