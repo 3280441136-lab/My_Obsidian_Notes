@@ -7,12 +7,12 @@
   <g transform="translate(70 135)">
     <rect x="0" y="0" width="500" height="300" rx="18" class="box"/>
     <text x="250" y="38" text-anchor="middle" class="t s">L 型：端点直接决定 Q</text>
-    <text x="250" y="115" text-anchor="middle" class="t eq">R_low → R_high</text>
+    <text x="250" y="115" text-anchor="middle" class="t eq">R<tspan baseline-shift="sub" font-size="0.72em">low</tspan> → R<tspan baseline-shift="sub" font-size="0.72em">high</tspan></text>
     <line x1="135" y1="155" x2="365" y2="155" class="w"/>
     <circle cx="135" cy="155" r="9" fill="#172033"/><circle cx="365" cy="155" r="9" fill="#172033"/>
-    <text x="135" y="205" text-anchor="middle" class="t eq">R_low</text>
-    <text x="365" y="205" text-anchor="middle" class="t eq">R_high</text>
-    <text x="250" y="260" text-anchor="middle" class="t eq">Q = √(R_high/R_low − 1)</text>
+    <text x="135" y="205" text-anchor="middle" class="t eq">R<tspan baseline-shift="sub" font-size="0.72em">low</tspan></text>
+    <text x="365" y="205" text-anchor="middle" class="t eq">R<tspan baseline-shift="sub" font-size="0.72em">high</tspan></text>
+    <text x="250" y="260" text-anchor="middle" class="t eq">Q = √(R<tspan baseline-shift="sub" font-size="0.72em">high</tspan>/R<tspan baseline-shift="sub" font-size="0.72em">low</tspan> − 1)</text>
     <text x="250" y="288" text-anchor="middle" class="t n">没有独立调节带宽的中间量</text>
   </g>
 
@@ -32,5 +32,6 @@
   </g>
 
   <rect x="125" y="480" width="950" height="48" rx="12" fill="#fff4df" stroke="#e1a34a"/>
-  <text x="600" y="511" text-anchor="middle" class="t eq">T：C_T = C₁ + C₂；π：L_π = L₁ + L₂</text>
+  <text x="600" y="511" text-anchor="middle" class="t eq">T：C<tspan baseline-shift="sub" font-size="0.72em">T</tspan> = C₁ + C₂；π：L<tspan baseline-shift="sub" font-size="0.72em">π</tspan> = L₁ + L₂</text>
 </svg>
+
