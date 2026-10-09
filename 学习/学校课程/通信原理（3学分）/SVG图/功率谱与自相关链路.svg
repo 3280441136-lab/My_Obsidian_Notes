@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="520" viewBox="0 0 1080 520">
+  <title>自相关函数与功率谱密度</title>
+  <desc>图示从时域自相关函数经过傅里叶变换得到功率谱密度，再通过零时差得到平均功率的学习链路。</desc>
+  <defs>
+    <marker id="arrow2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#334155"/></marker>
+    <style>.b{fill:#f8fafc;stroke:#334155;stroke-width:2}.h{font:700 21px sans-serif;fill:#0f172a}.t{font:17px sans-serif;fill:#334155}.s{font:15px sans-serif;fill:#475569}.a{stroke:#334155;stroke-width:3;fill:none;marker-end:url(#arrow2)}</style>
+  </defs>
+  <rect width="1080" height="520" fill="#ffffff"/>
+  <text x="45" y="48" class="h">从时域统计量到频域功率分布</text>
+  <rect x="55" y="130" width="245" height="180" rx="16" class="b"/>
+  <text x="82" y="172" class="h">自相关函数</text>
+  <text x="82" y="215" class="t">比较两个时刻</text>
+  <text x="82" y="250" class="t">描述时间上的联系</text>
+  <text x="82" y="285" class="s">零时差给出平均功率</text>
+  <rect x="405" y="130" width="245" height="180" rx="16" class="b"/>
+  <text x="432" y="172" class="h">傅里叶变换</text>
+  <text x="432" y="215" class="t">把时间差转换成频率</text>
+  <text x="432" y="250" class="t">保留统计平均意义</text>
+  <text x="432" y="285" class="s">维纳辛钦关系</text>
+  <rect x="755" y="130" width="265" height="180" rx="16" class="b"/>
+  <text x="782" y="172" class="h">功率谱密度</text>
+  <text x="782" y="215" class="t">功率随频率的分布</text>
+  <text x="782" y="250" class="t">曲线下的总面积</text>
+  <text x="782" y="285" class="s">等于平均功率</text>
+  <path d="M315 220 L395 220" class="a"/>
+  <path d="M665 220 L745 220" class="a"/>
+  <text x="326" y="198" class="s">变换</text>
+  <text x="676" y="198" class="s">反变换</text>
+  <path d="M530 325 L530 405" class="a"/>
+  <rect x="355" y="415" width="350" height="62" rx="14" fill="#ecfdf5" stroke="#0f766e" stroke-width="2"/>
+  <text x="385" y="453" class="t">零时差或频域积分得到总功率</text>
+</svg>

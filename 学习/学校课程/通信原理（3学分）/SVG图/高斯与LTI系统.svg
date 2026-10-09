@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="560" viewBox="0 0 1100 560">
+  <title>高斯随机过程与线性系统</title>
+  <desc>图示高斯过程的有限维联合分布由均值向量和协方差矩阵决定，线性时不变系统保持宽平稳性和高斯性。</desc>
+  <defs>
+    <marker id="arrow4" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#334155"/></marker>
+    <style>.b{fill:#f8fafc;stroke:#334155;stroke-width:2}.h{font:700 21px sans-serif;fill:#0f172a}.t{font:17px sans-serif;fill:#334155}.s{font:15px sans-serif;fill:#475569}.a{stroke:#334155;stroke-width:3;fill:none;marker-end:url(#arrow4)}</style>
+  </defs>
+  <rect width="1100" height="560" fill="#ffffff"/>
+  <text x="45" y="50" class="h">高斯随机过程与线性系统的保持性</text>
+  <rect x="55" y="135" width="260" height="125" rx="16" class="b"/>
+  <text x="82" y="177" class="h">宽平稳随机过程</text>
+  <text x="82" y="216" class="t">均值恒定</text>
+  <text x="82" y="246" class="t">相关只依赖时间差</text>
+  <rect x="55" y="325" width="260" height="125" rx="16" class="b"/>
+  <text x="82" y="367" class="h">高斯随机过程</text>
+  <text x="82" y="406" class="t">任意有限时刻联合高斯</text>
+  <text x="82" y="436" class="t">由均值向量和协方差矩阵决定</text>
+  <rect x="430" y="235" width="255" height="125" rx="16" fill="#e0f2fe" stroke="#0284c7" stroke-width="3"/>
+  <text x="470" y="278" class="h">线性时不变系统</text>
+  <text x="470" y="318" class="t">时域卷积</text>
+  <text x="470" y="348" class="t">频域乘以系统函数</text>
+  <rect x="815" y="135" width="230" height="125" rx="16" fill="#ecfdf5" stroke="#0f766e" stroke-width="3"/>
+  <text x="850" y="177" class="h">输出仍宽平稳</text>
+  <text x="850" y="216" class="t">输出均值被系统函数定标</text>
+  <text x="850" y="246" class="t">输出功率谱被功率增益定标</text>
+  <rect x="815" y="325" width="230" height="125" rx="16" fill="#ecfdf5" stroke="#0f766e" stroke-width="3"/>
+  <text x="850" y="367" class="h">输出仍高斯</text>
+  <text x="850" y="406" class="t">线性组合保持联合高斯</text>
+  <text x="850" y="436" class="t">只改变均值和协方差</text>
+  <path d="M325 198 L420 275" class="a"/>
+  <path d="M325 388 L420 330" class="a"/>
+  <path d="M695 275 L805 198" class="a"/>
+  <path d="M695 330 L805 388" class="a"/>
+</svg>

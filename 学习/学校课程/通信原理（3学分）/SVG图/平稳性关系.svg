@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="560" viewBox="0 0 1080 560">
+  <title>平稳性与遍历性的关系</title>
+  <desc>图示遍历过程蕴含严平稳，严平稳蕴含宽平稳；宽平稳和严平稳反向均不成立。</desc>
+  <defs>
+    <marker id="arrow3" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#334155"/></marker>
+    <style>.b{fill:#f8fafc;stroke:#334155;stroke-width:2}.h{font:700 22px sans-serif;fill:#0f172a}.t{font:17px sans-serif;fill:#334155}.s{font:15px sans-serif;fill:#475569}.a{stroke:#334155;stroke-width:3;fill:none;marker-end:url(#arrow3)}</style>
+  </defs>
+  <rect width="1080" height="560" fill="#ffffff"/>
+  <text x="50" y="50" class="h">平稳性与遍历性的关系</text>
+  <rect x="390" y="105" width="300" height="92" rx="16" fill="#ecfdf5" stroke="#0f766e" stroke-width="3"/>
+  <text x="445" y="145" class="h">遍历过程</text>
+  <text x="420" y="178" class="s">时间平均可以代替集合平均</text>
+  <rect x="390" y="255" width="300" height="92" rx="16" class="b"/>
+  <text x="425" y="295" class="h">严平稳过程</text>
+  <text x="415" y="328" class="s">所有有限维分布不随时间平移改变</text>
+  <rect x="390" y="405" width="300" height="92" rx="16" class="b"/>
+  <text x="425" y="445" class="h">宽平稳过程</text>
+  <text x="415" y="478" class="s">均值恒定，相关只依赖时间差</text>
+  <path d="M540 200 L540 245" class="a"/>
+  <path d="M540 350 L540 395" class="a"/>
+  <text x="565" y="230" class="s">通常要求</text>
+  <text x="565" y="380" class="s">定义蕴含</text>
+  <path d="M385 300 C280 300 250 455 385 455" stroke="#dc2626" stroke-width="3" fill="none" marker-end="url(#arrow3)"/>
+  <text x="190" y="382" class="s" fill="#dc2626">反向不成立</text>
+  <path d="M695 155 C835 155 875 300 695 300" stroke="#dc2626" stroke-width="3" fill="none" marker-end="url(#arrow3)"/>
+  <text x="785" y="215" class="s" fill="#dc2626">反向不成立</text>
+</svg>

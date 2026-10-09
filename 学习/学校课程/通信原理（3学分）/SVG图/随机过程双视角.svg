@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="560" viewBox="0 0 1000 560">
+  <title>随机过程的双视角</title>
+  <desc>左列表示一次实验得到的样本函数，中列表示固定时刻的随机变量，右列表示所有可能样本组成的随机过程总体。</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#334155"/></marker>
+    <style>.box{fill:#f8fafc;stroke:#334155;stroke-width:2}.title{font:700 28px sans-serif;fill:#0f172a}.head{font:700 20px sans-serif;fill:#0f172a}.text{font:17px sans-serif;fill:#334155}.small{font:15px sans-serif;fill:#475569}.accent{fill:#0f766e}.line{stroke:#334155;stroke-width:3;fill:none;marker-end:url(#arrow)}</style>
+  </defs>
+  <rect width="1000" height="560" fill="#ffffff"/>
+  <text x="50" y="48" class="title">随机过程的双视角</text>
+  <rect x="55" y="105" width="250" height="300" rx="18" class="box"/>
+  <text x="85" y="145" class="head accent">一次实验</text>
+  <text x="85" y="185" class="text">固定一次随机结果</text>
+  <text x="85" y="225" class="text">得到一条样本函数</text>
+  <path d="M100 330 C135 250 165 380 205 300 S255 230 275 285" stroke="#2563eb" stroke-width="5" fill="none"/>
+  <path d="M100 300 C145 345 180 245 225 315 S265 345 275 260" stroke="#f97316" stroke-width="4" fill="none"/>
+  <text x="95" y="385" class="small">波形随时间变化</text>
+  <rect x="375" y="105" width="250" height="300" rx="18" class="box"/>
+  <text x="405" y="145" class="head accent">固定时刻</text>
+  <text x="405" y="185" class="text">比较所有可能样本</text>
+  <text x="405" y="225" class="text">得到一个随机变量</text>
+  <circle cx="500" cy="315" r="62" fill="#e0f2fe" stroke="#0284c7" stroke-width="3"/>
+  <circle cx="500" cy="315" r="18" fill="#0284c7"/>
+  <text x="432" y="415" class="small">幅度可能取多个值</text>
+  <rect x="695" y="105" width="250" height="300" rx="18" class="box"/>
+  <text x="725" y="145" class="head accent">总体模型</text>
+  <text x="725" y="185" class="text">所有可能波形</text>
+  <text x="725" y="225" class="text">以及出现规律</text>
+  <path d="M750 325 C780 245 810 380 845 300 S890 235 915 285" stroke="#2563eb" stroke-width="4" fill="none"/>
+  <path d="M750 300 C795 345 830 245 875 315 S915 350 930 260" stroke="#f97316" stroke-width="4" fill="none"/>
+  <path d="M750 345 C785 295 825 380 865 335 S915 300 935 335" stroke="#16a34a" stroke-width="4" fill="none"/>
+  <text x="725" y="415" class="small">随机过程是样本函数集合</text>
+  <path d="M315 255 L365 255" class="line"/>
+  <path d="M635 255 L685 255" class="line"/>
+  <text x="315" y="235" class="small">观察</text>
+  <text x="635" y="235" class="small">汇总</text>
+  <text x="55" y="505" class="text">样本函数是总体的一次实现；随机变量是随机过程在一个时刻的取值规律。</text>
+</svg>
