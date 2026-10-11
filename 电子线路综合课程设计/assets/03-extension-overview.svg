@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="650" viewBox="0 0 1400 650">
+  <defs>
+    <marker id="arrow3" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#334155"/></marker>
+    <style>.title{font:700 30px "Microsoft YaHei","Noto Sans CJK SC",sans-serif;fill:#0f172a}.head{font:700 23px "Microsoft YaHei","Noto Sans CJK SC",sans-serif;fill:#0f172a}.txt{font:600 18px "Microsoft YaHei","Noto Sans CJK SC",sans-serif;fill:#0f172a}.small{font:500 15px "Microsoft YaHei","Noto Sans CJK SC",sans-serif;fill:#334155}.box{fill:#eff6ff;stroke:#2563eb;stroke-width:2}.pink{fill:#fff1f2;stroke:#e11d48;stroke-width:2}.purple{fill:#f5f3ff;stroke:#7c3aed;stroke-width:2}.gold{fill:#fffbeb;stroke:#d97706;stroke-width:2}.line{stroke:#334155;stroke-width:3;fill:none;marker-end:url(#arrow3)}</style>
+  </defs>
+  <rect x="0" y="0" width="1400" height="650" fill="#fff"/>
+  <text x="50" y="55" class="title">任务三：扩展任务——三选一软件仿真总览</text>
+  <text x="50" y="90" class="small">初步倾向：混沌信号发生器；最终选项以老师要求、时间和组员基础为准</text>
+  <rect x="75" y="185" width="365" height="310" rx="20" class="pink"/>
+  <text x="258" y="230" text-anchor="middle" class="head">选项 1：Costas 环</text>
+  <text x="110" y="280" class="txt">目标</text><text x="205" y="280" class="small">提取载波并解调</text>
+  <text x="110" y="325" class="txt">核心模块</text><text x="205" y="325" class="small">I/Q 乘法器、低通、</text><text x="205" y="352" class="small">鉴相器、环路滤波、NCO</text>
+  <text x="110" y="410" class="txt">产出</text><text x="205" y="410" class="small">载波、相位误差、解调波形</text>
+
+  <rect x="515" y="185" width="365" height="310" rx="20" class="purple"/>
+  <text x="698" y="230" text-anchor="middle" class="head">选项 2：混沌信号发生器</text>
+  <text x="550" y="280" class="txt">目标</text><text x="645" y="280" class="small">产生确定性伪随机信号</text>
+  <text x="550" y="325" class="txt">核心模块</text><text x="645" y="325" class="small">定点加法、乘法、延时</text><text x="645" y="352" class="small">寄存器、参数设置</text>
+  <text x="550" y="410" class="txt">产出</text><text x="645" y="410" class="small">时域波形、相图、频谱</text>
+
+  <rect x="955" y="185" width="365" height="310" rx="20" class="gold"/>
+  <text x="1138" y="230" text-anchor="middle" class="head">选项 3：2PSK / 2DPSK</text>
+  <text x="990" y="280" class="txt">目标</text><text x="1085" y="280" class="small">数字调制与解调</text>
+  <text x="990" y="325" class="txt">核心模块</text><text x="1085" y="325" class="small">数据源、映射、载波、</text><text x="1085" y="352" class="small">匹配滤波、位同步、判决</text>
+  <text x="990" y="410" class="txt">产出</text><text x="1085" y="410" class="small">调制波形、眼图、误码率</text>
+
+  <rect x="230" y="555" width="940" height="58" rx="16" fill="#f8fafc" stroke="#64748b" stroke-width="2"/>
+  <text x="700" y="591" text-anchor="middle" class="small">软件仿真即可；FPGA 开发板、DAC、示波器属于额外演示，不是本任务的必要条件</text>
+</svg>

@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="620" viewBox="0 0 1400 620">
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#334155"/></marker>
+    <style>.title{font:700 30px "Microsoft YaHei","Noto Sans CJK SC",sans-serif;fill:#0f172a}.box{fill:#eff6ff;stroke:#2563eb;stroke-width:2}.box2{fill:#f0fdf4;stroke:#16a34a;stroke-width:2}.box3{fill:#fff7ed;stroke:#ea580c;stroke-width:2}.txt{font:600 20px "Microsoft YaHei","Noto Sans CJK SC",sans-serif;fill:#0f172a}.small{font:500 16px "Microsoft YaHei","Noto Sans CJK SC",sans-serif;fill:#334155}.line{stroke:#334155;stroke-width:3;fill:none;marker-end:url(#arrow)}</style>
+  </defs>
+  <rect x="0" y="0" width="1400" height="620" fill="#ffffff"/>
+  <text x="50" y="55" class="title">任务一：16 档可编程增益放大器——系统框图</text>
+  <text x="50" y="90" class="small">按键选择增益，模拟开关改变反馈电阻，运放完成放大</text>
+
+  <rect x="55" y="245" width="150" height="90" rx="16" class="box"/>
+  <text x="130" y="285" text-anchor="middle" class="txt">输入信号</text>
+  <text x="130" y="315" text-anchor="middle" class="small">正弦波 / 语音</text>
+
+  <rect x="285" y="245" width="180" height="90" rx="16" class="box"/>
+  <text x="375" y="285" text-anchor="middle" class="txt">输入隔离</text>
+  <text x="375" y="315" text-anchor="middle" class="small">缓冲 / 隔离</text>
+
+  <rect x="555" y="215" width="260" height="150" rx="16" class="box2"/>
+  <text x="685" y="255" text-anchor="middle" class="txt">增益可控放大</text>
+  <text x="685" y="292" text-anchor="middle" class="small">TL084 + CD4066</text>
+  <text x="685" y="325" text-anchor="middle" class="small">反馈电阻网络</text>
+
+  <rect x="905" y="245" width="180" height="90" rx="16" class="box"/>
+  <text x="995" y="285" text-anchor="middle" class="txt">输出缓冲</text>
+  <text x="995" y="315" text-anchor="middle" class="small">提高带载能力</text>
+
+  <rect x="1175" y="245" width="170" height="90" rx="16" class="box"/>
+  <text x="1260" y="285" text-anchor="middle" class="txt">输出信号</text>
+  <text x="1260" y="315" text-anchor="middle" class="small">示波器测量</text>
+
+  <path d="M205 290 L285 290 M465 290 L555 290 M815 290 L905 290 M1085 290 L1175 290" class="line"/>
+
+  <rect x="510" y="445" width="180" height="90" rx="16" class="box3"/>
+  <text x="600" y="485" text-anchor="middle" class="txt">按键 K</text>
+  <text x="600" y="515" text-anchor="middle" class="small">选择增益档位</text>
+
+  <rect x="755" y="445" width="180" height="90" rx="16" class="box3"/>
+  <text x="845" y="485" text-anchor="middle" class="txt">74LS279</text>
+  <text x="845" y="515" text-anchor="middle" class="small">按键消抖 / 状态保存</text>
+
+  <rect x="1000" y="445" width="180" height="90" rx="16" class="box3"/>
+  <text x="1090" y="485" text-anchor="middle" class="txt">74LS163</text>
+  <text x="1090" y="515" text-anchor="middle" class="small">生成 4 位增益码</text>
+
+  <path d="M690 490 L755 490 M935 490 L1000 490" class="line"/>
+  <path d="M1090 445 C1090 390 760 390 685 365" class="line"/>
+  <text x="685" y="420" text-anchor="middle" class="small">b0 b1 b2 b3 控制模拟开关</text>
+  <text x="1215" y="530" text-anchor="middle" class="small">可选：LED 显示当前档位</text>
+</svg>
