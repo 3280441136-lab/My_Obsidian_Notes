@@ -3,5 +3,6 @@
   "theme": "obsidian",
   "baseFontSizeAction": true,
   "textFontFamily": "Noto Serif SC",
-  "interfaceFontFamily": "Noto Serif SC"
+  "interfaceFontFamily": "Noto Serif SC",
+  "monospaceFontFamily": "Consolas"
 }
