@@ -2,5 +2,6 @@
   "cssTheme": "Catppuccin",
   "theme": "obsidian",
   "baseFontSizeAction": true,
-  "textFontFamily": "黑体"
+  "textFontFamily": "Noto Serif SC",
+  "interfaceFontFamily": "Noto Serif SC"
 }
