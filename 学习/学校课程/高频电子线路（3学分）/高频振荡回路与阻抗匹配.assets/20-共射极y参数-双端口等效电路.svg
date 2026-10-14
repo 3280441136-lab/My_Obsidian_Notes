@@ -9,6 +9,7 @@
   <text x="975" y="165" text-anchor="middle" class="t s">输出端口</text>
   <line x1="130" y1="227" x2="560" y2="227" class="w"/>
   <line x1="130" y1="464" x2="560" y2="464" class="w"/>
+  <line x1="560" y1="464" x2="760" y2="464" class="w"/>
   <line x1="760" y1="227" x2="1190" y2="227" class="w"/>
   <line x1="760" y1="464" x2="1190" y2="464" class="w"/>
   <circle cx="130" cy="227" r="6" fill="#24364b"/><circle cx="130" cy="464" r="6" fill="#24364b"/>
