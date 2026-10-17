@@ -1,4 +1,9 @@
 {
+  "quickAddPageSettings": {
+    "source": "previous",
+    "template": "ruled",
+    "paperColor": "#fffdf7"
+  },
   "pressureCaptureVersion": 1,
   "toolDefaults": {
     "activeTool": "pen",
@@ -101,7 +106,7 @@
   "showDrawingNotices": false,
   "showRenderTelemetry": false,
   "inkInputPolicy": "allow-touch",
-  "livePreviewMode": "balanced",
+  "livePreviewMode": "accurate",
   "inkRenderSettings": {
     "thinning": 0.5,
     "streamline": 0.5,
@@ -109,7 +114,14 @@
     "easing": "linear",
     "taperStart": 0,
     "taperEnd": 0,
-    "pressureMode": "auto"
+    "pressureMode": "auto",
+    "inkModel": "continuous-v1",
+    "edgeGeometryVersion": 2,
+    "widthSmoothingVersion": 2,
+    "widthSmoothing": "extra-smooth",
+    "smoothingMode": "pressure",
+    "pressureResponse": "gentle",
+    "strokeGeometry": "round"
   },
   "legacyInkRenderSettings": {
     "thinning": 0.5,

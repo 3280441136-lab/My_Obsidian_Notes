@@ -46,7 +46,8 @@
       "selectedModels": [],
       "outputStyle": null,
       "promptSuggestions": false,
-      "discoveredOutputStyles": []
+      "discoveredOutputStyles": [],
+      "sessionEnvironmentHash": "runtime-input:v1:ebc4ebc6ad9f613efdcf6ec714d83795d5000ef0a5a8d9955baf5dbec8f4fa98"
     },
     "codex": {
       "enabled": true,
@@ -62,14 +63,16 @@
         "gpt-5.2"
       ],
       "enableUltraEffort": false,
+      "responseStyle": "pragmatic",
+      "responseVerbosity": "default",
       "reasoningSummary": "none",
       "environmentVariables": "",
       "environmentHash": "runtime-input:v1:ed54f4f5238abeec7f65a5da1e468c9a639e157a7d1c7753b53f54ba1196e8a0",
+      "sessionEnvironmentHash": "runtime-input:v1:cf4a613a63a895356fbc95544817979656506c93b9fb3fe1c76833522e1c19fc",
       "installationMethodsByHost": {
         "device-6f0a58629d0f9770f30fa08b0ac6bd8f89d65bfa092a9436d4fbc22b109fe1b4": "native-windows"
       },
       "wslDistroOverridesByHost": {},
-      "responseStyle": "pragmatic",
       "selectedModels": [
         {
           "model": "gpt-5.6-sol",
@@ -270,8 +273,7 @@
           ],
           "isDefault": false
         }
-      ],
-      "responseVerbosity": "default"
+      ]
     },
     "opencode": {
       "cliPath": "",
@@ -293,6 +295,7 @@
       "environmentVariables": "",
       "modelAliases": {},
       "preferredThinkingByModel": {},
+      "sessionEnvironmentHash": "",
       "visibleModels": [],
       "selectedModels": []
     },
@@ -306,6 +309,19 @@
       "preferredReasoningByModel": {},
       "visibleModels": [],
       "selectedModelsByHost": {}
+    },
+    "deepseek": {
+      "enabled": false,
+      "codeMode": false,
+      "presetPlugins": "",
+      "cliPath": "",
+      "cliPathsByHost": {},
+      "environmentVariables": "",
+      "environmentHash": "",
+      "visibleModels": [],
+      "modelAliases": {},
+      "preferredReasoningByModel": {},
+      "selectedModels": []
     }
   },
   "settingsProvider": "codex",
@@ -313,6 +329,7 @@
     "providerId": "codex",
     "model": "gpt-5.6-sol"
   },
+  "inlineEditModel": null,
   "savedProviderModel": {
     "claude": "sonnet",
     "codex": "openai-codex/gpt-5.6-sol"
@@ -332,9 +349,11 @@
   "enableAutoScroll": true,
   "showMessageTimestamps": false,
   "deferMathRenderingDuringStreaming": true,
+  "pluginRenderedFenceLanguages": [],
   "expandFileEditsByDefault": false,
   "chatViewPlacement": "right-sidebar",
   "enableZenMode": true,
+  "zenModePosition": null,
   "enableDualPane": true,
   "dualPaneSide": "right",
   "restoreTabsOnStartup": true,
