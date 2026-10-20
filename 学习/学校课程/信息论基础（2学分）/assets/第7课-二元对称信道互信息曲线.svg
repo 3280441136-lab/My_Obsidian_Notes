@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="420" viewBox="0 0 1120 420" role="img" aria-label="二元对称信道互信息随输入概率和交叉概率的变化曲线">
+  <rect width="1120" height="420" fill="#ffffff"/>
+  <g font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" fill="#24313d">
+    <text x="310" y="38" text-anchor="middle" font-size="22" font-weight="600">固定信道，改变输入分布</text>
+    <text x="810" y="38" text-anchor="middle" font-size="22" font-weight="600">固定等概率输入，改变信道</text>
+    <text x="310" y="385" text-anchor="middle" font-size="17">输入一的概率</text>
+    <text x="810" y="385" text-anchor="middle" font-size="17">交叉概率</text>
+    <text transform="translate(48 190) rotate(-90)" text-anchor="middle" font-size="15">互信息（比特）</text>
+    <text transform="translate(548 190) rotate(-90)" text-anchor="middle" font-size="15">互信息（比特）</text>
+  </g>
+  <g stroke="#aab4bc" stroke-width="1">
+    <path d="M120 60V320H500 M620 60V320H1000" fill="none" stroke="#53616d" stroke-width="1.5"/>
+    <path d="M120 103H500 M120 190H500 M620 190H1000" stroke-dasharray="4 5"/>
+    <path d="M120 320v5 M310 320v5 M500 320v5 M620 320v5 M810 320v5 M1000 320v5"/>
+  </g>
+  <g font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="15" fill="#52606b">
+    <text x="108" y="325" text-anchor="end">0</text>
+    <text x="108" y="195" text-anchor="end">0.3</text>
+    <text x="108" y="108" text-anchor="end">0.5</text>
+    <text x="608" y="325" text-anchor="end">0</text>
+    <text x="608" y="195" text-anchor="end">0.5</text>
+    <text x="608" y="65" text-anchor="end">1</text>
+    <text x="120" y="345" text-anchor="middle">0</text>
+    <text x="310" y="345" text-anchor="middle">0.5</text>
+    <text x="500" y="345" text-anchor="middle">1</text>
+    <text x="620" y="345" text-anchor="middle">0</text>
+    <text x="810" y="345" text-anchor="middle">0.5</text>
+    <text x="1000" y="345" text-anchor="middle">1</text>
+    <text x="310" y="76" text-anchor="middle" fill="#b44535">翻转概率为百分之十</text>
+    <text x="810" y="76" text-anchor="middle" fill="#23758a">输入零和一等概率</text>
+  </g>
+  <path d="M120 320 L158 228.5 L196 165 L234 122.5 L272 98 L310 90 L348 98 L386 122.5 L424 165 L462 228.5 L500 320" fill="none" stroke="#c34a3b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M620 60 L658 182 L696 248 L734 289 L772 312 L810 320 L848 312 L886 289 L924 248 L962 182 L1000 60" fill="none" stroke="#23758a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="310" cy="90" r="5" fill="#c34a3b"/>
+  <circle cx="810" cy="320" r="5" fill="#23758a"/>
+</svg>
