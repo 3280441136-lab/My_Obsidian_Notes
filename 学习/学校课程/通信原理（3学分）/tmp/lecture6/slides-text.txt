@@ -1,0 +1,238 @@
+===== Slide 1 =====
+Principles of communications                 Chapter 3  Channel—Part I
+===== Slide 2 =====
+Chapter 3: Channel — Part I
+3.1 The classification of channels 信道的分类  --Wireless channels 无线信道  --Wire channel 有线信道3.2 Channel models 信道模型  --Modulation channel model（调制解调模型）  --Coding channel model（编码信道模型）3.3 Influence of the channel characteristics on transmission (for modulation model)信道特性对传输的影响3.4 Channel capacity (continuous channel) 信道容量
+===== Slide 3 =====
+We may classify communication channels in different ways:
+Wired channel：有线信道Wireless channel：无线信道
+Transmitted media
+Channel characteristic
+恒参信道
+随参信道
+3.1 The classification of channels 信道的分类
+===== Slide 4 =====
+Wired channel：有线信道Wireless channel：无线信道
+Transmitted media
+3.1 The classification of channels 信道的分类
+Wired channel:  guided propagation	--symmetrical cable: （对称电缆）	--coaxial cable（同轴电缆）	--optical fiber （光纤）Wireless channel: based on free propagation	--ground wave	--sky wave	--LOS (line of sight) 视距
+===== Slide 5 =====
+Wired channel: guided propagation  --symmetrical cable: twist wire   --coaxial cable（同轴电缆）  --optical fiber （光纤）
+电信号
+光信号
+3.1 The classification of channels 信道的分类
+天才简史：高锟（光纤之父）
+前香港中文大学校长高锟和George A. Hockham首先提出光纤可以用于通讯传输的设想，高锟因此获得2009年诺贝尔物理学奖。
+===== Slide 6 =====
+Wired channel: based on guided propagation	- symmetrical cable	-coaxial cable	-optical fiberWireless channel: based on free propagation	-ground wave	-sky wave	-LOS (Line of Sight)
+3.1 The classification of channels
+===== Slide 7 =====
+Wireless channel: based on free propagation	--ground wave	--sky wave--LOS (Line of Sight)
+< 2MHz
+2~30MHz
+10000km
+>30MHz
+Over hundreds to thousands of km
+短波电台
+===== Slide 8 =====
+Summary
+Wired Channel（有线信道）① Twisted-pair cable：Low cost, used for short-range LAN. Vulnerable to electromagnetic crosstalk.   成本低，短距离局域网（网线），易受干扰。② Coaxial cable：Better anti-interference performance than twisted pair; used in old CATV and surveillance systems.   抗干扰优于双绞线，早期有线电视、监控。③ Optical fiber：Excellent anti-interference, huge bandwidth, long transmission distance. Used for backbone & long-haul communication.   抗干扰极强、带宽大、远距离，骨干网、长途通信。
+===== Slide 9 =====
+Summary
+Wireless Channel（无线信道）① Ground wave：Propagates along the Earth’s surface. Suitable for long-distance medium & long wave; capable of diffracting around surface obstacles. 沿地球表面传播，适合长距离、中长波，可绕过地表障碍物。② Sky wave：Reflected by the ionosphere. Uses short waves for long-distance, intercontinental communication. 利用电离层反射传播，短波，可实现远距离、跨大洲通信。③ Line-of-Sight (LOS) propagation：Microwave travels in straight line with no obstruction between two points. Applications: base stations, satellites, wireless bridges. 视线传播：微波，两点之间无遮挡，直线传输（基站、卫星、无线网桥）。
+===== Slide 10 =====
+Matching Question
+10
+Channelssymmetrical cablecoaxial cableoptical fiberground wavesky waveLOS (line of sight)
+Applications Long-distance high-speed backbone transmissionB. Home telephone and short-     distance LAN C. Cable television (CATV) D. Microwave relay, point-to-point      LOS transmission E. Medium wave radio broadcasting F. Shortwave over-the-horizon long-     distance radio
+===== Slide 11 =====
+Example 1
+Assume a wireless link uses line-of-sight propagation for communication, and the heights of the transmitting antenna and the receiving antenna are both 80m.Find the maximum communication distance.
+===== Slide 12 =====
+Example 2
+理想自由空间传播衰落模型(Friis方程)
+===== Slide 13 =====
+62GHz
+23GHz
+120GHz
+180GHz
+350GHz
+Attenuation characteristics of the atmosphere
+Wireless channel: based on free propagation
+===== Slide 14 =====
+Chapter 3: Channel — Part I
+3.1 The classification of channels 信道的分类  --Wireless channels 无线信道  --Wire channel 有线信道3.2 Channel models 信道模型  --Modulation channel model（调制解调模型）  --Coding channel model（编码信道模型）3.3 Influence of the channel characteristics on transmission           信道特性对传输的影响3.4 Channel capacity (continuous channel) 信道容量
+===== Slide 15 =====
+3.2 Channel models 信道模型  --Modulation channel model（调制解调模型）  --Coding channel model（编码信道模型）
+Channel encoder
+Channel decoder
+Source encoder
+Source  decoder
+Modulator
+Demodulator
+channel
+Source of information
+User of information
+Encryption
+Decryption
+Noise
+Modulation channel
+Coding channel
+===== Slide 16 =====
+3.2 Channel models 信道模型  --Modulation channel model（调制解调模型）  --Coding channel model（编码信道模型）
+Channel encoder
+Channel decoder
+Source encoder
+Source  decoder
+Modulator
+Demodulator
+channel
+Source of information
+User of information
+Encryption
+Decryption
+Noise
+Modulation channel
+Coding channel
+===== Slide 17 =====
+3.2 Channel models 信道模型  --Modulation channel model（调制解调模型）  --Coding channel model（编码信道模型）
+Channel encoder
+Channel decoder
+Source encoder
+Source  decoder
+Modulator
+Demodulator
+channel
+Source of information
+User of information
+Encryption
+Decryption
+Noise
+Modulation channel
+Coding channel
+===== Slide 18 =====
+3.2 Channel models 信道模型  --Modulation channel model（调制解调模型）  --Coding channel model（编码信道模型）
+The modulation channel is a real physical channel, while the coding channel is merely an abstract model with statistical properties. 调制信道是真实物理信道，而编码信道仅仅是具有统计特性的抽象模型
+===== Slide 19 =====
+3.2 Channel models 信道模型  --Modulation channel model（调制解调模型）
+===== Slide 20 =====
+3.2 Channel models 信道模型  --Modulation channel model（调制解调模型）
+Constant parameter channels（恒参信道）Wire line（有线电话线）Coaxial cable（同轴电缆）Optical fiber（光纤）Microwave line-of-sight（视距微波）
+Random parameter channels（随参信道）Shortwave ionospheric channel（短波电离层）Mobile radio channel（移动通信无线信道）Troposcatter channel（对流层散射信道）
+===== Slide 21 =====
+3.2 Channel models 信道模型 --Coding channel model
+Binary coding channel model — Memoryless model
+转移概率
+===== Slide 22 =====
+Example 3
+===== Slide 23 =====
+===== Slide 24 =====
+𝒑( 𝒚 𝒌 /  𝒙 𝒋 )
+Transition probability
+X
+Y
+3.2 Channel models 信道模型 --Coding channel model（编码信道模型）
+Quaternary coding channel model
+===== Slide 25 =====
+Example
+(     ) 1. The modulation channel is located between the output of the modulator and the input of the demodulator.(     )2. The coding channel mainly analyzes waveform distortion and amplitude-frequency distortion of analog signals. (     ) 3. The performance of the coding channel depends on the noise and distortion from the modulation channel.
+What is the difference between modulation channel and coding channel?
+===== Slide 26 =====
+Chapter 3: Channel — Part I
+3.1 The classification of channels 信道的分类  --Wireless channels 无线信道  --Wire channel 有线信道3.2 Channel models 信道模型  --Modulation channel model（调制解调模型）  --Coding channel model（编码信道模型）3.3 Influence of the channel characteristics on transmission       信道特性对传输的影响--Influence of Constant parameter channels on transmission --Influence of Random parameter channels on transmissio
+===== Slide 27 =====
+3.3 Influence of the channel characteristics on transmission
+Ideal constant parameter channel transmission characteristics
+Or  Group delay（群延时）:
+Amplitude-frequency characteristic：
+Phase-frequency characteristic：
+===== Slide 28 =====
+3.3 Influence of the channel characteristics on transmission
+Ideal constant parameter channel transmission characteristics
+If the input signal is s(t), then output is:
+—— This case is called distortionless transmission.                                       无失真传输
+constant attenuation
+constant time delay
+===== Slide 29 =====
+𝐻(𝜔
+Insertion loss插入损耗
+Typical telephone channel:
+In practice
+Decrease of SNR  and increase ISI ( Inter-symbol interference)
+3.3 Influence of the channel characteristics on transmission
+Practical constant parameter channel are not ideal
+Linear compensation network线性补偿网络
+===== Slide 30 =====
+3.3 Influence of the channel characteristics on transmission
+Practical constant parameter channel are not ideal
+Example: The equivalent model of a constant parameter channel is shown in the following Figure. Analyze what kinds of distortion will occur when the signal transmits through this channel.
+===== Slide 31 =====
+3.3 Influence of the channel characteristics on transmission
+Practical constant parameter channel are not ideal
+Solution The transfer function of this channel is:
+===== Slide 32 =====
+Most wireless channels belong to random parameter channels.
+Three characteristics: Transmission attenuation of the signal is varying with time;  Transmission delay of the signal varies with time; Signal arrives at the receiver over several paths, i.e. multi-path propagation(多径传播)phenomenon exists.
+3.3 Influence of the channel characteristics on transmission   --Influence of Random parameter channels on transmission
+===== Slide 33 =====
+Influence of Random parameter channels on transmission--Multipath effect(多径效应):       The effect of multipath propagation on signals.
+Figure. 3.3.3   Model of a multipath channel.
+Constant amplitude &single frequency
+?
+===== Slide 34 =====
+The receiving signal is
+Influence of Random parameter channels on transmission--Multipath effect(多径效应):
+===== Slide 35 =====
+The receiving signal is 	It can be written as :
+Influence of Random parameter channels on transmission--Multipath effect(多径效应):
+===== Slide 36 =====
+Narrowband signal
+The receiving signal is 	It can be written as : 								             		    where                                                    --- Receiving envelope				                                              ---Receiving phase
+缓慢随机变化
+缓慢随机变化
+Influence of Random parameter channels on transmission--Multipath effect(多径效应):
+===== Slide 37 =====
+Transmitting
+Receiving
+Spectrum
+Conclusion: When a constant amplitude single tone sine wave  propagates to the receiver over n paths, the received signal can be regarded as a narrowband signal  with random varying envelope and phase. Its spectrum is diffused (弥散)
+waveform
+Influence of Random parameter channels on transmission--Multipath effect(多径效应):
+===== Slide 38 =====
+Transmitting
+Receiving
+Spectrum
+waveform
+Influence of Random parameter channels on transmission--Multipath effect(多径效应):
+This envelope fluctuation is called fast fading 快衰落 — the fading period is comparable to the symbol period.
+i.e. fading period≈ symbol period
+===== Slide 39 =====
+n=2
+A f(t ➖ 0)  A f(t ➖ 0 ➖ )
+f(t)
+F()
+Influence of Random parameter channels on transmission--Multipath effect(多径效应): ——简化场景： 只有两条传播路径
+===== Slide 40 =====
+n=2
+A f(t ➖ 0)  A f(t ➖ 0 ➖ )
+f(t)
+F()
+Influence of Random parameter channels on transmission--Multipath effect(多径效应): ——简化场景： 只有两条传播路径
+Discuss？
+===== Slide 41 =====
+Influence of Random parameter channels on transmission--Multipath effect(多径效应): ——简化场景：只有两条传播路径
+Constant attenuation
+Fixed time delay
+欧拉公式
+Since this fading depends on frequency, it is often referred to as frequency-selective fading（ 频率选择性衰落）.
+===== Slide 42 =====
+Influence of Random parameter channels on transmission--Multipath effect(多径效应): ——简化场景：只有两条传播路径
+Constant attenuation
+Fixed time delay
+欧拉公式
+In mobile 4G and 5G communications, this frequency-selective fading has a great impact on signals and degrades communication quality. So we need ways to solve this problem.
+===== Slide 43 =====
+Condition for frequency‑selective fading
+===== Slide 44 =====
+Example
+===== Slide 45 =====
