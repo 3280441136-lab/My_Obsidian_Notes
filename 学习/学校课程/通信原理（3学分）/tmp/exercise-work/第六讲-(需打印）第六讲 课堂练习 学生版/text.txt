@@ -1,0 +1,51 @@
+000 第六讲 Channel——Part I    2025.9.22
+001 Example1:Assume the transmitted power P_{T}=10 W, transmitting antenna gain G_{T}=100, receiving antenna gain G_{R}=10. The propagation distance is 50 km, and the electromagnetic wave frequency is 800 MHz. Calculate the received power and propagation loss.
+012 Example 2: A binary symmetric memoryless channel (BSC). Bit 0 and bit 1 are transmitted with equal probability. The error transition probabilities are P(1|0)=P(0|1)=0.005. Calculate the average bit error probability P_{e}.
+013 [IMAGE rId4]
+023 True & False
+024 (     ) 1. The modulation channel is located between the output of the modulator and the input of the demodulator.
+025 (     ) 2. The coding channel mainly analyzes waveform distortion and amplitude-frequency distortion of analog signals.
+026 (     ) 3. The performance of the coding channel depends on the noise and distortion from the modulation channel.
+027 Short answer question:
+028 What is the difference between modulation channel and coding channel?
+035 Example 3 : A two-path multi-path channel, the channel transfer function is
+036 H(ω)=Ae^{−jωτ_{0}}(1+e^{−jωτ}) The relative time delay between two paths is τ=2 μs.
+037 Find the frequencies where deep fading (nulls零点) happens.
+038 Calculate the coherence bandwidth of this two-ray channel.
+059 No.
+060 English
+061 中文
+062 1
+063 attenuation
+064 衰减
+065 2
+066 propagation
+067 传播
+068 3
+069 symmetrical cable
+070 对称电缆
+071 4
+072 coaxial cable
+073 同轴电缆
+074 5
+075 optical fiber
+076 光纤
+077 6
+078 ground wave
+079 地波
+080 7
+081 sky wave
+082 天波
+083 8
+084 LOS (line of sight)
+085 视距传播
+086 9
+087 constant parameter channel
+088 恒参信道
+089 10
+090 random parameter channel
+091 随参信道
+092 11
+093 frequency selective fading
+094 频率选择性衰落
+095 表1 专业词汇中英文对照

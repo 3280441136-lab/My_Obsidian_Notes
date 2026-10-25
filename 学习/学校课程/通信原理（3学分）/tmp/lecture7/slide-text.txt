@@ -1,0 +1,383 @@
+
+--- PAGE 1 ---
+
+          Principles of communications                 Chapter 3  Channel—Part II             Channel Capacity                   信道容量                                                                               
+
+--- PAGE 2 ---
+
+ |  | 
+ |  | 
+Twisted pairs
+Coaxial cable
+Optical Fiber
+Ground wave
+Short Wave
+Satellite(LOS)
+Chapter 3: Channel — Part II
+
+--- PAGE 3 ---
+
+Channel bandwidth B and Information rate Rb
+Channel bandwidth B is a key parameter in communication systems, describing the ability of a communication channel to transmit signals or data.
+Channel | B (Bandwidth) | Rb​ (bps)
+Wifi | Depends on standard
+ (e.g., ~20 - 160 MHz for Wi-Fi 6) | Up to ~9.6 Gbps (Wi-Fi 7)
+  Information rate Rb：
+the average information content transmitted in unit time, the unit is b/s or bps.
+
+--- PAGE 4 ---
+
+  Discussion
+Channel | B (Bandwidth) | Rb​ (bps)
+Twisted pairs |  | 
+Coaxial cable |  | 
+Optical Fiber |  | 
+Ground wave |  | 
+Short Wave |  | 
+Satellite(LOS) |  | 
+Wifi |  | 
+
+--- PAGE 5 ---
+
+Channel | B (Bandwidth) | Rb​ (bps)
+Twisted pairs | ~100/250 MHz | ~1 Gbps
+Coaxial cable | ~1 GHz | ~10 Gbps
+Optical Fiber | ~THz | ~100 Gbps
+Ground wave | ~kHz~MHz | ~Mbps
+Short Wave | ~MHz | ~tens kbps
+Satellite (LOS) | ~500 MHz~GHz | ~100 Mbps
+Wifi | ~20–160 MHz | ~9.6 Gbps
+Bandwidth is limited by the transmission medium.
+Transmission rate has an upper limit called channel capacity.
+Maximum
+
+--- PAGE 6 ---
+
+
+高速公路最大容量(车辆)
+光缆的最大容量 (信息量)
+Channel Capacity:信道容量
+How to compute the channel capacity of a communication system？
+
+--- PAGE 7 ---
+
+A Mathematical Theory of Communication，
+The Bell System Technical Journal, 1948
+Fifty Years of Shannon Theory，IEEE 1998
+天才简史——香农
+Channel Capacity:信道容量                       
+Shannon  theorem 香农定理
+
+--- PAGE 8 ---
+
+Definition
+Discrete Channel Capacity    离散信道容量
+Continous Channel Capacity 连续信道容量
+Examples
+Extension 扩展
+Channel Capacity:信道容量                       
+
+--- PAGE 9 ---
+
+Definition
+     Channel capacity: For a given channel, it is the maximum average information‑transmission rate that can be transmitted error‑free, representing an inherent limiting parameter of the channel itself.(对于给定信道，信道能够无差错传输的最大平均信息速率，是信道本身固有的极限参数。)
+Channel Capacity:信道容量                       
+
+--- PAGE 10 ---
+
+Definition
+Discrete Channel Capacity    离散信道容量
+Continous Channel Capacity 连续信道容量
+Examples
+Extension 扩展
+Channel Capacity:信道容量                       
+
+--- PAGE 11 ---
+
+
+
+
+Discrete Channel capacity:离散
+H(x)
+H(y) 
+H(x/y)
+Channel Capacity:信道容量                       
+Channel
+
+--- PAGE 12 ---
+
+
+
+
+Discrete Channel capacity:离散
+H(x)
+H(y) 
+H(x/y)
+Channel Capacity:信道容量                       
+Channel
+
+--- PAGE 13 ---
+
+
+Discrete Channel capacity:离散
+Channel Capacity:信道容量                       
+
+--- PAGE 14 ---
+
+
+Discrete Channel capacity——example
+
+--- PAGE 15 ---
+
+Mutual information 
+
+
+Nyquist rate
+   K=2BT
+Unit time is K/T
+
+Gaussian 
+distribution
+—Hartley   Y1928
+—Shannon Y1948
+Shannon-Hartley theorem 香农-哈特利定理
+Channel Capacity:信道容量                       
+
+--- PAGE 16 ---
+
+
+
+Where  S － average transmitted power（W）
+	          N－ noise power（W）
+	          B－channel bandwidth（Hz）
+ 
+
+
+For a continuous additive white Gaussian noise (AWGN) channel, the channel capacity is:
+Shannon-Hartley theorem 香农-哈特利定理
+Channel Capacity:信道容量                       
+What is the difference 
+between discrete and continuous channel capacity?
+
+--- PAGE 17 ---
+
+3.2 Channel models 信道模型
+  --Modulation channel model（调制解调模型）
+  --Coding channel model（编码信道模型）
+Channel encoder
+Channel decoder
+Source encoder
+Source  decoder
+ Modulator
+ Demodulator
+channel
+Source of information
+User of information
+Encryption
+Decryption
+
+
+
+
+
+
+
+
+
+
+
+
+Noise
+
+    Modulation channel
+Coding channel 
+
+--- PAGE 18 ---
+
+3.2 Channel models 信道模型
+  --Modulation channel model（调制解调模型）
+  --Coding channel model（编码信道模型）
+Channel encoder
+Channel decoder
+ Modulator
+ Demodulator
+channel
+
+
+
+
+
+
+Noise
+
+    Modulation channel
+Coding channel 
+The modulation channel is a real physical channel, 
+while the coding channel is merely an abstract model with statistical properties. 
+
+--- PAGE 19 ---
+
+Discrete Channel Capacity    离散信道容量
+    离散信道模型：高层抽象
+  用转移概率表征物理介质带来的差错。
+Continous Channel Capacity 连续信道容量
+    连续 AWGN 信道模型：底层物理视角
+  直接使用带宽、功率、噪声功率这些物理介质参数。
+Channel Capacity:信道容量                       
+
+--- PAGE 20 ---
+
+
+
+Where  S － average transmitted power（W）
+	          N－ noise power（W）
+	          B－channel bandwidth（Hz）
+ Suppose single power spectral density is n0，N = n0B.
+The channel capacity can be rewritten as：
+
+
+
+
+From the above equation, the capacity  of a continuous channel depends on 
+three factors: channel bandwidth B, signal power S, and noise’s PSD no.
+
+
+
+  Channel capacity——香农定理
+For a continuous additive white Gaussian noise (AWGN) channel, the channel capacity is:
+三要素
+
+--- PAGE 21 ---
+
+
+
+
+
+
+--- PAGE 22 ---
+
+
+--- PAGE 23 ---
+
+Example
+
+Conclusion:B and S/N can be traded off.
+                    带宽和信噪比可以互换
+Reduce the requirement on SNR
+
+--- PAGE 24 ---
+
+
+  3.4 Channel capacity——Examples
+
+--- PAGE 25 ---
+
+
+  3.4 Channel capacity——Examples
+
+--- PAGE 26 ---
+
+3  (25年期末) A geosynchronous satellite同步卫星 communication link has a carrier frequency of 14 GHz, the system bandwidth is 36 MHz between the transmitter and the receiver, and a signal to-noise ratio (SNR) of 30dB at the receiver.① Calculate the channel capacity.
+(提示: The SNR in dB must first be converted to a linear value.)
+②If the satellite communication link is affected by space rain attenuation, resulting in the receiver SNR dropping to 10dB while the bandwidth remains unchanged, how will the channel capacity change, calculate it.
+
+--- PAGE 27 ---
+
+③What intuitive impact(影响) does this change have on the service bearing capacity(服务承载能力) of satellite communication (e.g., high-definition video transmission高清视频传输, large data backhaul大数据回传)? 即简单讨论对通信服务质量的影响。
+
+--- PAGE 28 ---
+
+Definition
+Discrete Channel Capacity    离散信道容量
+Continous Channel Capacity 连续信道容量
+Examples
+Extension 扩展
+Channel Capacity:信道容量                       
+
+--- PAGE 29 ---
+
+
+Extension 拓展——example
+
+--- PAGE 30 ---
+
+Higher-order modulation gets closer to channel capacity.
+Higher-order modulation brings higher BER, and good channel coding is needed to improve the reliability of the communication system.
+高阶调制误码率更高，需要优良的信道编码来提升通信系统的可靠性。
+
+
+
+
+
+--- PAGE 31 ---
+
+Modulation: improves communication effectiveness (faster transmission, higher spectral efficiency) 
+Channel coding: guarantees communication reliability (accurate transmission, lower bit error rate)
+调制：提升通信有效性（传得快，频谱效率） 
+信道编码：保障通信可靠性（传得准，降低误码）
+
+--- PAGE 32 ---
+
+Extension 拓展：MIMO communication
+MIMO multiplexing复用: multiple antennas send different information to multiply data rate.多天线传输相互独立的信息，信息传输速率可以成倍提升。
+ MIMO diversity 分集: multiple antennas send the same information to enhance system reliability.多天线发送相同信息，增强系统可靠性。
+
+--- PAGE 33 ---
+
+Extension 拓展：MIMO communication
+The standard channel capacity formula for MIMO:
+
+--- PAGE 34 ---
+
+The standard channel capacity formula for MIMO:
+det:determinant 行列式
+
+--- PAGE 35 ---
+
+The standard channel capacity formula for MIMO:
+Approximate MIMO Capacity Formula 
+(High SNR & Rich Scattering)
+Special Case: 2×2 MIMO
+
+--- PAGE 36 ---
+
+Approximate MIMO Capacity Formula 
+(High SNR & Rich Scattering)
+Link | Antenna Config | min(Nt, Nr) | Channel Capacity
+Downlink | 4×2 MIMO 
+(BS 4Tx, UE 2Rx) |  | 
+Uplink | 1×4 
+(UE 1Tx, BS 4Rx) |  | 
+
+--- PAGE 37 ---
+
+
+3.2 A voice-grade channel of the telephone network has a bandwidth of 3.4kHz.
+(a)Calculate the information capacity of the telephone channel for a signal-to-noise ratio of 30dB
+(b) Calculate the minimum SNR required to support information transmission through the telephone channel at the rate of 9600bps
+
+作业
+
+--- PAGE 38 ---
+
+Mind map
+
+--- PAGE 39 ---
+
+
+--- PAGE 40 ---
+
+第一章 习  题 +  思维导图  +  Brief summary(精练）
+第二章 作业清单
+                + 思维导图（2人讨论完成，互签）可打印可手写
+                + Brief summary（精炼）手写
+ 
+第三章 作业清单+思维导图+summary
+
+
+双节大礼包
+
+--- PAGE 41 ---
+
+
+--- PAGE 42 ---

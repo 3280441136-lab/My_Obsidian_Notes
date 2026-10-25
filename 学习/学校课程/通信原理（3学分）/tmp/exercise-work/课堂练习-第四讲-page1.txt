@@ -1,0 +1,34 @@
+ 
+1
+                 第四讲 Random Processes——Part II    2025.9.17 
+Stationary Processes 
+练习一：判断(True or False) 
+(   ) Any ergodic random process must be wide-sense stationary.  
+任何各态历经（遍历）随机过程一定是宽平稳的。 
+(   ) A strictly stationary random process is always ergodic.  
+严平稳随机过程一定是各态历经（遍历）的。 
+(   ) All wide-sense stationary processes are strictly stationary.  
+中文：所有宽平稳随机过程都是严平稳的。 
+结论： 
+ 
+练习二：自相关函数的性质 
+Suppose 𝑋(𝑡) is a wide-sense stationary random process. Its auto correlation function is 
+𝑅𝑋(𝜏) = 16 + 9𝑒−2|𝜏|  
+Solve the following questions: 
+1) Find the average power of 𝑋(𝑡). 
+2) Find the DC power of 𝑋(𝑡). 
+3) Find the AC power of 𝑋(𝑡). 
+ 
+ 
+ 
+ 
+ 
+练习三：Gaussian Random Processes 
+判断(T or F): 
+(   )  For a general random process, strict-sense stationary implies wide-sense stationary.  
+对于一般随机过程，严平稳可以推出宽平稳。 
+(   )  If two random variables are uncorrelated, they must be statistically independent.  
+      若两个随机变量不相关，则它们一定统计独立。 
+(   )  For Gaussian random variables, uncorrelated means statistically independent. 
+      对于高斯随机变量，不相关等价于统计独立。 
+ 

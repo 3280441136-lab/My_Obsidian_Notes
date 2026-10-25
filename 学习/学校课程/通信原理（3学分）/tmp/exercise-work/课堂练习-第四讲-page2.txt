@@ -1,0 +1,33 @@
+ 
+2
+练习四 误码率Pe 的计算  Pe=
+1
+2 erfc (√
+Eb
+N0) 
+For a BPSK system over AWGN channel, the energy per bit Eb=4×10−6 J, single-sided noise 
+power spectral density N0=1×10−6 W/Hz. Given: erf (2)=0.995322 
+Calculate the bit error probability Pe. 
+ 
+ 
+ 
+ 
+ 
+ 
+练习五 Random Processes Passing through Linear Systems 
+Let X(t) be a stationary stochastic process with mean value a and auto correlation function 
+Rx(τ). Its output after passing through a linear system is  Y(t)=X(t)+X(t−T) 
+(1) Draw the block diagram of this linear system. 
+(2) Find the auto correlation function and power spectral density of Y(t). 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 

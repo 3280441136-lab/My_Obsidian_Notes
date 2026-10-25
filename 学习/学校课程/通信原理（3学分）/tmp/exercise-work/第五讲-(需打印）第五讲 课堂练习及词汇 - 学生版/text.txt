@@ -1,0 +1,50 @@
+000 英文术语
+001 中文术语
+002 Narrowband Random Process
+003 窄带随机过程
+004 In-phase and quadrature component
+005 同相、正交分量（I/Q 分量）
+006 Envelope-phase form
+007 包络 - 相位形式
+008 Rayleigh distribution
+009 瑞利分布
+010 Rician distribution
+011 莱斯分布
+012 Multi-path effect
+013 多径效应
+014 Gaussian white noise
+015 高斯白噪声
+016 Low-pass Gaussian noise
+017 低通高斯噪声
+018 Band-pass Gaussian noise
+019 带通高斯噪声
+020 Sine wave plus narrowband noise
+021 正弦波加窄带噪声
+022 表1 专业词汇中英文对照
+044 Table 1 Gaussian Noise at Different Stages in Communication System
+045 Gaussian distribution
+046 PSD分布
+047 R(τ) 曲线
+048 R(τ) 数学表达式
+049 功率P
+051 AGWN
+052 加性高斯白噪声
+062 Low-pass
+063 Gaussian noise
+072 Band-pass
+073 Gaussian noise
+085 第五讲 Random Processes——Part III    2025.9.19
+086 练习一：判断(True or False)
+087 1 (    ) Rician distribution can be regarded as a generalized Rayleigh distribution.
+088 莱斯分布可以看作是广义的瑞利分布。
+089 2 (   ) When there is no direct wave and only reflected waves, the envelope of received signal follows Rician distribution.
+090 不存在直射波，仅存在反射波时，接收信号的包络服从莱斯分布。
+091 3 (   ) A narrowband random process can be expressed by in-phase and quadrature components.
+092 窄带随机过程可以用同相分量和正交分量表示。
+093 4 (    ) Rayleigh distribution occurs when there exists a strong direct wave.
+094 当存在强直射波时，信号包络服从瑞利分布。
+095 5 (    ) Envelope-phase form is one representation of narrowband random process.
+096 包络-相位形式是窄带随机过程的一种表达形式。
+098 练习二 A zero-mean Gaussian white noise with power spectral density \frac{n_{0}}{2} is fed into an ideal band pass filter. The filter has a center frequency f_{c} and bandwidth B, as shown in the figure.(1) Find the auto-correlation function of the filter’s output noise.
+099 (2) Write down the one-dimensional probability density function of the output noise.
+100 \frac{}{}\frac{}{}\frac{}{}\frac{}{}\frac{}{}\frac{}{}\frac{}{}\frac{}{}\frac{}{}\frac{}{}\frac{}{}\frac{}{}

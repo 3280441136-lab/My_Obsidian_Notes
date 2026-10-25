@@ -1,0 +1,46 @@
+ 
+ 
+Table 2   Fourier Transforms of Typical Signals 
+序号 
+时域f(t) 
+频域F(ω) 
+1 
+δ(t) 
+ 
+2 
+1（直流） 
+ 
+3 
+ejω0t 
+ 
+4 
+sgn(t) 
+ 
+5 
+cos(ω0t) 
+ 
+6 
+sin(ω0t) 
+ 
+7 
+ 
+ 
+ 
+                           Table3 常用三角函数公式表 
+                         
+Type 
+Formula 
+Product-to-sum（积化和差） 
+cosα cosβ= 
+Product-to-sum（积化和差） 
+sinα sinβ= 
+Double-angle formulas（二倍角公式） 
+sin2α= 
+Power-reduction identities（降幂公式） 
+cos2α= 
+Power-reduction identities（降幂公式） 
+sin2α= 
+Basic Pythagorean identity 
+（基本平方恒等式） 
+sin2α+cos2α= 
+ 

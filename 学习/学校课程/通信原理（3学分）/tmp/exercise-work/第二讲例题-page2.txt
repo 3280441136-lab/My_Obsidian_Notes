@@ -1,0 +1,23 @@
+ 
+1.4 通信系统性能指标 
+Example 1:  In a digital communication system, the symbol duration is T=0.2 ms. 
+The system adopts octal transmission (each symbol carries 3 bits of information). 
+①Calculate the symbol rate RB (Baud). 
+②Calculate the information bit rate Rb (bit/s). 
+Solution 
+1. 
+Symbol rate: 
+𝑅𝐵=
+1
+𝑇=
+1
+0.2×10−3 = 𝟓𝟎𝟎𝟎 Baud  
+2  For octal 𝑀= 8, log2 8 = 3 
+𝑅𝑏= 𝑅𝐵⋅log2 𝑀= 5000 × 3 = 𝟏𝟓𝟎𝟎𝟎 b/s 
+ 
+ 
+出门测(2024 期末) Suppose that an information source is composed of 4 different 
+symbols, with the probabilities of 1/4, 1/8, 1/8 and 1/2. If the source sends out 2400 
+independent symbols per second, try to find the average information rate of the 
+information source. 
+ 

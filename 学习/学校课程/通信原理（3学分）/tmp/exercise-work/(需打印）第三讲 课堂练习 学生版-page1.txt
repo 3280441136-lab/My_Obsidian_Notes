@@ -1,0 +1,49 @@
+                       Lecture 3 Random process part I 
+Example 1   Let the stochastic process ξ(t) be expressed as   ξ(t)=2 cos (2πt+θ)  
+where θ is a discrete random variable. P(θ=0)=1/2, P (θ=
+π
+2) =1/2. 
+Compute:(1) The mean value Eξ[ξ(1)]  (2) The auto-correlation function Rξ(0,1) 
+-- Formula reminder for discrete random variable expectation: E[X(t)]= ∑
+xi
+K
+i=1
+P(xi) 
+    
+     
+ 
+ 
+ 
+ 
+ 
+ 
+Example 2: Let X1 and X2 be statistically independent Gaussian-distributed random variables, 
+each with zero mean and variance σ2. Define the Gaussian process 
+X(t)=X1 cos ( ω0t)+X2 sin ( ω0t) 
+Find the mean value μX(t) and auto-correlation function RX(t1,t2). 
+Given Conditions: 
+1. E[X1]=0, E[X2]=0 
+2. Variance: D(X1)=σ2, D(X2)=σ2 
+3. X1 and X2 are independent ⇒E[X1X2]=E[X1]E[X2]=0 
+4. E[X1
+2]=D(X1)+(E[X1])2=σ2, E[X2
+2]=σ2 
+            
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Example 3: Let s(t) be a stationary random pulse sequence with power spectral density Ps(f). Find 
+the power spectral density Pe(f) of the modulated signal e(t)=s(t) cos ω0 t. 
+ 
+     
+ 
+ 
+ 
+ 
+  

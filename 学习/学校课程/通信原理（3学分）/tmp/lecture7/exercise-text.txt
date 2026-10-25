@@ -1,0 +1,79 @@
+                   学号：              姓名：             
+第七讲 Channel——Part II    2025.9.24
+Example1:A channel has symbol rate . Test two different input distributions on this same channel:
+Distribution 1: 
+Distribution 2: 
+Calculate mutual information  for both distributions.
+
+
+Find the channel capacity C and maximum bit rate.
+
+
+
+Example2 :A single-mode optical fiber channel has an available bandwidth , and the signal-to-noise ratio is .Use the Shannon-Hartley theorem to calculate the channel capacity C. If we switch to a multi-mode optical fiber with bandwidth  and the same SNR of , calculate its channel capacity.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Example 3  (25年期末) A geosynchronous satellite同步卫星 communication link has a carrier frequency of 14 GHz, the system bandwidth is 36 MHz between the transmitter and the receiver, and a signal to-noise ratio (SNR) of 30dB at the receiver.
+① (提示: The SNR in dB must first be converted to a linear value.)
+②If the satellite communication link is affected by space rain attenuation, resulting in the receiver SNR dropping to 10dB while the bandwidth remains unchanged, how will the channel capacity change, calculate it.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Example 4
+Assumption: 
+
+
+Conclusion： 
+
+
+
+
+
+
+
+Example 
+For an AWGN channel with ideal baseband Nyquist transmission, the bandwidth . The system adopts 16QAM modulation without channel coding.
+(1) Find the spectral efficiency of this modulation scheme .
+(2) Calculate the information bit rate  of the system.
+(3) Given the linear signal-to-noise ratio , calculate the Shannon channel capacity of this channel.
+(4) If we switch to higher-order modulation (for example, 64QAM), recalculate the information bit rate  and compare it with the Shannon capacity obtained in part (3).
+
+
+
+
+
+
+
+Link | Antenna Config | min(Nt, Nr) | Channel Capacity
+Downlink | 4×2 MIMO 
+(BS 4Tx, UE 2Rx) |  | 
+Uplink | 1×4 
+(UE 1Tx, BS 4Rx) |  | 

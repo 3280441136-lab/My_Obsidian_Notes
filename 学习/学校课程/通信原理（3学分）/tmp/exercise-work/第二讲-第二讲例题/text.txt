@@ -1,0 +1,19 @@
+000 1.3信息及其度量 &  1.4通信系统性能指标​
+002 1.3信息及其度量
+004 Example 1：there is a binary discrete source, if p(0)=p (1)=1/2, then
+005 I(0)=      ;      I(1)=
+009 Example 2: A source has three symbols A, B, C with probabilities:
+010 p(A)=1/2, p(B)=1/4, p(C)=1/4;
+011 A 10-symbol message: A A B C A B A C A A. Find the total information of this message.
+015 Example 3: A discrete source has four possible symbols x1,x2,x3,x4 with probabilities:   p(x1)=1/4, p(x2)=1/8,p(x3)=1/8, p(x4)=1/2
+016 Find the entropy of this source (in bits per symbol)
+026 1.4通信系统性能指标​
+027 Example 1:  In a digital communication system, the symbol duration is T=0.2 ms. The system adopts octal transmission (each symbol carries 3 bits of information).
+028 ①Calculate the symbol rate R_{B} (Baud).
+029 ②Calculate the information bit rate R_{b} (bit/s).
+030 Solution
+031 Symbol rate:
+032 R_{B}=\frac{1}{T}=\frac{1}{0.2×10^{−3}}=5000 Baud
+033 2  For octal M=8,log_{2}8=3
+034 R_{b}=R_{B}⋅log_{2}M=5000×3=15000 b/s
+037 出门测(2024期末) Suppose that an information source is composed of 4 different symbols, with the probabilities of 1/4, 1/8, 1/8 and 1/2. If the source sends out 2400 independent symbols per second, try to find the average information rate of the information source.

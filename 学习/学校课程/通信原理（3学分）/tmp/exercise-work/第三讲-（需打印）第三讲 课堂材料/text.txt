@@ -1,0 +1,65 @@
+000 Table 1 Deterministic Signals vs Random Processes
+001 对比
+002 确知信号
+003 随机信号（随机过程）
+004 核心本质
+005 [IMAGE rId4]确定的时间函数
+006 样本函数构成的集合，
+007 每一时刻是随机变量
+008 [IMAGE rId5]
+009 t 时刻取值
+010 给定时间t，取值唯一、确定，可以完全预知
+011 给定时间t，取值是随机变量，瞬时值不可预知
+012 波形数量
+013 仅有1条确定波形
+014 [IMAGE rId4]
+015 有无穷多条样本波形，观测只能得到其中一个样本
+016 [IMAGE rId6]
+017 能量信号
+018 功率信号
+019 直接对该唯一波形做积分，直接判定是能量/功率信号[IMAGE rId7]
+020 [IMAGE rId8]
+021 稳随机过程是功率信号；
+022 分析使用功率谱密度。
+023 [IMAGE rId9]
+024 描述方法
+025 直接写时间函数s(t)
+026 依靠概率统计：均值、方差、概率分布等统计特征描述整体，不能单靠某一个样本
+027 可预测性
+029 瞬时值完全可预测
+030 瞬时值不可预测，统计规律可以描述
+034 Table 2   Fourier Transforms of Typical Signals
+035 序号
+036 时域f(t)
+037 频域F(ω)
+038 1
+039 δ(t)
+041 2
+042 1（直流）
+044 3
+045 ejω0t
+047 4
+048 sgn(t)
+050 5
+051 cos(ω0t)
+053 6
+054 sin(ω0t)
+056 7
+057 [IMAGE rId10]
+060 Table3 常用三角函数公式表
+062 Type
+063 Formula
+064 Product-to-sum（积化和差）
+065 cosα cosβ=
+066 Product-to-sum（积化和差）
+067 sinα sinβ=
+068 Double-angle formulas（二倍角公式）
+069 sin2α=
+070 Power-reduction identities（降幂公式）
+071 cos2α=
+072 Power-reduction identities（降幂公式）
+073 sin2α=
+074 Basic Pythagorean identity
+075 （基本平方恒等式）
+076 sin2α+cos2α=
+078 [IMAGE rId11]

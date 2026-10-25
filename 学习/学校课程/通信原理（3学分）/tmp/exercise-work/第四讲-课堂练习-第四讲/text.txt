@@ -1,0 +1,60 @@
+000 第四讲 Random Processes——Part II    2025.9.17
+001 Stationary Processes
+002 练习一：判断(True or False)
+003 (   ) Any ergodic random process must be wide-sense stationary.
+004 任何各态历经（遍历）随机过程一定是宽平稳的。
+005 (   ) A strictly stationary random process is always ergodic.
+006 严平稳随机过程一定是各态历经（遍历）的。
+007 (   ) All wide-sense stationary processes are strictly stationary.
+008 中文：所有宽平稳随机过程都是严平稳的。
+009 结论：
+011 练习二：自相关函数的性质
+012 Suppose X(t) is a wide-sense stationary random process. Its auto correlation function is R_{X}(τ)=16+9e^{−2|τ|}
+013 Solve the following questions:
+014 Find the average power of X(t).
+015 2) Find the DC power of X(t).
+016 3) Find the AC power of X(t).
+022 练习三：Gaussian Random Processes
+023 判断(T or F):
+024 (   )  For a general random process, strict-sense stationary implies wide-sense stationary.
+025 对于一般随机过程，严平稳可以推出宽平稳。
+026 (   )  If two random variables are uncorrelated, they must be statistically independent.
+027 若两个随机变量不相关，则它们一定统计独立。
+028 (   )  For Gaussian random variables, uncorrelated means statistically independent.
+029 对于高斯随机变量，不相关等价于统计独立。
+031 练习四 误码率Pe的计算  P_{e}=\frac{1}{2}erfc(\sqrt{\frac{E_{b}}{N_{0}}})
+032 For a BPSK system over AWGN channel, the energy per bit E_{b}=4×10^{−6} J, single-sided noise power spectral density N_{0}=1×10^{−6} W/Hz. Given: erf (2)=0.995322
+033 Calculate the bit error probability P_{e}.
+040 练习五 Random Processes Passing through Linear Systems
+041 Let X(t) be a stationary stochastic process with mean value a and auto correlation function R_{x}(τ). Its output after passing through a linear system is  Y(t)=X(t)+X(t−T)
+042 (1) Draw the block diagram of this linear system.
+043 (2) Find the auto correlation function and power spectral density of Y(t).
+057 表1 专业词汇中英文对照
+058 中文术语
+059 英文术语
+060 严平稳随机过程
+061 Strictsense stationary random process
+062 宽平稳随机过程
+063 Widesense stationary random process
+064 各态历经性（遍历性）
+065 Ergodicity
+066 自相关函数
+067 Autocorrelation function
+068 功率谱密度
+069 Power spectral density(PSD)
+070 维纳辛钦定理
+071 WienerKhinchin Relation(Theorem)
+072 高斯随机过程
+073 Gaussian random process
+074 统计平均
+075 Statistical average
+076 时间平均
+077 Time average
+078 统计独立
+079 Statistically independent
+080 不相关
+081 Uncorrelated
+082 直流功率
+083 DC power
+084 交流功率
+085 AC power

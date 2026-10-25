@@ -1,0 +1,33 @@
+                    第五讲 Random Processes——Part III    2025.9.19 
+练习一：判断(True or False) 
+1 (    ) Rician distribution can be regarded as a generalized Rayleigh distribution.  
+莱斯分布可以看作是广义的瑞利分布。 
+2 (   ) When there is no direct wave and only reflected waves, the envelope of received 
+signal follows Rician distribution.  
+不存在直射波，仅存在反射波时，接收信号的包络服从莱斯分布。 
+3 (   ) A narrowband random process can be expressed by in-phase and quadrature 
+components.  
+窄带随机过程可以用同相分量和正交分量表示。 
+4 (    ) Rayleigh distribution occurs when there exists a strong direct wave.  
+当存在强直射波时，信号包络服从瑞利分布。 
+5 (    ) Envelope-phase form is one representation of narrowband random process.  
+包络-相位形式是窄带随机过程的一种表达形式。 
+ 
+练习二 A zero-mean Gaussian white noise with power spectral density 
+n0
+2 is fed into an 
+ideal band pass filter. The filter has a center frequency fc and bandwidth B, as shown in the 
+figure.(1) Find the auto-correlation function of the filter’s output noise. 
+(2) Write down the one-dimensional probability density function of the output noise. 
+( )
+H f
+cf
+−
+ B
+ B
+cf
+f
+ 
+ 
+ 
+ 

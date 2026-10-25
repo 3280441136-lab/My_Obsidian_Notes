@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1050" height="500" viewBox="0 0 1050 500">
+  <rect width="1050" height="500" fill="#fffdf7"/>
+  <style>
+    .axis{stroke:#39414d;stroke-width:2}.bar{fill:#2f6f9f}.fold{stroke:#bb5a3c;stroke-width:2;stroke-dasharray:8 6;fill:none}.label{font:16px sans-serif;fill:#20252b}.title{font:21px sans-serif;font-weight:700;fill:#20252b}.out{fill:#4e8b63}
+  </style>
+  <text x="30" y="35" class="title">线性卷积结果折回为 N=4 周期卷积</text>
+  <text x="35" y="78" class="label">普通卷积：y_lin[n]=[1, 2, 3, 1, 2, 3, 0]</text>
+  <line x1="70" y1="250" x2="930" y2="250" class="axis"/>
+  <g>
+    <rect x="80" y="200" width="70" height="50" class="bar"/><rect x="190" y="150" width="70" height="100" class="bar"/><rect x="300" y="100" width="70" height="150" class="bar"/><rect x="410" y="200" width="70" height="50" class="bar"/><rect x="520" y="150" width="70" height="100" class="bar"/><rect x="630" y="100" width="70" height="150" class="bar"/><rect x="740" y="250" width="70" height="1" class="bar"/>
+    <text x="105" y="275" class="label">0:1</text><text x="215" y="275" class="label">1:2</text><text x="325" y="275" class="label">2:3</text><text x="435" y="275" class="label">3:1</text><text x="545" y="275" class="label">4:2</text><text x="655" y="275" class="label">5:3</text><text x="765" y="275" class="label">6:0</text>
+  </g>
+  <path d="M555 135 C560 55, 100 55, 115 190" class="fold"/><path d="M665 85 C670 25, 210 25, 225 140" class="fold"/><path d="M775 240 C780 180, 320 180, 335 90" class="fold"/>
+  <text x="355" y="55" class="label">相差 4 的位置绕回并相加</text>
+  <text x="35" y="345" class="label">周期卷积只保留四个位置：</text>
+  <line x1="70" y1="460" x2="650" y2="460" class="axis"/>
+  <rect x="90" y="410" width="90" height="50" class="out"/><rect x="230" y="380" width="90" height="80" class="out"/><rect x="370" y="410" width="90" height="50" class="out"/><rect x="510" y="435" width="90" height="25" class="out"/>
+  <text x="110" y="485" class="label">0:3</text><text x="250" y="485" class="label">1:5</text><text x="390" y="485" class="label">2:3</text><text x="530" y="485" class="label">3:1</text>
+</svg>

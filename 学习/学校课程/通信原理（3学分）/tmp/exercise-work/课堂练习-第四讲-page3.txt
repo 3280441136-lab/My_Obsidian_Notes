@@ -1,0 +1,36 @@
+ 
+3
+ 
+表1 专业词汇中英文对照 
+中文术语 
+英文术语 
+严平稳随机过程 
+Strict-sense stationary random process 
+宽平稳随机过程 
+Wide-sense stationary random process 
+各态历经性（遍历性） 
+Ergodicity 
+自相关函数 
+Autocorrelation function 
+功率谱密度 
+Power spectral density(PSD) 
+维纳-辛钦定理 
+Wiener-Khinchin Relation(Theorem) 
+高斯随机过程 
+Gaussian random process 
+统计平均 
+Statistical average 
+时间平均 
+Time average 
+统计独立 
+Statistically independent 
+不相关 
+Uncorrelated 
+直流功率 
+DC power 
+交流功率 
+AC power 
+ 
+ 
+ 
+ 

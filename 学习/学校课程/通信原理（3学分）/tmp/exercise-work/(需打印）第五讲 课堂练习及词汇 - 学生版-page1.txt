@@ -1,0 +1,86 @@
+                                表1 专业词汇中英文对照 
+           
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Table 1 Gaussian Noise at Different Stages in Communication System 
+ 
+ 
+ 
+英文术语 
+中文术语 
+Narrowband Random Process 
+窄带随机过程 
+In-phase and quadrature component 
+同相、正交分量（I/Q 分量） 
+Envelope-phase form 
+包络 - 相位形式 
+Rayleigh distribution 
+瑞利分布 
+Rician distribution 
+莱斯分布 
+Multi-path effect 
+多径效应 
+Gaussian white noise 
+高斯白噪声 
+Low-pass Gaussian noise 
+低通高斯噪声 
+Band-pass Gaussian noise 
+带通高斯噪声 
+Sine wave plus narrowband noise 
+正弦波加窄带噪声 
+Gaussian 
+distribution 
+PSD 分布 
+     R(τ) 曲线 
+   R(τ) 数学表达式 
+    功率P 
+ 
+AGWN 
+加性高斯白噪声 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Low-pass 
+Gaussian noise 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Band-pass 
+Gaussian noise 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
