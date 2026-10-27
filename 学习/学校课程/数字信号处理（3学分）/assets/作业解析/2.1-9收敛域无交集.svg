@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 410" role="img" aria-label="习题2.1第9问正负时间部分的收敛域无交集">
+  <rect width="940" height="410" fill="#ffffff"/>
+  <text x="230" y="36" text-anchor="middle" font-size="23" font-family="Microsoft YaHei, sans-serif" fill="#1d3340">正时间部分</text>
+  <text x="710" y="36" text-anchor="middle" font-size="23" font-family="Microsoft YaHei, sans-serif" fill="#1d3340">负时间部分</text>
+  <rect x="40" y="58" width="380" height="294" fill="#dceff5" stroke="#506570"/>
+  <rect x="520" y="58" width="380" height="294" fill="#ffffff" stroke="#506570"/>
+  <line x1="230" y1="58" x2="230" y2="352" stroke="#9aa9ae"/>
+  <line x1="40" y1="205" x2="420" y2="205" stroke="#9aa9ae"/>
+  <line x1="710" y1="58" x2="710" y2="352" stroke="#9aa9ae"/>
+  <line x1="520" y1="205" x2="900" y2="205" stroke="#9aa9ae"/>
+  <circle cx="230" cy="205" r="100" fill="#ffffff" stroke="#2585ae" stroke-width="3" stroke-dasharray="8 6"/>
+  <circle cx="710" cy="205" r="100" fill="#dceff5" stroke="#2585ae" stroke-width="3" stroke-dasharray="8 6"/>
+  <text x="230" y="198" text-anchor="middle" font-size="23" font-family="Microsoft YaHei, sans-serif" fill="#24546b">圆内不收敛</text>
+  <text x="710" y="198" text-anchor="middle" font-size="23" font-family="Microsoft YaHei, sans-serif" fill="#24546b">圆内收敛</text>
+  <text x="230" y="380" text-anchor="middle" font-size="20" font-family="Microsoft YaHei, sans-serif" fill="#1d3340">需要圆外</text>
+  <text x="710" y="380" text-anchor="middle" font-size="20" font-family="Microsoft YaHei, sans-serif" fill="#1d3340">需要圆内</text>
+</svg>
