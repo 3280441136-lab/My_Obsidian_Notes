@@ -1,0 +1,162 @@
+[
+  {
+    "slide": 1,
+    "text": "Chapter 4 Continuous-Wave Modulation (\n连续波调制\n)\nLinear modulation: 线性调制\nA\nmplitude modulation (AM) \n调幅\nD\nouble-sideband modulation\n (DSB)\n \n双边带调制\n S\ningle-sideband modulation (SSB) \n \nV\nestigital-sideband modulation(VSB)"
+  },
+  {
+    "slide": 2,
+    "text": "Analog communication system\n Modulation and  demodulation\n？\nWired\nWireless\n    M\nodulat\nion\n调制\nD\nemodulat\nion\n解调\nSource of \ninformation\nUser of\n information\nNoise\nChannel\nGoods need to be carried on different means of transport.\nrailway track\nunload\nload\nReview\n：回顾"
+  },
+  {
+    "slide": 3,
+    "text": "  Modulation\n调制\nEssence of Modulation \n调制的本质\n   \nModulation moves baseband information to high-frequency carrier for transmission."
+  },
+  {
+    "slide": 4,
+    "text": "Purposes of Modulation\n \n目的\nSatisfy antenna size requirement\n满足天线尺寸要求\nRealize frequency division multiplexing\n实现频分复用\nAvoid low-frequency interference\n避开低频干扰"
+  },
+  {
+    "slide": 5,
+    "text": "AM Communication System Project\n \n                         —— \n以语音信号为例\nSpeech is a low-frequency baseband signal with varying amplitude in time domain and spectrum within 200 Hz–3.4 kHz.\nAM Communication System Project\n \n                         —— \n以语音信号为例\n0\n      \nf\nH\n=3.4kHz\nlow-frequency"
+  },
+  {
+    "slide": 6,
+    "text": "AM Communication System Project\n \n                         —— \n以语音信号为例\nSpeech is a \nlow-frequency\n baseband signal with varying amplitude in time domain and \nspectrum within 200Hz–3.4 kHz\n.\nAM Communication System Project\n \n                         —— \n以语音信号为例"
+  },
+  {
+    "slide": 7,
+    "text": "AM \n通信系统实际链路\n——video"
+  },
+  {
+    "slide": 8,
+    "text": "AM Communication System Project\nM\nathematical model: abstraction \n    \n数学模型：抽象\nTime\n & \nfrequency-domain characteristics \n   \n时域频域特性 \nAnti-noise performance \n抗噪声性能 \nPractical AM system \n实际 AM 系统"
+  },
+  {
+    "slide": 9,
+    "text": "Mathematical model and Definition\nm\n(\nt\n)\nm(t)\n~\nA\n₀\n直流偏置\n×\ncos\nω\nc\nt\ncarrier\nChannel\nn\n(\nt\n)\n加性噪声\nBPF\n带通滤波\nEnvelope detector\n二极管\n + RC\n+\ns\nm\n(\nt\n)\nm\n(\nt\n):\n \nbaseband message signal\n; \nalso called \nmodulating signal\n;\n         \nthe original low-frequency audio signal to be transmitted\n.\nA₀:\n   \nD.C \nbias\n \n直流偏置\ncos\nω\nc\nt\n \n:\n \ncarrier\n;  \nhigh-frequency sinusoidal carrier wave\n;\ns\nm\n(\nt\n): AM \nmodulated signal\n；\n          \nthe high-frequency \nAM \nsignal after modulation\n.\nModulation"
+  },
+  {
+    "slide": 10,
+    "text": "Mathematical model and Definition\nm\n(\nt\n)\nm(t)\n~\nA\n₀\n直流偏置\n×\ncos\nω\nc\nt\ncarrier\nChannel\nn\n(\nt\n)\n加性噪声\nBPF\n带通滤波\nEnvelope detector\n二极管\n + RC\n+\ns\nm\n(\nt\n)\nDemodulation\nm\n(\nt\n):\n \nrecovered baseband signal\n.\n~\nDemodulation"
+  },
+  {
+    "slide": 11,
+    "text": "AM Communication System Project\nM\nathematical model: abstraction \n    \n数学模型：抽象\nTime\n & \nfrequency-domain characteristics\n \n   \n时域频域特性 \nAnti-noise performance \n抗噪声性能 \nPractical AM system \n实际 AM 系统"
+  },
+  {
+    "slide": 12,
+    "text": "m\n(\nt\n)\nm(t)\n~\nA\n₀\n×\ncos\nω\nc\nt\ncarrier\nChannel\nn\n(\nt\n)\n加性噪声\nBPF\n带通滤波\nEnvelope detector\n二极管\n + RC\n+\ns\nm\n(\nt\n)\nModulation\n？\n？"
+  },
+  {
+    "slide": 13,
+    "text": "       m\n(\nt\n)\n      cos\nω\nc\nt\n  \n      \ns\nm\n(\nt\n)\n      m\n(\nt\n)\n~\nW\naveform matching \n        \nproblem\n(a)\n(b)\n(c)\n(d)"
+  },
+  {
+    "slide": 14,
+    "text": ""
+  },
+  {
+    "slide": 15,
+    "text": ""
+  },
+  {
+    "slide": 16,
+    "text": "Comparison Table of Time-domain and Frequency-domain Expressions\nConclusion:\n1\n2\n3 "
+  },
+  {
+    "slide": 17,
+    "text": "Comparison Table of Time-domain and Frequency-domain Expressions\n    ？\n       ？"
+  },
+  {
+    "slide": 18,
+    "text": "Definition of Modulation Index \nm\na"
+  },
+  {
+    "slide": 19,
+    "text": "It describes how deeply\n \nthe baseband signal changes the carrier amplitude.\n \n满调幅"
+  },
+  {
+    "slide": 20,
+    "text": "Modulation efficiency \nη\n: the ratio of useful sideband power \nP\ns\n \nto total transmitted power \nP\n."
+  },
+  {
+    "slide": 21,
+    "text": "AM Communication System Project\nM\nathematical model: abstraction \nTime\n & \nfrequency-domain characteristics \nAnti-noise performance \n抗噪声性能\n \n--\n -- \nPractical AM system"
+  },
+  {
+    "slide": 22,
+    "text": "Anti-noise performance\nm\n(\nt\n)\nm(t)\n~\nA\n₀\n×\ncos\nω\nc\nt\nChannel\nn\n(\nt\n)\nBPF\nEnvelope detector\n+\ns\nm\n(\nt\n)\nS\ni\n/N\ni\nModulation Gain \n调制制度增益\n: An indicator for analog modulation systems to evaluate anti-noise performance of the demodulator.\nS\no\n/N\no\nDemodulation"
+  },
+  {
+    "slide": 23,
+    "text": "Anti-noise performance\nm\n(\nt\n)\nm(t)\n~\nA\n₀\n×\ncos\nω\nc\nt\nChannel\nn\n(\nt\n)\nBPF\nEnvelope detector\n+\ns\nm\n(\nt\n)\nS\ni\n/N\ni\nModulation Gain \n调制制度增益\n: An indicator for analog modulation systems to evaluate anti-noise performance of the demodulator.\nS\no\n/N\no\nDemodulation"
+  },
+  {
+    "slide": 24,
+    "text": "Anti-noise performance——Large SNR\nm\n(\nt\n)\nm(t)\n~\nA\n₀\n×\ncos\nω\nc\nt\nChannel\nn\n(\nt\n)\nBPF\nEnvelope detector\n+\ns\nm\n(\nt\n)\na\nb\nc\nd\nSignal  Power\n？"
+  },
+  {
+    "slide": 25,
+    "text": "Anti-noise performance——Large SNR\nm\n(\nt\n)\nm(t)\n~\nA\n₀\n×\ncos\nω\nc\nt\nChannel\nn\n(\nt\n)\nBPF\nEnvelope detector\n+\ns\nm\n(\nt\n)\nLarge\n SNR\n："
+  },
+  {
+    "slide": 26,
+    "text": "Anti-noise performance——Large SNR\nm\n(\nt\n)\nm(t)\n~\nA\n₀\n×\ncos\nω\nc\nt\nChannel\nn\n(\nt\n)\nBPF\nEnvelope detector\n+\ns\nm\n(\nt\n)"
+  },
+  {
+    "slide": 27,
+    "text": "Anti-noise performance——Large SNR\nm\n(\nt\n)\nm(t)\n~\nA\n₀\n×\ncos\nω\nc\nt\nChannel\nn\n(\nt\n)\nBPF\nEnvelope detector\n+\ns\nm\n(\nt\n)"
+  },
+  {
+    "slide": 28,
+    "text": "Anti-noise performance——Large SNR\nm\n(\nt\n)\nm(t)\n~\nA\n₀\n×\ncos\nω\nc\nt\nChannel\nn\n(\nt\n)\nBPF\nEnvelope detector\n+\ns\nm\n(\nt\n)\n注：\nEnvelope detection removes the 1/2 power attenuation introduced by the high-frequency carrier.\n？\n？"
+  },
+  {
+    "slide": 29,
+    "text": "Anti-noise performance——Large SNR\nm\n(\nt\n)\nm(t)\n~\nA\n₀\n×\ncos\nω\nc\nt\nChannel\nn\n(\nt\n)\nBPF\nEnvelope detector\n+\ns\nm\n(\nt\n)\nSpecial case\n:\n \nm\n(\nt\n)\n \nis a single‑tone sinusoidal signal\n.\n \n单音正弦\n信号\nSince \nG\n<1, AM envelope detection provides no SNR gain and exhibits poor noise performance.\n？\n？"
+  },
+  {
+    "slide": 30,
+    "text": "Anti-noise performance——Small SNR\nm\n(\nt\n)\nm(t)\n~\nA\n₀\n×\ncos\nω\nc\nt\nChannel\nn\n(\nt\n)\nBPF\nEnvelope detector\n+\ns\nm\n(\nt\n)\nThe signal is \ncorrupted\n扰乱\n by noise\n.\nSmall SNR:\nDemodulation"
+  },
+  {
+    "slide": 31,
+    "text": "Anti-noise performance——Small SNR\nThreshold effect:\n\t\nIf the input signal‑to‑noise ratio drops below a specific threshold, the output signal‑to‑noise ratio deteriorates much faster than the input SNR.\nNonlinear detector(envelope detector) has a threshold effect.\nEnvelope detector\nSmall SNR:"
+  },
+  {
+    "slide": 32,
+    "text": "Anti-noise performance——Small SNR video"
+  },
+  {
+    "slide": 33,
+    "text": "AM Communication System Project\nM\nathematical model: abstraction \n   \n数学模型：抽象\nTime\n & \nfrequency-domain characteristics \n   \n时域频域特性 \nAnti-noise performance 抗噪声性能 \nPractical AM system 实际 AM 系统"
+  },
+  {
+    "slide": 34,
+    "text": "A Real AM Communication System\nTransmitter\nMicrophone\nm(t)\nBand-limiting\n0.3–3.4 kHz\nAM modulator\n[Ac+m(t)]·cosωct\nBand-pass filter\nBPF · fc±B\nPower amplifier\nClass C → antenna\nm(t)\nm(t)\ns(t)\ns(t)\nmodulated RF\nChannel\nAWGN + attenuation\nr(t)=s(t)+n(t)\nReceiver\nLoudspeaker\nRecover m(t)\nAudio amplifier\nAF gain\nDC blocking\nRemove Ac\nEnvelope det.\nDiode + RC\nRF amplifier\n+ BPF\nm(t)\nm(t)\nenvelope\nr(t)\nNo local carrier\nNo carrier sync\nvs DSB-SC: no carrier-recovery circuit needed\nChain: mic → AM mod → PA → channel → RF amp → envelope det. → DC block → audio amp → speaker\nEnvelope detection needs no local carrier — that is why AM receivers stay simple and cheap.\nTrade-off: AM wastes about two thirds of transmitter power on the carrier (max efficiency 33%).\nCommunication Principles · Amplitude Modulation (AM)"
+  },
+  {
+    "slide": 35,
+    "text": "AM 通信系统实际链路\n通信原理 · 模拟幅度调制\n发射机 Transmitter\n信源话筒\nm(t)\n限带滤波\n0.3–3.4 kHz\nAM 调制器\n[Ac+m(t)]·cosωct\n带通滤波\nBPF · fc±B\n功率放大\nC 类 → 天线\nm(t)\nm(t)\ns(t)\ns(t)\n已调信号\n信道 Channel\nAWGN + 衰减\nr(t)=s(t)+n(t)\n接收机 Receiver\n扬声器\n恢复 m(t)\n音频功放\n低频放大\n隔直耦合\n去掉 Ac\n包络检波\n二极管 + RC\n高频放大\n+ BPF\nm(t)\nm(t)\n包络\nr(t)\n本地载波：不需要\n无需载波同步\n对比 DSB-SC：省去载波同步电路\n全链路：话筒 → 限带 → AM 调制 → 功放 → 信道 → 高放 → 包络检波 → 隔直 → 音频功放 → 扬声器\n包络检波不需要本地载波 —— 这正是 AM 接收机简单、便宜的原因\n代价：AM 把约三分之二的发射功率浪费在载波上（最高效率 33%），换来这份简单\n通信原理 · 幅度调制（AM）\n1 / 2"
+  },
+  {
+    "slide": 36,
+    "text": "AM \n通信系统实际链路\n——video"
+  },
+  {
+    "slide": 37,
+    "text": "Commercial Medium-wave AM Broadcasting System Parameters"
+  },
+  {
+    "slide": 38,
+    "text": "商用中波 AM 广播系统参数"
+  },
+  {
+    "slide": 39,
+    "text": "Example\n "
+  },
+  {
+    "slide": 40,
+    "text": "Known Conditions"
+  }
+]
