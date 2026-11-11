@@ -1,0 +1,1 @@
+Pages 14 and 19 use ensemble averages across waveforms at a fixed time; the mean curve may vary, with constant mean a special case. Pages 20-21 define variance and distinguish E[X squared] from the square of E[X].

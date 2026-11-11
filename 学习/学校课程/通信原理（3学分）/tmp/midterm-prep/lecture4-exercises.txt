@@ -1,0 +1,89 @@
+                 第四讲 Random Processes——Part II    2025.9.17
+Stationary Processes
+练习一：判断(True or False)
+(   ) Any ergodic random process must be wide-sense stationary. 
+任何各态历经（遍历）随机过程一定是宽平稳的。
+(   ) A strictly stationary random process is always ergodic. 
+严平稳随机过程一定是各态历经（遍历）的。
+(   ) All wide-sense stationary processes are strictly stationary. 
+中文：所有宽平稳随机过程都是严平稳的。
+结论：
+
+练习二：自相关函数的性质
+Suppose X(t) is a wide-sense stationary random process. Its auto correlation function is RX(τ)=16+9e−2|τ| 
+Solve the following questions:
+Find the average power of X(t).
+2) Find the DC power of X(t).
+3) Find the AC power of X(t).
+
+
+
+
+
+练习三：Gaussian Random Processes
+判断(T or F):
+(   )  For a general random process, strict-sense stationary implies wide-sense stationary. 
+对于一般随机过程，严平稳可以推出宽平稳。
+(   )  If two random variables are uncorrelated, they must be statistically independent. 
+      若两个随机变量不相关，则它们一定统计独立。
+(   )  For Gaussian random variables, uncorrelated means statistically independent.
+      对于高斯随机变量，不相关等价于统计独立。
+
+练习四 误码率Pe的计算  Pe=12erfcEbN0
+For a BPSK system over AWGN channel, the energy per bit Eb=4×10−6 J, single-sided noise power spectral density N0=1×10−6 W/Hz. Given: erf (2)=0.995322
+Calculate the bit error probability Pe.
+
+
+
+
+
+
+练习五 Random Processes Passing through Linear Systems
+Let X(t) be a stationary stochastic process with mean value a and auto correlation function Rx(τ). Its output after passing through a linear system is  Y(t)=X(t)+X(t−T)
+(1) Draw the block diagram of this linear system.
+(2) Find the auto correlation function and power spectral density of Y(t).
+
+
+
+
+
+
+
+
+
+
+
+
+
+表1 专业词汇中英文对照
+中文术语
+英文术语
+严平稳随机过程
+Strictsense stationary random process
+宽平稳随机过程
+Widesense stationary random process
+各态历经性（遍历性）
+Ergodicity
+自相关函数
+Autocorrelation function
+功率谱密度
+Power spectral density(PSD)
+维纳辛钦定理
+WienerKhinchin Relation(Theorem)
+高斯随机过程
+Gaussian random process
+统计平均
+Statistical average
+时间平均
+Time average
+统计独立
+Statistically independent
+不相关
+Uncorrelated
+直流功率
+DC power
+交流功率
+AC power
+
+
+

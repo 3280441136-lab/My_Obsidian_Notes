@@ -1,0 +1,86 @@
+学号：   写群里名单的小学号                姓名：            
+
+第二章 课后作业      
+                      
+2. 1   Let the stochastic process ξ(t) be expressed as   ξ(t)=2cos(2πt+θ) 
+where θ is a discrete random variable. P(θ=0)=1/2, Pθ=π2=1/2.
+Compute:(1) The mean value Eξξ(1)  
+(2) The auto-correlation function Rξ(0,1)
+--Formula reminder for discrete random variable expectation: EX(t)=i=1KxiP(xi)
+   
+    
+
+
+
+
+
+
+2.2: Let X1 and X2 be statistically independent Gaussiandistributed random variables, each with zero mean and variance σ2. Define the Gaussian process
+X(t)=X1cos(ω0t)+X2sin(ω0t)
+Find the mean value μX(t) and auto-correlation function RX(t1,t2).
+Given Conditions:
+E[X1]=0, E[X2]=0
+Variance: D(X1)=σ2, D(X2)=σ2
+X1 and X2 are independent ⇒E[X1X2]=E[X1]E[X2]=0
+E[X12]=D(X1)+(E[X1])2=σ2, E[X22]=σ2
+           
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2.3: Let s(t) be a stationary random pulse sequence with power spectral density Ps(f). Find the power spectral density Pe(f) of the modulated signal e(t)=s(t)cosω0t.
+
+
+
+
+
+
+
+
+2.4 Let X(t) be a stationary stochastic process with mean value a and auto correlation function Rx(τ). Its output after passing through a linear system is Y(t)=X(t)+X(t−T)
+(1) Draw the block diagram of this linear system.
+(2) Find the auto correlation function and power spectral density of Y(t).
+
+
+
+
+
+
+
+
+
+
+
+
+
+2.5 A zero-mean Gaussian white noise with power spectral density n02 is fed into an ideal band pass filter. The filter has a center frequency fc and bandwidth B, as shown in the figure.(1) Find the auto-correlation function of the filter’s output noise.
+(2) Write down the one-dimensional probability density function of the output noise.
+
+
+
+
+
+
+
+
+2.6A two-path multi-path channel, the channel transfer function is
+H(ω)=Ae−jωτ01+e−jωτ The relative time delay between two paths is τ=2 μs.
+Find the frequencies where deep fading (nulls零点) happens. 
+Calculate the coherence bandwidth of this two-ray channel.
+                 
+
+
+
+
+2.7 思考题(从时域和频域两个域进行推导)
+      

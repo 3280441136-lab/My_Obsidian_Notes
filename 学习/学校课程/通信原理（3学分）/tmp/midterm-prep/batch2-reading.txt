@@ -1,0 +1,1 @@
+Pages 26-28 form an assembly exercise followed by the completed model. Transmitter: source encoder, encryption, channel encoder, modulator. Receiver reverses these operations. Noise enters channel. Page 31 summarizes digital advantages and bandwidth/synchronization costs. Use course ordering without claiming every practical system requires encryption or every optional block.

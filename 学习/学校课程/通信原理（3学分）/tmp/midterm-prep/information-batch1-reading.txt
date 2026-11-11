@@ -1,0 +1,1 @@
+Pages 3-4 motivate self-information via uncertainty and surprise. Information is nonnegative for positive-probability events, zero for probability one, decreases with probability, and is additive for independent events. Page 7 defines logarithmic information; page 11 introduces total information by actual symbol counts. Clarify alphabet size M versus message length N.

@@ -1,0 +1,1 @@
+Pages 29 and 33 compare phase ensemble integrals with time integrals along a fixed sample. Page 34 overlays ergodicity equalities on the table, and page 35 states the course finite-second-moment conclusion. Mean and correlation rows covered now; PSD row deferred until Fourier/PSD unit.

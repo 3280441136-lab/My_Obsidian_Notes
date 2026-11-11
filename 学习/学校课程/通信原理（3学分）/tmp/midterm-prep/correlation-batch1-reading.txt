@@ -1,0 +1,1 @@
+Pages 23-26 give the continuous uniform-phase cosine problem and its solution. The expectation is over one common phase at both time instants. Product-to-sum separates a deterministic difference-angle term from the random sum-angle term; the latter has zero full-period phase integral.

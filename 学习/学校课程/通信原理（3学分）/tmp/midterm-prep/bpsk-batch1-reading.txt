@@ -1,0 +1,1 @@
+Pages 27-30 define Gaussian density, erfc, BPSK error formula, and the full example. N0 is single-sided; the supplied formula assumes coherent detection over AWGN. Pages 29-30 show the entire input and numerical evaluation.

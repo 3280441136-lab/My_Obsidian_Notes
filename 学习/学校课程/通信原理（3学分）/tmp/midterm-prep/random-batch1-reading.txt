@@ -1,0 +1,1 @@
+Pages 3-6: the chapter moves from noise and the family of possible waveforms to the fixed-realization and fixed-time views. The initial chapter map groups numerical characteristics, stationarity, Gaussian processes, LTI systems and noise. Page 6 horizontal view follows one outcome across time.

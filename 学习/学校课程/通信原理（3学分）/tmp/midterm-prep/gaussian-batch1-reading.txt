@@ -1,0 +1,1 @@
+Pages 23-26 introduce Gaussian amplitude densities, all-finite-dimensional joint Gaussian definition, WSS-to-SSS via mean vector and covariance, and independence iff uncorrelated for jointly Gaussian variables. Slide 25 product density omits normalization in its displayed factor; do not reproduce that typo.

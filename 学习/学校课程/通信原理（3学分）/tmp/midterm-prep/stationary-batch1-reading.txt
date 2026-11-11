@@ -1,0 +1,1 @@
+Pages 12-14 introduce time-shift invariance of all finite-dimensional distributions, then restrict to finite second moments for WSS. WSS needs constant mean and lag-only autocorrelation. Page 14 writes t1 minus t1 in the formula; correct is t2 minus t1. Page 16 mixes ergodicity statements; reserve the first two statements for the next unit and cover statement 3 here.

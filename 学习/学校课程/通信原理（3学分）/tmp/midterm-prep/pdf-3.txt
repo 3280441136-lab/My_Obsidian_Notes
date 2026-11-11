@@ -1,0 +1,149 @@
+PAGE 1
+1 
+ 
+南京信息工程大学  期中试卷 
+Nanjing University of Information Science &Technology mid-term examination paper 
+2024－2025 the first term  The Principles of Communications  course  
+Total  2  pages ;Exam time 100 minutes；Teacher 朱艳萍，施赛楠，罗歆瑶；Paper-making time：Nov. 2024 
+学院     电信学院     专业   电子信息工程   班              
+学号                   姓名                得分             
+I Choice questions (20 points, 2 points/item) 
+1. The process of Gaussian process after passing LTI( linear time invariant) system is (  ). 
+A. Rice process                B. Narrow-band Gaussian process 
+C. Gaussian process            D. None of the above 
+2. (      ) is the main performance indicator of a communication system. 
+A. Reliability                 B. Efficiency 
+C. Accuracy and Efficiency      D. Reliability and Efficiency  
+3.The reliability of a digital communication system can be measured by the error probability, which can be 
+represented by (        ). 
+A. Output signal-to-noise ratio     B. System gain 
+C. Input signal-to-noise ratio      D. Bit error rate and symbol error rate 
+4.The expressions of a narrowband random process are (      ). 
+A. Amplitude-phase form and sine-cosine form 
+B. Amplitude-phase form and in-phase quadrature form 
+C. Envelope-phase form and in-phase quadrature form 
+D. Envelope-phase form and sine-cosine form 
+5.For four commonly used linear analog modulation methods, the order of bandwidth from smallest to 
+largest is (  ). 
+A. SSB < VSB < DSB = AM     B. SSB < VSB < AM < DSB 
+C. VSB < SSB < AM = DSB     D. AM < SSB < VSB < DSB 
+6.The noise in a channel is usually added on the signal, so it is often referred to as (   ). 
+A. Multiplicative interference   B. Multiplicative noise 
+C. Additive noise             D. None of the above  
+7. Which system has the highest anti-noise performance?  
+A．WBFM       B.  AM      C.  DSB     D. VSB 
+8. Which multiplexing technology is applied in multicarrier （多载波）telephone system？ 
+A. FDM          B.  TDM       C. CDM  
+9. This frequency response condition H(f+fc)+H(f-fc)=1 is the design principle of the (     ) 
+modulation. It is usually used in TV signals. 
+
+PAGE 2
+2 
+ 
+A.  AM    B. SSB    C. VSB    D. DSB  
+10.The power spectral density of Gaussian white noise across the entire frequency range is: 
+A. Constant                        B. Inversely proportional to frequency 
+C. Linear proportional to frequency     D. Varies with frequency 
+II Fill in the blanks (10points, 2 points/blank) 
+1For non-equal probability situation,the relationship for symbol rate RB and information rate Rb 
+is           . 
+2 Multi-path propagation appears in ________ channel (constant parameter or random parameter). 
+3 If you want to listen to radio with high quality, you will choose ________modulation. 
+4 The expression of FM signal is __________. 
+5 The Carson’s rule (卡森公式) is __________. 
+III Answer the following questions (20 points)  
+1 Explain the threshold effect. 
+2 Draw the whole DSB communication system model (including the generation and detection)； 
+3 Draw the system model of digital communication; 
+4 Suppose the message signal m(t)=cos𝜔𝑚𝑡, draw the waveforms of AM and FM; 
+IV Proving problems（10 points） 
+Prove frequency selective fading(频率选择性衰落)of multipath channel. 
+V  Calculations（40 points, 10 points/problem） 
+1 On the keyboard of a telephone, there are 10 number keys (0~9).  𝑃1 = 0.15, 𝑃3 = 𝑃8 = 0.25, 𝑃0 = 
+𝑃2 = 𝑃4 = 𝑃5 = 𝑃6 = 𝑃7 = 𝑃9 = 0.05. 
+(1) Try to figure out the entropy of the information source of each key.  
+(2) If the rate of pressing keys is 1.5 p/s, try to figure out the information rate. 
+2 Each black-and-white TV image contains 3×106 pixels, and each pixel has 16 equal brightness 
+levels. If the signal output S/N= 30 dB, and the transmission time is 4 minutes, calculate the mi
+nimum bandwidth of the channel required for transmission of the black-and-white TV image. 
+3 If a Gaussian white noise passes through the filter shown in the following Figure 3. Its mean is zero and 
+the double side PSD is n0/2. Find the PSD and autocorrelation of output noise. 
+ 
+        Figure 1 
+4 It is known that the modulated signal is a single-tone cosine signal of 8 MHz, and the single power spectral 
+density of channel noise is set as 𝑛0 = 5 × 10−15 𝑊/𝐻𝑧, and the channel loss 𝛼 is 60 dB. If the output 
+SNR is required to be 40 dB, find: 
+(1) Bandwidth and transmit power of AM signal at 100% modulation. 
+(2) Bandwidth and transmit power of the FM signal when the FM index is 5. 
+
+PAGE 3
+3 
+ 
+答题纸 
+I  选择题 (10 分 ) 
+1 
+2 
+3 
+4 
+5 
+6 
+7 
+8 
+9 
+10 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+II  填空题 (10 分)   
+1 
+2 
+3 
+4 
+5 
+  
+ 
+ 
+ 
+ 
+ 
+III 简答题（每题5 分） 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
